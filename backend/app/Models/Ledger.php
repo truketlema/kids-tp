@@ -4,7 +4,15 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+#[Fillable([
+    'recorded_by',
+    'type',
+    'tp_amount',
+    'conversion_rate_snapshot',
+    'remarks',
+])]
 class Ledger extends Model
 {
     public function child(): BelongsTo

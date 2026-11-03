@@ -3,6 +3,7 @@
 namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Commitment extends Model
 {
@@ -14,4 +15,8 @@ class Commitment extends Model
     {
         return $this->belongsTo(Family::class);
     }
+    public function ledgers(): HasMany
+{
+    return $this->hasMany(Ledger::class);
+}
 }

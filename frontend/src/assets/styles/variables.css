@@ -22,6 +22,11 @@
 
   /* Typography */
   --font-family: 'Nunito', sans-serif;
+  --text-caption: 12px;
+  --text-small: 14px;
+  --text-body: 16px;
+  --text-large: 18px;
+  --text-heading: 22px;
 
   /* Border radius */
   --radius-small: 8px;

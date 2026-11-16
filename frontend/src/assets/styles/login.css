@@ -85,7 +85,7 @@
   border-radius: 4px;
   background: #e8f3ef;
   color: #455333;
-  font-size: 11px;
+  font-size: var(--text-caption);
   font-weight: 800;
 }
 
@@ -106,7 +106,7 @@
   display: block;
   margin-bottom: 6px;
   color: #4b5632;
-  font-size: 14px;
+  font-size: var(--text-small);
   font-weight: 800;
 }
 
@@ -121,7 +121,7 @@
   background: #fff;
   color: #4b5632;
   font: inherit;
-  font-size: 15px;
+  font-size: var(--text-body);
   transition: border-color 0.15s, box-shadow 0.15s;
 }
 
@@ -140,7 +140,7 @@
   gap: 8px;
   margin: 1px 0 18px;
   color: #78899a;
-  font-size: 13px;
+  font-size: var(--text-small);
   cursor: pointer;
 }
 
@@ -163,7 +163,7 @@
   background: #f5c766;
   color: #3e452e;
   font: inherit;
-  font-size: 14px;
+  font-size: var(--text-small);
   font-weight: 900;
   cursor: pointer;
   transition: background-color 0.16s ease, transform 0.16s ease;
@@ -189,7 +189,7 @@
   margin: 14px 0 0;
   color: #536b35;
   text-align: center;
-  font-size: 13px;
+  font-size: var(--text-small);
   line-height: 1.45;
 }
 
@@ -200,7 +200,7 @@
 .login-footer {
   margin: 18px 0 0;
   color: #718397;
-  font-size: 13px;
+  font-size: var(--text-small);
 }
 
 .login-footer a {

@@ -72,7 +72,7 @@
 .eyebrow {
   margin: 0 0 20px;
   color: #D5F58C;
-  font-size: 12px;
+  font-size: var(--text-caption);
   font-weight: 800;
   letter-spacing: 0.4px;
 }
@@ -101,7 +101,7 @@
 .benefit p {
   margin: 0;
   color: #c2cdb0;
-  font-size: 14px;
+  font-size: var(--text-small);
   line-height: 1.5;
 }
 
@@ -173,7 +173,7 @@
   background: #e8f3ef;
   color: #455333;
 
-  font-size: 12px;
+  font-size: var(--text-caption);
   font-weight: 800;
   letter-spacing: 0.15px;
 }
@@ -193,7 +193,7 @@
   margin: 0 0 6px;
 
   color: #4b5632;
-  font-size: 14px;
+  font-size: var(--text-small);
   font-weight: 800;
 }
 
@@ -211,7 +211,7 @@
   color: #4b5632;
 
   font-family: inherit;
-  font-size: 16px;
+  font-size: var(--text-body);
 
   transition: border-color 0.15s, box-shadow 0.15s;
 }
@@ -260,7 +260,7 @@
   background: #fff;
   color: #4b5632;
   font-family: inherit;
-  font-size: 16px;
+  font-size: var(--text-body);
   font-weight: 700;
   cursor: pointer;
 }
@@ -306,7 +306,7 @@
   background: transparent;
   color: #4b5632;
   font-family: inherit;
-  font-size: 14px;
+  font-size: var(--text-small);
   text-align: left;
   cursor: pointer;
 }
@@ -325,7 +325,7 @@
 .country-empty {
   margin: 8px 10px;
   color: #718397;
-  font-size: 13px;
+  font-size: var(--text-small);
 }
 
 .field .phone-input input {
@@ -351,7 +351,7 @@
   margin: 18px 0 20px;
 
   color: #78899a;
-  font-size: 13px;
+  font-size: var(--text-small);
   line-height: 1.45;
 
   cursor: pointer;
@@ -383,7 +383,7 @@
   color: #3e452e;
 
   font-family: inherit;
-  font-size: 15px;
+  font-size: var(--text-body);
   font-weight: 900;
 
   cursor: pointer;
@@ -418,7 +418,7 @@
   margin-top: 18px;
 
   color: #718397;
-  font-size: 13px;
+  font-size: var(--text-small);
 }
 
 .login {
@@ -433,7 +433,7 @@
 
   color: #536b35;
   text-align: center;
-  font-size: 13px;
+  font-size: var(--text-small);
 }
 
 .status-error {
@@ -512,7 +512,7 @@
 
   .badge {
     margin-bottom: 9px;
-    font-size: 12px;
+    font-size: var(--text-caption);
   }
 
   .mobile-title {
@@ -534,12 +534,12 @@
 
   .field > span,
   .field-label {
-    font-size: 14px;
+    font-size: var(--text-small);
   }
 
   .field input {
     height: 44px;
-    font-size: 16px;
+    font-size: var(--text-body);
   }
 
   .phone-input {
@@ -549,17 +549,17 @@
   .terms {
     margin-top: 16px;
     margin-bottom: 18px;
-    font-size: 13px;
+    font-size: var(--text-small);
   }
 
   .submit {
     min-height: 46px;
-    font-size: 15px;
+    font-size: var(--text-body);
   }
 
   .form-footer {
     margin-top: 18px;
-    font-size: 13px;
+    font-size: var(--text-small);
   }
 }
 

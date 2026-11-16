@@ -11,7 +11,6 @@
           <RouterLink class="nav-current" to="/dashboard">Dashboard</RouterLink>
           <a href="#children">Children</a>
           <span aria-disabled="true">Activities</span>
-          <span aria-disabled="true">Family Ledger</span>
           <span aria-disabled="true">History</span>
         </nav>
 
@@ -55,6 +54,11 @@
     </header>
 
     <div class="dashboard-content">
+      <span class="date-chip page-date-chip">
+        <span class="date-dot" aria-hidden="true"></span>
+        {{ todayLabel }}
+      </span>
+
       <section id="children" class="children-section" aria-labelledby="children-title">
         <div class="section-heading">
           <div>
@@ -77,11 +81,11 @@
         <template v-else-if="children.length">
           <div class="children-list">
             <article
-              v-for="(child, index) in children"
+              v-for="child in children"
               :key="child.id"
               class="child-card"
             >
-              <span class="child-avatar" :class="`avatar-${index % 3}`">
+              <span class="child-avatar">
                 <v-icon
                   v-if="avatarIcon(child.avatar)"
                   :icon="avatarIcon(child.avatar)"
@@ -91,7 +95,9 @@
 
               <span class="child-copy">
                 <strong>{{ child.name }}</strong>
-                <small>{{ childAge(child.date_of_birth) }}</small>
+                <small class="child-age">
+                  {{ childAge(child.date_of_birth) }}
+                </small>
               </span>
 
               <span class="child-family-label">Family member</span>
@@ -123,21 +129,36 @@
         <h2 id="overview-title">Family Stewardship Overview</h2>
         <div class="overview-grid">
           <article class="overview-card">
-            <span class="overview-kicker">FAMILY MEMBERS</span>
+            <div class="overview-card-heading">
+              <span class="overview-kicker">FAMILY MEMBERS</span>
+              <span class="overview-icon" aria-hidden="true">
+                <v-icon icon="mdi-account-group-outline" />
+              </span>
+            </div>
             <strong>{{ children.length }}</strong>
             <p>Children in your family registry</p>
             <span class="overview-meter" aria-hidden="true"></span>
           </article>
 
           <article class="overview-card">
-            <span class="overview-kicker">TRUST POINTS</span>
+            <div class="overview-card-heading">
+              <span class="overview-kicker">TRUST POINTS</span>
+              <span class="overview-icon" aria-hidden="true">
+                <v-icon icon="mdi-star-outline" />
+              </span>
+            </div>
             <strong>Getting started</strong>
             <p>Points will appear as you record family activity.</p>
             <span class="overview-meter" aria-hidden="true"></span>
           </article>
 
           <article class="overview-card">
-            <span class="overview-kicker">FAMILY ACCOUNT</span>
+            <div class="overview-card-heading">
+              <span class="overview-kicker">FAMILY ACCOUNT</span>
+              <span class="overview-icon" aria-hidden="true">
+                <v-icon icon="mdi-shield-check-outline" />
+              </span>
+            </div>
             <strong>Ready</strong>
             <p>{{ profile?.family?.family_name || 'Your family' }} is set up.</p>
             <span class="overview-meter" aria-hidden="true"></span>

@@ -7,11 +7,15 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+
 #[Fillable([
     'name',
-    'date_of_birth',])]
+    'date_of_birth',
+    'avatar',
+])]
 class Child extends Model
 {
+    public const AVATARS = ['bear', 'cat', 'dog', 'flower', 'rocket', 'star'];
 
     public function family(): BelongsTo
     {

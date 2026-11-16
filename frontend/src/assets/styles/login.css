@@ -1,0 +1,253 @@
+.login-page {
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: #fff;
+  color: #4b5632;
+}
+
+.login-layout {
+  display: grid;
+  grid-template-columns: minmax(270px, 34%) minmax(0, 1fr);
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+.login-brand-panel {
+  display: grid;
+  place-items: center;
+  padding: 32px;
+  background: #4b5632;
+}
+
+.login-mascot {
+  display: block;
+  width: min(100%, 270px);
+  height: auto;
+  object-fit: contain;
+}
+
+.login-form-panel {
+  position: relative;
+  isolation: isolate;
+
+  display: grid;
+  place-items: center;
+  min-width: 0;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: 48px clamp(28px, 8vw, 120px);
+  overflow: hidden;
+
+  background: #fff;
+}
+
+.login-print-decoration {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 0;
+
+  width: 140px;
+  height: 130px;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.login-print {
+  position: absolute;
+  height: auto;
+}
+
+.login-print-one {
+  top: -38px;
+  left: 18px;
+  width: 96px;
+}
+
+.login-print-two {
+  top: -12px;
+  left: 78px;
+  width: 112px;
+}
+
+.login-form {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 400px);
+}
+
+.login-badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 22px;
+  margin: 0 0 16px;
+  padding: 4px 9px;
+  border-radius: 4px;
+  background: #e8f3ef;
+  color: #455333;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.login-form h1 {
+  margin: 0 0 22px;
+  color: #4b5632;
+  font-size: 32px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.login-field {
+  display: block;
+  margin-bottom: 15px;
+}
+
+.login-field span {
+  display: block;
+  margin-bottom: 6px;
+  color: #4b5632;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.login-field input {
+  display: block;
+  width: 100%;
+  height: 44px;
+  padding: 0 12px;
+  border: 1px solid #dce4eb;
+  border-radius: 6px;
+  outline: none;
+  background: #fff;
+  color: #4b5632;
+  font: inherit;
+  font-size: 15px;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.login-field input:focus {
+  border-color: #96ac65;
+  box-shadow: 0 0 0 3px #d9ff8b55;
+}
+
+.login-field input::placeholder {
+  color: #9aa48f;
+}
+
+.remember {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 1px 0 18px;
+  color: #78899a;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.remember input {
+  width: 15px;
+  height: 15px;
+  margin: 0;
+  accent-color: #637644;
+}
+
+.login-submit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: min(100%, 318px);
+  min-height: 46px;
+  margin: 0 auto;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: #f5c766;
+  color: #3e452e;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 900;
+  cursor: pointer;
+  transition: background-color 0.16s ease, transform 0.16s ease;
+}
+
+.login-submit:hover:not(:disabled) {
+  background: #ffd77c;
+  transform: translateY(-1px);
+}
+
+.login-submit:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+
+.login-submit:focus-visible,
+.login-footer a:focus-visible {
+  outline: 3px solid #82965c;
+  outline-offset: 3px;
+}
+
+.login-status {
+  margin: 14px 0 0;
+  color: #536b35;
+  text-align: center;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.login-status-error {
+  color: #b42318;
+}
+
+.login-footer {
+  margin: 18px 0 0;
+  color: #718397;
+  font-size: 13px;
+}
+
+.login-footer a {
+  margin-left: 4px;
+  color: #4b5632;
+  font-weight: 900;
+}
+
+@media (max-width: 650px) {
+  .login-layout {
+    display: block;
+  }
+
+  .login-brand-panel {
+    min-height: 112px;
+    padding: 14px;
+  }
+
+  .login-mascot {
+    width: 104px;
+  }
+
+  .login-form-panel {
+    min-height: calc(100dvh - 112px);
+    padding: 36px 24px;
+  }
+
+  .login-print-decoration {
+    width: 120px;
+    height: 116px;
+  }
+
+  .login-print-one {
+    top: -36px;
+    left: 16px;
+    width: 86px;
+  }
+
+  .login-print-two {
+    top: -11px;
+    left: 68px;
+    width: 100px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .login-submit {
+    transition-duration: 0.01ms;
+  }
+}

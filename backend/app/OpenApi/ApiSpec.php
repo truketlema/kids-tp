@@ -1,0 +1,132 @@
+<?php
+
+namespace App\OpenApi;
+
+use OpenApi\Spec as OA;
+
+#[OA\Info(
+    title: 'Kids TP API',
+    version: '1.0.0',
+    description: 'API for parent accounts, family details, and children.',
+)]
+#[OA\Server(url: '/api', description: 'Kids TP API')]
+#[OA\Security\Scheme(
+    component: 'bearerAuth',
+    type: 'http',
+    scheme: 'bearer',
+    bearerFormat: 'Sanctum token',
+)]
+class ApiSpec
+{
+    #[OA\Operation\Get(
+        path: '/health',
+        tags: ['System'],
+        summary: 'Check API health',
+        responses: [new OA\Response(response: 200, description: 'API is running')],
+    )]
+    public function health(): void {}
+
+    #[OA\Operation\Post(
+        path: '/register',
+        tags: ['Authentication'],
+        summary: 'Register a parent and create their family',
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: [new OA\MediaType\Json(schema: new OA\Schema(
+                type: 'object',
+                required: ['name', 'email', 'phone', 'password', 'password_confirmation', 'family_name'],
+                properties: [
+                    new OA\Property(property: 'name', schema: new OA\Schema(type: 'string', maxLength: 255)),
+                    new OA\Property(property: 'email', schema: new OA\Schema(type: 'string', format: 'email')),
+                    new OA\Property(property: 'phone', schema: new OA\Schema(type: 'string', maxLength: 20)),
+                    new OA\Property(property: 'password', schema: new OA\Schema(type: 'string', minLength: 8)),
+                    new OA\Property(property: 'password_confirmation', schema: new OA\Schema(type: 'string', minLength: 8)),
+                    new OA\Property(property: 'family_name', schema: new OA\Schema(type: 'string', maxLength: 255)),
+                ],
+            ))],
+        ),
+        responses: [
+            new OA\Response(response: 201, description: 'Account created; returns the user, family, and bearer token'),
+            new OA\Response(response: 422, description: 'Validation failed'),
+        ],
+    )]
+    public function register(): void {}
+
+    #[OA\Operation\Post(
+        path: '/login',
+        tags: ['Authentication'],
+        summary: 'Authenticate a parent',
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: [new OA\MediaType\Json(schema: new OA\Schema(
+                type: 'object',
+                required: ['name', 'email', 'password'],
+                properties: [
+                    new OA\Property(property: 'name', schema: new OA\Schema(type: 'string')),
+                    new OA\Property(property: 'email', schema: new OA\Schema(type: 'string', format: 'email')),
+                    new OA\Property(property: 'password', schema: new OA\Schema(type: 'string')),
+                ],
+            ))],
+        ),
+        responses: [
+            new OA\Response(response: 200, description: 'Login succeeded; returns the user and bearer token'),
+            new OA\Response(response: 401, description: 'Credentials did not match'),
+            new OA\Response(response: 422, description: 'Validation failed'),
+        ],
+    )]
+    public function login(): void {}
+
+    #[OA\Operation\Get(
+        path: '/user',
+        tags: ['Account'],
+        summary: 'Get the authenticated parent and family',
+        security: [new OA\Security\Requirement(scheme: 'bearerAuth')],
+        responses: [
+            new OA\Response(response: 200, description: 'Authenticated user with family details'),
+            new OA\Response(response: 401, description: 'Unauthenticated or invalid token'),
+        ],
+    )]
+    public function user(): void {}
+
+    #[OA\Operation\Get(
+        path: '/children',
+        tags: ['Children'],
+        summary: 'List children in the authenticated parent’s family',
+        security: [new OA\Security\Requirement(scheme: 'bearerAuth')],
+        responses: [
+            new OA\Response(response: 200, description: 'Family children, ordered by name'),
+            new OA\Response(response: 401, description: 'Unauthenticated or invalid token'),
+            new OA\Response(response: 409, description: 'Account is not associated with a family'),
+        ],
+    )]
+    public function children(): void {}
+
+    #[OA\Operation\Post(
+        path: '/children',
+        tags: ['Children'],
+        summary: 'Add a child to the authenticated parent’s family',
+        security: [new OA\Security\Requirement(scheme: 'bearerAuth')],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: [new OA\MediaType\Json(schema: new OA\Schema(
+                type: 'object',
+                required: ['name', 'date_of_birth'],
+                properties: [
+                    new OA\Property(property: 'name', schema: new OA\Schema(type: 'string', maxLength: 255)),
+                    new OA\Property(property: 'date_of_birth', schema: new OA\Schema(type: 'string', format: 'date')),
+                    new OA\Property(
+                        property: 'avatar',
+                        schema: new OA\Schema(type: 'string', enum: ['bear', 'cat', 'dog', 'flower', 'rocket', 'star']),
+                    ),
+                ],
+            ))],
+        ),
+        responses: [
+            new OA\Response(response: 201, description: 'Child created'),
+            new OA\Response(response: 401, description: 'Unauthenticated or invalid token'),
+            new OA\Response(response: 409, description: 'Account is not associated with a family'),
+            new OA\Response(response: 422, description: 'Validation failed'),
+        ],
+    )]
+    public function addChild(): void {}
+}

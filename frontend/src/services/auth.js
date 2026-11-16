@@ -45,7 +45,9 @@ async function request(endpoint, { method = 'GET', payload, authenticated = fals
     response = await fetch(`${API_BASE_URL}${endpoint}`, options)
   } catch (error) {
     if (error instanceof TypeError) {
-      throw new Error('Unable to reach the API. Make sure the Laravel server is running.')
+      throw new Error('Unable to reach the API. Make sure the Laravel server is running.', {
+        cause: error,
+      })
     }
 
     throw error

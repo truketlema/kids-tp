@@ -301,7 +301,7 @@ async function loadProfile() {
 
 async function signOut() {
   clearAuthToken()
-  await router.replace({ name: 'login' })
+  await router.replace({ name: 'home' })
 }
 
 onMounted(loadProfile)

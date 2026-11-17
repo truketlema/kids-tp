@@ -23,6 +23,7 @@ class SwaggerDocumentationTest extends TestCase
                     '/login' => ['post'],
                     '/user' => ['get'],
                     '/children' => ['get', 'post'],
+                    '/children/{childId}/allocation' => ['patch'],
                 ],
                 'components' => [
                     'securitySchemes' => ['bearerAuth'],

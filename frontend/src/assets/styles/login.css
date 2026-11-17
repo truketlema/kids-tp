@@ -59,14 +59,14 @@
 }
 
 .login-print-one {
-  top: -38px;
-  left: 18px;
-  width: 96px;
+  top: -52px;
+  left: 36px;
+  width: 112px;
 }
 
 .login-print-two {
-  top: -12px;
-  left: 78px;
+  top: -2px;
+  left: 66px;
   width: 112px;
 }
 
@@ -214,18 +214,18 @@
     display: block;
   }
 
-  .login-brand-panel {
-    min-height: 112px;
-    padding: 14px;
+  .login-page {
+    background: #f7f9f2;
   }
 
-  .login-mascot {
-    width: 104px;
+  .login-brand-panel {
+    display: none;
   }
 
   .login-form-panel {
-    min-height: calc(100dvh - 112px);
-    padding: 36px 24px;
+    min-height: 100dvh;
+    padding: 42px 24px 32px;
+    background: #f7f9f2;
   }
 
   .login-print-decoration {
@@ -233,16 +233,20 @@
     height: 116px;
   }
 
+  .login-print {
+    width: 92px;
+  }
+
   .login-print-one {
-    top: -36px;
+    top: -50px;
     left: 16px;
-    width: 86px;
+    width: 112px;
   }
 
   .login-print-two {
-    top: -11px;
-    left: 68px;
-    width: 100px;
+    top: -2px;
+    left: 46px;
+    width: 112px;
   }
 }
 

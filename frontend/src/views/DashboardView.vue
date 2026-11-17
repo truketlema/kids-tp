@@ -24,13 +24,13 @@
             <v-icon icon="mdi-bell-outline" />
           </span>
 
-          <div class="profile-summary">
+          <RouterLink class="profile-summary" to="/profile" aria-label="Open profile">
             <span class="profile-avatar">{{ initials(profile?.name) }}</span>
             <span class="profile-copy">
               <strong>{{ profile?.name || 'Parent' }}</strong>
               <small>{{ profile?.family?.family_name || 'Family account' }}</small>
             </span>
-          </div>
+          </RouterLink>
 
           <button class="sign-out" type="button" @click="signOut">
             Sign out
@@ -80,10 +80,11 @@
 
         <template v-else-if="children.length">
           <div class="children-list">
-            <article
+            <RouterLink
               v-for="child in children"
               :key="child.id"
               class="child-card"
+              :to="{ name: 'child-profile', params: { childId: child.id } }"
             >
               <span class="child-avatar">
                 <v-icon
@@ -101,7 +102,7 @@
               </span>
 
               <span class="child-family-label">Family member</span>
-            </article>
+            </RouterLink>
           </div>
 
           <button class="add-child-button" type="button" @click="openAddChild">
@@ -189,16 +190,11 @@
         <v-icon icon="mdi-history" />
         <span>History</span>
       </span>
-      <button type="button" @click="isProfileMenuOpen = !isProfileMenuOpen">
+      <RouterLink to="/profile">
         <v-icon icon="mdi-account-outline" />
         <span>Profile</span>
-      </button>
+      </RouterLink>
     </nav>
-
-    <div v-if="isProfileMenuOpen" class="profile-menu">
-      <strong>{{ profile?.name || 'Parent' }}</strong>
-      <button type="button" @click="signOut">Sign out</button>
-    </div>
 
     <div
       v-if="isAddChildOpen"
@@ -325,8 +321,7 @@
 
           <div class="dialog-actions">
             <button class="dialog-submit" type="submit" :disabled="isAddingChild">
-              <v-icon v-if="!isAddingChild" icon="mdi-plus" />
-              {{ isAddingChild ? 'Adding...' : 'Add child' }}
+              {{ isAddingChild ? 'Saving...' : 'Save' }}
             </button>
           </div>
         </form>
@@ -367,7 +362,6 @@ const isAddChildOpen = ref(false)
 const isAddingChild = ref(false)
 const isAvatarPickerOpen = ref(false)
 const childFormError = ref('')
-const isProfileMenuOpen = ref(false)
 
 const childForm = reactive({
   name: '',

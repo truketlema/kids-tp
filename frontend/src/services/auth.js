@@ -132,3 +132,11 @@ export function addChild(payload) {
     authenticated: true,
   })
 }
+
+export function updateChildAllocation(childId, allocation) {
+  return request(`/children/${encodeURIComponent(childId)}/allocation`, {
+    method: 'PATCH',
+    payload: { allocation },
+    authenticated: true,
+  })
+}

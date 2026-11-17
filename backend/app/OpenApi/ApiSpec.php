@@ -92,6 +92,7 @@ class ApiSpec
         path: '/children',
         tags: ['Children'],
         summary: 'List children in the authenticated parent’s family',
+        description: 'Returns each child’s saved budget allocation, or null when the fixed default allocation applies.',
         security: [new OA\Security\Requirement(scheme: 'bearerAuth')],
         responses: [
             new OA\Response(response: 200, description: 'Family children, ordered by name'),
@@ -129,4 +130,56 @@ class ApiSpec
         ],
     )]
     public function addChild(): void {}
+
+    #[OA\Operation\Patch(
+        path: '/children/{childId}/allocation',
+        tags: ['Children'],
+        summary: 'Save or restore a child’s budget allocation',
+        description: 'Allocation percentages must total 100. Send allocation: null to restore the fixed defaults.',
+        security: [new OA\Security\Requirement(scheme: 'bearerAuth')],
+        parameters: [
+            new OA\Parameter(
+                name: 'childId',
+                in: 'path',
+                required: true,
+                schema: new OA\Schema(type: 'integer'),
+            ),
+        ],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: [new OA\MediaType\Json(schema: new OA\Schema(
+                type: 'object',
+                required: ['allocation'],
+                properties: [
+                    new OA\Property(
+                        property: 'allocation',
+                        schema: new OA\Schema(
+                            type: 'object',
+                            nullable: true,
+                            required: [
+                                'long_term_savings',
+                                'planned_purchase',
+                                'discretionary_spending',
+                                'reserve',
+                            ],
+                            properties: [
+                                new OA\Property(property: 'long_term_savings', schema: new OA\Schema(type: 'integer', minimum: 0, maximum: 100)),
+                                new OA\Property(property: 'planned_purchase', schema: new OA\Schema(type: 'integer', minimum: 0, maximum: 100)),
+                                new OA\Property(property: 'discretionary_spending', schema: new OA\Schema(type: 'integer', minimum: 0, maximum: 100)),
+                                new OA\Property(property: 'reserve', schema: new OA\Schema(type: 'integer', minimum: 0, maximum: 100)),
+                            ],
+                        ),
+                    ),
+                ],
+            ))],
+        ),
+        responses: [
+            new OA\Response(response: 200, description: 'Allocation saved or fixed defaults restored'),
+            new OA\Response(response: 401, description: 'Unauthenticated or invalid token'),
+            new OA\Response(response: 409, description: 'Account is not associated with a family'),
+            new OA\Response(response: 404, description: 'Child is not in the authenticated parent’s family'),
+            new OA\Response(response: 422, description: 'Validation failed or percentages do not total 100'),
+        ],
+    )]
+    public function updateChildAllocation(): void {}
 }

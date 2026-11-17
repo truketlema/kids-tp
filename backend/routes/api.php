@@ -22,4 +22,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/children', [ChildController::class, 'index']);
     Route::post('/children', [ChildController::class, 'store']);
+    Route::patch('/children/{childId}/allocation', [ChildController::class, 'updateAllocation'])
+        ->whereNumber('childId');
 });

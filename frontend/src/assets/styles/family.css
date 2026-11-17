@@ -1,0 +1,635 @@
+.family-page {
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: #f7f9f2;
+  color: #3e472f;
+}
+
+.family-content {
+  width: min(100%, 1160px);
+  min-height: calc(100vh - 128px);
+  margin: 0 auto;
+  padding: 22px 24px 44px;
+}
+
+.family-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 20px;
+  color: #7a816f;
+  font-size: var(--text-caption);
+}
+
+.family-breadcrumb a {
+  color: #53633a;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.family-title-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.family-eyebrow {
+  margin: 0 0 4px;
+  color: #849070;
+  font-size: var(--text-caption);
+  font-weight: 800;
+  letter-spacing: 0.7px;
+}
+
+.family-title-row h1 {
+  margin: 0;
+  color: #39432c;
+  font-size: 26px;
+}
+
+.family-date {
+  color: #7d856e;
+  font-size: var(--text-caption);
+}
+
+.family-summary-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 82px;
+  margin-bottom: 20px;
+  padding: 14px 18px;
+  border: 1px solid #edf0e7;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 5px 16px rgba(49, 61, 36, 0.035);
+}
+
+.family-home-icon,
+.family-member-avatar,
+.family-invite-icon,
+.family-setting-icon {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  border-radius: 50%;
+}
+
+.family-home-icon {
+  width: 46px;
+  height: 46px;
+  background: #e6f0ca;
+  color: #536b3a;
+  font-size: 20px;
+}
+
+.family-summary-copy {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+  margin-right: auto;
+}
+
+.family-summary-copy h2 {
+  overflow: hidden;
+  margin: 0;
+  color: #34402c;
+  font-size: var(--text-body);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.family-summary-copy p,
+.family-summary-copy small {
+  margin: 0;
+  color: #7b836e;
+  font-size: var(--text-caption);
+}
+
+.family-summary-card > button,
+.family-financial-setting > button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-height: 30px;
+  padding: 0 11px;
+  border: 0;
+  border-radius: 999px;
+  background: #f5c766;
+  color: #3e452e;
+  font: inherit;
+  font-size: var(--text-caption);
+  font-weight: 800;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.family-summary-card > button:hover,
+.family-financial-setting > button:hover {
+  background: #efbd54;
+}
+
+.family-management-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(300px, 0.9fr);
+  align-items: start;
+  gap: 24px;
+}
+
+.family-members-section {
+  min-width: 0;
+}
+
+.family-section-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.family-section-title > div {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.family-section-title h2 {
+  margin: 0;
+  color: #39432c;
+  font-size: var(--text-body);
+}
+
+.family-section-title > div > span {
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: #edf2e4;
+  color: #6d775d;
+  font-size: 11px;
+}
+
+.family-section-title > small {
+  color: #929985;
+  font-size: 9px;
+  letter-spacing: 0.4px;
+}
+
+.family-member-list {
+  display: grid;
+  gap: 10px;
+}
+
+.family-member-card,
+.family-invite-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 70px;
+  padding: 10px 13px;
+  border: 1px solid #edf0e7;
+  border-radius: 14px;
+  background: #fff;
+  color: inherit;
+  text-align: left;
+  text-decoration: none;
+}
+
+.family-member-card[href] {
+  cursor: pointer;
+}
+
+.family-member-card[href]:hover {
+  border-color: #dce7c9;
+  background: #fbfcf7;
+}
+
+.family-member-avatar {
+  width: 38px;
+  height: 38px;
+  background: #e8efdd;
+  color: #53633a;
+  font-size: var(--text-caption);
+  font-weight: 800;
+}
+
+.family-member-copy {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  margin-right: auto;
+}
+
+.family-member-name {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.family-member-name strong {
+  overflow: hidden;
+  color: #39432c;
+  font-size: var(--text-small);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.family-role {
+  padding: 2px 7px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.parent-role {
+  background: #e6f0ca;
+  color: #586a38;
+}
+
+.child-role {
+  background: #eef4df;
+  color: #647546;
+}
+
+.family-member-copy > small {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+  overflow: hidden;
+  color: #818876;
+  font-size: var(--text-caption);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.family-member-copy > small .v-icon {
+  flex: 0 0 auto;
+  font-size: 13px;
+}
+
+.family-points-unavailable {
+  color: #9aa08f !important;
+}
+
+.family-view-profile {
+  color: #717a61;
+  font-size: 10px;
+  white-space: nowrap;
+}
+
+.family-member-chevron {
+  flex: 0 0 auto;
+  color: #98a187;
+  font-size: 19px;
+}
+
+.family-invite-card {
+  width: 100%;
+  cursor: pointer;
+}
+
+.family-invite-card:hover {
+  background: #fbfcf7;
+}
+
+.family-invite-icon {
+  width: 38px;
+  height: 38px;
+  background: #e6f0ca;
+  color: #536b3a;
+  font-size: 20px;
+}
+
+.family-invite-card > span:nth-child(2) {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+  margin-right: auto;
+}
+
+.family-invite-card strong {
+  color: #39432c;
+  font-size: var(--text-small);
+}
+
+.family-invite-card small {
+  color: #818876;
+  font-size: var(--text-caption);
+}
+
+.family-members-note {
+  margin: 12px 0 0;
+  padding: 12px;
+  border: 1px solid #e0e5d7;
+  border-radius: 8px;
+  background: #f5f7f0;
+  color: #79816d;
+  font-size: var(--text-caption);
+  line-height: 1.5;
+}
+
+.family-financial-card {
+  padding: 16px;
+  border: 1px solid #e1e5da;
+  border-radius: 10px;
+  background: #fff;
+}
+
+.family-financial-card > header {
+  margin-bottom: 10px;
+  padding: 0 2px 10px;
+  border-bottom: 1px solid #edf0e7;
+}
+
+.family-financial-card > header h2 {
+  margin: 0;
+  color: #39432c;
+  font-size: var(--text-small);
+}
+
+.family-financial-card > header p {
+  margin: 4px 0 0;
+  color: #858c7a;
+  font-size: var(--text-caption);
+}
+
+.family-financial-setting {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 10px;
+  padding: 12px 10px;
+  border: 1px solid #edf0e7;
+  border-radius: 12px;
+}
+
+.family-setting-icon {
+  width: 30px;
+  height: 30px;
+  background: #eef4df;
+  color: #536b3a;
+}
+
+.family-setting-copy {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  margin-right: auto;
+}
+
+.family-setting-copy strong {
+  color: #414a36;
+  font-size: var(--text-caption);
+}
+
+.family-setting-copy small {
+  color: #8a907e;
+  font-size: 11px;
+}
+
+.family-setting-copy b {
+  color: #46513a;
+  font-size: var(--text-caption);
+}
+
+.family-setting-copy p {
+  margin: 3px 0 0;
+  color: #8a907e;
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.family-financial-setting > button {
+  min-height: 25px;
+  padding: 0 9px;
+}
+
+.family-shared-note {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0;
+  padding: 10px;
+  border: 1px solid #edf0e7;
+  border-radius: 10px;
+  color: #858c7a;
+  font-size: 11px;
+}
+
+.family-shared-note .v-icon {
+  flex: 0 0 auto;
+}
+
+.family-notice,
+.family-state {
+  margin: 0 0 16px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: #edf4df;
+  color: #4c5c37;
+  font-size: var(--text-small);
+}
+
+.family-state-error {
+  background: #fff0ee;
+  color: #9f332a;
+}
+
+.family-state p {
+  margin: 0 0 10px;
+}
+
+.family-state button {
+  padding: 7px 12px;
+  border: 0;
+  border-radius: 999px;
+  background: #f5c766;
+  color: #3e452e;
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.family-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  min-height: 54px;
+  padding: 10px max(24px, calc((100% - 1100px) / 2));
+  border-top: 1px solid #e6e9df;
+  background: #fff;
+  color: #8a907e;
+  font-size: var(--text-caption);
+}
+
+.family-footer strong {
+  color: #596637;
+}
+
+.family-mobile-nav {
+  display: none;
+}
+
+@media (max-width: 1050px) and (min-width: 761px) {
+  .family-content {
+    padding-right: 18px;
+    padding-left: 18px;
+  }
+
+  .family-management-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(280px, 0.85fr);
+    gap: 16px;
+  }
+}
+
+@media (max-width: 760px) {
+  .family-content {
+    min-height: calc(100dvh - 118px);
+    padding: 18px 15px 92px;
+  }
+
+  .family-breadcrumb {
+    margin-bottom: 16px;
+  }
+
+  .family-title-row {
+    margin-bottom: 13px;
+  }
+
+  .family-title-row h1 {
+    font-size: 22px;
+  }
+
+  .family-date {
+    max-width: 140px;
+    overflow: hidden;
+    text-align: right;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .family-summary-card {
+    min-height: 76px;
+    gap: 10px;
+    margin-bottom: 17px;
+    padding: 12px;
+  }
+
+  .family-summary-copy small {
+    display: none;
+  }
+
+  .family-summary-card > button {
+    min-height: 29px;
+    padding: 0 9px;
+    font-size: 10px;
+  }
+
+  .family-management-grid {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .family-section-title > small {
+    display: none;
+  }
+
+  .family-member-card,
+  .family-invite-card {
+    min-height: 72px;
+    padding: 10px;
+  }
+
+  .family-member-copy > small {
+    font-size: 11px;
+  }
+
+  .family-view-profile {
+    display: none;
+  }
+
+  .family-financial-card {
+    padding: 13px;
+  }
+
+  .family-financial-setting {
+    gap: 8px;
+    padding: 10px 8px;
+  }
+
+  .family-footer {
+    display: none;
+  }
+
+  .family-mobile-nav {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 20;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    min-height: 60px;
+    padding: 5px 5px max(5px, env(safe-area-inset-bottom));
+    border-top: 1px solid #e3e7dd;
+    background: rgba(255, 255, 255, 0.97);
+  }
+
+  .family-mobile-nav a,
+  .family-mobile-nav .family-nav-unavailable {
+    display: grid;
+    justify-items: center;
+    align-content: center;
+    gap: 2px;
+    min-width: 0;
+    border: 0;
+    border-radius: 9px;
+    background: transparent;
+    color: #616a57;
+    font: inherit;
+    text-decoration: none;
+  }
+
+  .family-mobile-nav .v-icon {
+    font-size: 19px;
+  }
+
+  .family-mobile-nav a span,
+  .family-mobile-nav .family-nav-unavailable span {
+    overflow: hidden;
+    max-width: 100%;
+    font-size: var(--text-caption);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .family-mobile-nav .family-nav-current {
+    background: #dceda8;
+    color: #3f4a2d;
+  }
+
+  .family-mobile-nav .family-nav-unavailable {
+    color: #a2a99a;
+  }
+}
+
+@media (max-width: 380px) {
+  .family-summary-card {
+    gap: 7px;
+    padding: 10px;
+  }
+
+  .family-summary-card > button {
+    padding: 0 7px;
+    font-size: 9px;
+  }
+
+  .family-member-card,
+  .family-invite-card {
+    gap: 8px;
+    padding: 8px;
+  }
+}

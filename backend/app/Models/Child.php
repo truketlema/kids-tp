@@ -12,10 +12,18 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
     'name',
     'date_of_birth',
     'avatar',
+    'budget_allocation',
 ])]
 class Child extends Model
 {
     public const AVATARS = ['bear', 'cat', 'dog', 'flower', 'rocket', 'star'];
+
+    protected function casts(): array
+    {
+        return [
+            'budget_allocation' => 'array',
+        ];
+    }
 
     public function family(): BelongsTo
     {

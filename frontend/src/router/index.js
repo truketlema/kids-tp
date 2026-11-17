@@ -4,6 +4,9 @@ import HomeView from '../views/HomeView.vue'
 import RegisterView from '../views/RegisterView.vue'
 import LoginView from '../views/LoginView.vue'
 import DashboardView from '../views/DashboardView.vue'
+import ProfileView from '../views/ProfileView.vue'
+import FamilyView from '../views/FamilyView.vue'
+import ChildProfileView from '../views/ChildProfileView.vue'
 import { getAuthToken } from '../services/auth.js'
 
 const router = createRouter({
@@ -29,6 +32,24 @@ const router = createRouter({
       path: '/dashboard',
       name: 'dashboard',
       component: DashboardView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/profile',
+      name: 'profile',
+      component: ProfileView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/family',
+      name: 'family',
+      component: FamilyView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/children/:childId',
+      name: 'child-profile',
+      component: ChildProfileView,
       meta: { requiresAuth: true },
     },
   ],

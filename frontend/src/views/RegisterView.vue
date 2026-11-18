@@ -64,7 +64,10 @@
           :aria-busy="isSubmitting"
           @submit.prevent="submitForm"
         >
-          <p class="badge">PARENT REGISTRATION</p>
+          <p class="badge">{{ isInvitation ? 'JOIN YOUR FAMILY' : 'PARENT REGISTRATION' }}</p>
+          <p v-if="isInvitation && invitationFamilyName" class="invitation-family">
+            You’ve been invited to join <strong>{{ invitationFamilyName }}</strong>.
+          </p>
 
           <h1 class="mobile-title">
             Good habits grow into brighter futures.
@@ -89,6 +92,7 @@
               type="email"
               autocomplete="email"
               placeholder="selam.tesfaye@example.com"
+              :readonly="isInvitation"
               required
             />
           </label>
@@ -203,7 +207,7 @@
             />
           </label>
 
-          <label class="field">
+          <label v-if="!isInvitation" class="field">
             <span>Family name *</span>
             <input
               v-model.trim="form.familyName"
@@ -227,8 +231,16 @@
             </span>
           </label>
 
-          <button class="submit" type="submit" :disabled="isSubmitting">
-            {{ isSubmitting ? 'Creating account...' : 'Create parent account & family' }}
+          <button
+            class="submit"
+            type="submit"
+            :disabled="isSubmitting || isInvitationLoading || (isInvitation && !isInvitationValid)"
+          >
+            {{
+              isSubmitting
+                ? (isInvitation ? 'Joining family...' : 'Creating account...')
+                : (isInvitation ? 'Join family' : 'Create parent account & family')
+            }}
           </button>
 
           <div class="form-footer">
@@ -262,15 +274,27 @@ import {
   reactive,
   ref,
 } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import {
   getCountries,
   getCountryCallingCode,
   parsePhoneNumberFromString,
 } from 'libphonenumber-js'
-import { registerAccount } from '../services/auth.js'
+import {
+  acceptFamilyInvitation,
+  getFamilyInvitation,
+  registerAccount,
+} from '../services/auth.js'
 
 const router = useRouter()
+const route = useRoute()
+const invitationToken = typeof route.query.invitation === 'string'
+  ? route.query.invitation
+  : ''
+const isInvitation = ref(Boolean(invitationToken))
+const isInvitationLoading = ref(false)
+const isInvitationValid = ref(!invitationToken)
+const invitationFamilyName = ref('')
 const regionNames = new Intl.DisplayNames(['en'], { type: 'region' })
 const countries = getCountries()
   .map((code) => ({
@@ -362,14 +386,19 @@ async function submitForm() {
   isSubmitting.value = true
 
   try {
-    const result = await registerAccount({
+    const registrationPayload = {
       name: form.parentName,
-      email: form.email,
       phone: parsedPhone.number,
       password: form.password,
       password_confirmation: form.passwordConfirmation,
-      family_name: form.familyName,
-    })
+    }
+    const result = isInvitation.value
+      ? await acceptFamilyInvitation({ ...registrationPayload, token: invitationToken })
+      : await registerAccount({
+          ...registrationPayload,
+          email: form.email,
+          family_name: form.familyName,
+        })
 
     status.value = result.message
     await router.replace({ name: 'dashboard' })
@@ -383,8 +412,26 @@ async function submitForm() {
   }
 }
 
-onMounted(() => {
+onMounted(async () => {
   document.addEventListener('pointerdown', handleCountryPickerOutsideClick)
+
+  if (isInvitation.value) {
+    isInvitationLoading.value = true
+
+    try {
+      const result = await getFamilyInvitation(invitationToken)
+      form.email = result.invitation.email
+      invitationFamilyName.value = result.invitation.family_name
+      isInvitationValid.value = true
+    } catch (error) {
+      status.value = error instanceof Error
+        ? error.message
+        : 'Unable to load this family invitation.'
+      statusType.value = 'error'
+    } finally {
+      isInvitationLoading.value = false
+    }
+  }
 })
 
 onBeforeUnmount(() => {

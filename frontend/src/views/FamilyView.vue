@@ -20,6 +20,9 @@
       <p v-if="notice" class="family-notice" role="status" aria-live="polite">
         {{ notice }}
       </p>
+      <p v-if="actionError" class="family-notice family-notice-error" role="alert">
+        {{ actionError }}
+      </p>
 
       <div v-if="isLoading" class="family-state" role="status">
         Loading your family...
@@ -37,9 +40,24 @@
             <p>{{ children.length }} {{ children.length === 1 ? 'child' : 'children' }}</p>
             <small>Showing your parent account and family children</small>
           </div>
-          <button type="button" @click="showUnavailable('Editing family details')">
-            <v-icon icon="mdi-pencil-outline" />
-            Edit Family
+          <form
+            v-if="editingFamilyName"
+            class="family-inline-form family-name-form"
+            @submit.prevent="saveFamilySetting('family_name')"
+          >
+            <label>
+              <span>Family name</span>
+              <input v-model.trim="familyDraft.family_name" required maxlength="255" />
+            </label>
+            <button type="submit" :disabled="isSavingFamily">
+              {{ isSavingFamily ? 'Saving…' : 'Save' }}
+            </button>
+            <button type="button" class="family-form-cancel" :disabled="isSavingFamily" @click="cancelFamilyEdit">
+              Cancel
+            </button>
+          </form>
+          <button v-else type="button" @click="editFamilyName">
+            <v-icon icon="mdi-pencil-outline" /> Edit Family
           </button>
         </section>
 
@@ -48,26 +66,26 @@
             <header class="family-section-title">
               <div>
                 <h2 id="family-members-title">Family Members</h2>
-                <span>{{ children.length + 1 }} profiles shown</span>
+                <span>{{ children.length + familyParents.length }} profiles shown</span>
               </div>
               <small>HOUSEHOLD MEMBERS</small>
             </header>
 
             <div class="family-member-list">
-              <article class="family-member-card">
-                <span class="family-member-avatar">{{ initials(profile?.name) }}</span>
+              <article v-for="parent in familyParents" :key="parent.id" class="family-member-card">
+                <span class="family-member-avatar">{{ initials(parent.name) }}</span>
                 <div class="family-member-copy">
                   <div class="family-member-name">
-                    <strong>{{ profile?.name || 'Parent' }}</strong>
+                    <strong>{{ parent.name || 'Parent' }}</strong>
                     <span class="family-role parent-role">Parent</span>
                   </div>
                   <small>
                     <v-icon icon="mdi-email-outline" />
-                    {{ profile?.email || 'No email on file' }}
+                    {{ parent.email || 'No email on file' }}
                   </small>
-                  <small v-if="profile?.phone">
+                  <small v-if="parent.phone">
                     <v-icon icon="mdi-phone-outline" />
-                    {{ profile.phone }}
+                    {{ parent.phone }}
                   </small>
                 </div>
                 <v-icon class="family-member-chevron" icon="mdi-chevron-right" />
@@ -98,7 +116,7 @@
               <button
                 class="family-invite-card"
                 type="button"
-                @click="showUnavailable('Inviting another parent')"
+                @click="isInvitationFormOpen = !isInvitationFormOpen"
               >
                 <span class="family-invite-icon"><v-icon icon="mdi-plus" /></span>
                 <span>
@@ -109,9 +127,28 @@
               </button>
             </div>
 
+            <form
+              v-if="isInvitationFormOpen"
+              class="family-invitation-form"
+              @submit.prevent="sendInvitation"
+            >
+              <label>
+                <span>Parent or guardian email</span>
+                <input
+                  v-model.trim="invitationEmail"
+                  type="email"
+                  autocomplete="email"
+                  maxlength="255"
+                  required
+                />
+              </label>
+              <button type="submit" :disabled="isSendingInvitation">
+                {{ isSendingInvitation ? 'Sending…' : 'Send invitation' }}
+              </button>
+            </form>
+
             <p class="family-members-note">
-              Children are managed by their parent accounts. Additional parent invitations
-              are not available yet.
+              Children are managed by their parent accounts. Invitations expire after seven days.
             </p>
           </section>
 
@@ -129,9 +166,19 @@
                 <b>{{ conversionRateLabel }}</b>
                 <p>This rate is used when translating Trust Points into ETB values.</p>
               </div>
-              <button type="button" @click="showUnavailable('Changing the conversion rate')">
-                Edit
-              </button>
+              <form
+                v-if="editingFamilyField === 'conversion_rate'"
+                class="family-setting-editor"
+                @submit.prevent="saveFamilySetting('conversion_rate')"
+              >
+                <label>
+                  <span>ETB per Trust Point</span>
+                  <input v-model.number="familyDraft.conversion_rate" type="number" min="0.01" step="0.01" required />
+                </label>
+                <button type="submit" :disabled="isSavingFamily">{{ isSavingFamily ? 'Saving…' : 'Save' }}</button>
+                <button type="button" class="family-form-cancel" :disabled="isSavingFamily" @click="cancelFamilyEdit">Cancel</button>
+              </form>
+              <button v-else type="button" @click="editFamilySetting('conversion_rate')">Edit</button>
             </article>
 
             <article class="family-financial-setting">
@@ -142,9 +189,19 @@
                 <b>{{ deductionCapLabel }}</b>
                 <p>Limits the Trust Points deducted in a day.</p>
               </div>
-              <button type="button" @click="showUnavailable('Changing the daily deduction cap')">
-                Edit
-              </button>
+              <form
+                v-if="editingFamilyField === 'daily_deduction_cap'"
+                class="family-setting-editor"
+                @submit.prevent="saveFamilySetting('daily_deduction_cap')"
+              >
+                <label>
+                  <span>Maximum points deducted per day</span>
+                  <input v-model.number="familyDraft.daily_deduction_cap" type="number" min="0" max="1000000" step="1" required />
+                </label>
+                <button type="submit" :disabled="isSavingFamily">{{ isSavingFamily ? 'Saving…' : 'Save' }}</button>
+                <button type="button" class="family-form-cancel" :disabled="isSavingFamily" @click="cancelFamilyEdit">Cancel</button>
+              </form>
+              <button v-else type="button" @click="editFamilySetting('daily_deduction_cap')">Edit</button>
             </article>
 
             <p class="family-shared-note">
@@ -182,7 +239,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import ProfileHeader from '../components/ProfileHeader.vue'
 import {
@@ -190,6 +247,8 @@ import {
   clearAuthToken,
   fetchChildren,
   getCurrentUser,
+  inviteParent,
+  updateFamily,
 } from '../services/auth.js'
 
 const avatarIcons = {
@@ -206,6 +265,18 @@ const children = ref([])
 const isLoading = ref(true)
 const loadError = ref('')
 const notice = ref('')
+const actionError = ref('')
+const editingFamilyName = ref(false)
+const editingFamilyField = ref('')
+const isSavingFamily = ref(false)
+const familyDraft = reactive({
+  family_name: '',
+  conversion_rate: '',
+  daily_deduction_cap: '',
+})
+const isInvitationFormOpen = ref(false)
+const invitationEmail = ref('')
+const isSendingInvitation = ref(false)
 const todayLabel = new Intl.DateTimeFormat(undefined, {
   weekday: 'long',
   day: 'numeric',
@@ -219,6 +290,10 @@ const conversionRateLabel = computed(() => {
 const deductionCapLabel = computed(() => {
   const cap = Number(profile.value?.family?.daily_deduction_cap)
   return Number.isInteger(cap) && cap >= 0 ? `${cap} TP per day` : 'Not configured'
+})
+const familyParents = computed(() => {
+  const parents = profile.value?.family?.users
+  return Array.isArray(parents) && parents.length ? parents : [profile.value].filter(Boolean)
 })
 
 function initials(name) {
@@ -255,8 +330,67 @@ function childAge(dateOfBirth) {
   return age >= 0 ? `Age ${age}` : 'Age unavailable'
 }
 
-function showUnavailable(feature) {
-  notice.value = `${feature} is not available yet.`
+function editFamilyName() {
+  familyDraft.family_name = profile.value?.family?.family_name || ''
+  actionError.value = ''
+  editingFamilyName.value = true
+}
+
+function editFamilySetting(field) {
+  familyDraft[field] = profile.value?.family?.[field] ?? ''
+  actionError.value = ''
+  editingFamilyField.value = field
+}
+
+function cancelFamilyEdit() {
+  editingFamilyName.value = false
+  editingFamilyField.value = ''
+  actionError.value = ''
+}
+
+async function saveFamilySetting(field) {
+  isSavingFamily.value = true
+  actionError.value = ''
+
+  try {
+    const result = await updateFamily({ [field]: familyDraft[field] })
+    profile.value = { ...profile.value, family: result.family }
+    editingFamilyName.value = false
+    editingFamilyField.value = ''
+    notice.value = result.message
+  } catch (error) {
+    if (error instanceof ApiError && error.status === 401) {
+      clearAuthToken()
+      await router.replace({ name: 'login' })
+      return
+    }
+
+    actionError.value = error instanceof Error ? error.message : 'Unable to save family settings.'
+  } finally {
+    isSavingFamily.value = false
+  }
+}
+
+async function sendInvitation() {
+  isSendingInvitation.value = true
+  actionError.value = ''
+
+  try {
+    const result = await inviteParent(invitationEmail.value)
+    notice.value = result.message
+    invitationEmail.value = ''
+    isInvitationFormOpen.value = false
+  } catch (error) {
+    if (error instanceof ApiError && error.status === 401) {
+      clearAuthToken()
+      await router.replace({ name: 'login' })
+      return
+    }
+
+    actionError.value = error instanceof Error ? error.message : 'Unable to send the invitation.'
+  } finally {
+    isSendingInvitation.value = false
+  }
 }
 
 async function loadFamily() {

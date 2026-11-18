@@ -14,6 +14,9 @@
       <div v-if="notice" class="child-profile-notice" role="status" aria-live="polite">
         {{ notice }}
       </div>
+      <div v-if="childActionError" class="child-profile-notice child-profile-notice-error" role="alert">
+        {{ childActionError }}
+      </div>
 
       <div v-if="isLoading" class="child-profile-state" role="status">
         Loading child profile...
@@ -35,12 +38,44 @@
               <span>{{ childAge }} · Child</span>
               <small><v-icon icon="mdi-calendar-blank-outline" /> Date of birth: {{ formatDate(child.date_of_birth) }}</small>
             </div>
-            <button type="button" @click="showUnavailable('Editing child information')">
+            <button type="button" @click="toggleChildEdit">
               <v-icon icon="mdi-pencil-outline" />
-              Edit Info
+              {{ isEditingChild ? 'Cancel' : 'Edit Info' }}
             </button>
           </div>
         </div>
+
+        <form
+          v-if="isEditingChild"
+          class="child-edit-form"
+          @submit.prevent="saveChildDetails"
+        >
+          <label>
+            <span>Child name</span>
+            <input v-model.trim="childDraft.name" maxlength="255" required />
+          </label>
+          <label>
+            <span>Date of birth</span>
+            <input v-model="childDraft.date_of_birth" type="date" :max="todayInput" required />
+          </label>
+          <label>
+            <span>Avatar</span>
+            <select v-model="childDraft.avatar">
+              <option value="">Initials</option>
+              <option v-for="avatar in availableAvatars" :key="avatar" :value="avatar">
+                {{ avatar }}
+              </option>
+            </select>
+          </label>
+          <div class="child-edit-actions">
+            <button type="submit" :disabled="isSavingChild">
+              {{ isSavingChild ? 'Saving…' : 'Save changes' }}
+            </button>
+            <button type="button" :disabled="isSavingChild" @click="isEditingChild = false">
+              Cancel
+            </button>
+          </div>
+        </form>
 
         <div class="child-stat-grid">
           <section class="child-stat-card">
@@ -212,10 +247,11 @@
             <button
               class="child-remove-button"
               type="button"
-              @click="showUnavailable('Removing a child from the family')"
+              :disabled="isRemovingChild"
+              @click="removeChildProfile"
             >
               <v-icon icon="mdi-delete-outline" />
-              Remove Child from Family
+              {{ isRemovingChild ? 'Removing…' : 'Remove Child from Family' }}
               <v-icon icon="mdi-chevron-right" />
             </button>
           </section>
@@ -288,9 +324,12 @@ import {
   clearAuthToken,
   fetchChildren,
   getCurrentUser,
+  removeChild,
+  updateChild,
   updateChildAllocation,
 } from '../services/auth.js'
 
+const availableAvatars = ['bear', 'cat', 'dog', 'flower', 'rocket', 'star']
 const defaultBudgetAllocation = [
   { key: 'long_term_savings', label: 'Long-term Savings', percentage: 40, color: '#264f3a' },
   { key: 'planned_purchase', label: 'Planned Purchase', percentage: 25, color: '#7bd16b' },
@@ -312,10 +351,16 @@ const child = ref(null)
 const isLoading = ref(true)
 const loadError = ref('')
 const notice = ref('')
+const childActionError = ref('')
 const isEditingAllocation = ref(false)
 const isSavingAllocation = ref(false)
 const allocationError = ref('')
 const draftAllocation = ref({})
+const isEditingChild = ref(false)
+const isSavingChild = ref(false)
+const isRemovingChild = ref(false)
+const childDraft = ref({ name: '', date_of_birth: '', avatar: '' })
+const todayInput = new Date().toISOString().slice(0, 10)
 const budgetAllocation = computed(() => defaultBudgetAllocation.map((item) => ({
   ...item,
   percentage: Number(child.value?.budget_allocation?.[item.key] ?? item.percentage),
@@ -398,6 +443,71 @@ function formatDate(date) {
 
 function showUnavailable(feature) {
   notice.value = `${feature} is not available yet.`
+}
+
+function toggleChildEdit() {
+  childActionError.value = ''
+
+  if (isEditingChild.value) {
+    isEditingChild.value = false
+    return
+  }
+
+  childDraft.value = {
+    name: child.value.name,
+    date_of_birth: child.value.date_of_birth,
+    avatar: child.value.avatar || '',
+  }
+  isEditingChild.value = true
+}
+
+async function saveChildDetails() {
+  isSavingChild.value = true
+  childActionError.value = ''
+
+  try {
+    const result = await updateChild(child.value.id, {
+      ...childDraft.value,
+      avatar: childDraft.value.avatar || null,
+    })
+    child.value = { ...child.value, ...result.child }
+    isEditingChild.value = false
+    notice.value = result.message
+  } catch (error) {
+    if (error instanceof ApiError && error.status === 401) {
+      clearAuthToken()
+      await router.replace({ name: 'login' })
+      return
+    }
+
+    childActionError.value = error instanceof Error ? error.message : 'Unable to update this child.'
+  } finally {
+    isSavingChild.value = false
+  }
+}
+
+async function removeChildProfile() {
+  if (!window.confirm(`Remove ${child.value.name} from your family? This cannot be undone.`)) {
+    return
+  }
+
+  isRemovingChild.value = true
+  childActionError.value = ''
+
+  try {
+    await removeChild(child.value.id)
+    await router.replace({ name: 'dashboard' })
+  } catch (error) {
+    if (error instanceof ApiError && error.status === 401) {
+      clearAuthToken()
+      await router.replace({ name: 'login' })
+      return
+    }
+
+    childActionError.value = error instanceof Error ? error.message : 'Unable to remove this child.'
+  } finally {
+    isRemovingChild.value = false
+  }
 }
 
 function editBudgetAllocation() {

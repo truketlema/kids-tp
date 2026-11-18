@@ -14,7 +14,7 @@ class ChildController extends Controller
     {
         $family = $request->user()->family;
 
-        if (!$family) {
+        if (! $family) {
             return response()->json([
                 'message' => 'This account is not associated with a family.',
             ], 409);
@@ -37,7 +37,7 @@ class ChildController extends Controller
 
         $family = $request->user()->family;
 
-        if (!$family) {
+        if (! $family) {
             return response()->json([
                 'message' => 'This account is not associated with a family.',
             ], 409);
@@ -51,11 +51,11 @@ class ChildController extends Controller
         ], 201);
     }
 
-    public function updateAllocation(Request $request, int $childId): JsonResponse
+    public function update(Request $request, int $childId): JsonResponse
     {
         $family = $request->user()->family;
 
-        if (!$family) {
+        if (! $family) {
             return response()->json([
                 'message' => 'This account is not associated with a family.',
             ], 409);
@@ -63,7 +63,76 @@ class ChildController extends Controller
 
         $child = $family->children()->find($childId);
 
-        if (!$child) {
+        if (! $child) {
+            return response()->json([
+                'message' => 'This child was not found in your family.',
+            ], 404);
+        }
+
+        $validated = $request->validate([
+            'name' => ['sometimes', 'required', 'string', 'max:255'],
+            'date_of_birth' => ['sometimes', 'required', 'date', 'before_or_equal:today'],
+            'avatar' => ['sometimes', 'nullable', 'string', Rule::in(Child::AVATARS)],
+        ]);
+
+        if ($validated === []) {
+            return response()->json([
+                'message' => 'Provide at least one child detail to update.',
+            ], 422);
+        }
+
+        $child->fill($validated)->save();
+
+        return response()->json([
+            'message' => 'Child details updated successfully.',
+            'child' => $child->fresh(),
+        ]);
+    }
+
+    public function destroy(Request $request, int $childId): JsonResponse
+    {
+        $family = $request->user()->family;
+
+        if (! $family) {
+            return response()->json([
+                'message' => 'This account is not associated with a family.',
+            ], 409);
+        }
+
+        $child = $family->children()->find($childId);
+
+        if (! $child) {
+            return response()->json([
+                'message' => 'This child was not found in your family.',
+            ], 404);
+        }
+
+        if ($child->ledgers()->exists()) {
+            return response()->json([
+                'message' => 'This child has ledger history and cannot be removed.',
+            ], 409);
+        }
+
+        $child->delete();
+
+        return response()->json([
+            'message' => 'Child removed successfully.',
+        ]);
+    }
+
+    public function updateAllocation(Request $request, int $childId): JsonResponse
+    {
+        $family = $request->user()->family;
+
+        if (! $family) {
+            return response()->json([
+                'message' => 'This account is not associated with a family.',
+            ], 409);
+        }
+
+        $child = $family->children()->find($childId);
+
+        if (! $child) {
             return response()->json([
                 'message' => 'This child was not found in your family.',
             ], 404);

@@ -22,7 +22,12 @@ class SwaggerDocumentationTest extends TestCase
                     '/register' => ['post'],
                     '/login' => ['post'],
                     '/user' => ['get'],
+                    '/family' => ['patch'],
+                    '/family/invitations' => ['post'],
+                    '/invitations/{token}' => ['get'],
+                    '/invitations/accept' => ['post'],
                     '/children' => ['get', 'post'],
+                    '/children/{childId}' => ['patch', 'delete'],
                     '/children/{childId}/allocation' => ['patch'],
                 ],
                 'components' => [

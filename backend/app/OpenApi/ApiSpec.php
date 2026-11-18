@@ -132,6 +132,141 @@ class ApiSpec
     public function addChild(): void {}
 
     #[OA\Operation\Patch(
+        path: '/family',
+        tags: ['Family'],
+        summary: 'Update the authenticated parent’s family name and shared settings',
+        security: [new OA\Security\Requirement(scheme: 'bearerAuth')],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: [new OA\MediaType\Json(schema: new OA\Schema(
+                type: 'object',
+                properties: [
+                    new OA\Property(property: 'family_name', schema: new OA\Schema(type: 'string', maxLength: 255)),
+                    new OA\Property(property: 'conversion_rate', schema: new OA\Schema(type: 'number', exclusiveMinimum: 0)),
+                    new OA\Property(property: 'daily_deduction_cap', schema: new OA\Schema(type: 'integer', minimum: 0, maximum: 1000000)),
+                ],
+            ))],
+        ),
+        responses: [
+            new OA\Response(response: 200, description: 'Family settings updated'),
+            new OA\Response(response: 401, description: 'Unauthenticated or invalid token'),
+            new OA\Response(response: 409, description: 'Account is not associated with a family'),
+            new OA\Response(response: 422, description: 'Validation failed'),
+        ],
+    )]
+    public function updateFamily(): void {}
+
+    #[OA\Operation\Post(
+        path: '/family/invitations',
+        tags: ['Family'],
+        summary: 'Email an invitation to join the authenticated parent’s family',
+        security: [new OA\Security\Requirement(scheme: 'bearerAuth')],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: [new OA\MediaType\Json(schema: new OA\Schema(
+                type: 'object',
+                required: ['email'],
+                properties: [
+                    new OA\Property(property: 'email', schema: new OA\Schema(type: 'string', format: 'email')),
+                ],
+            ))],
+        ),
+        responses: [
+            new OA\Response(response: 201, description: 'Invitation email sent; invitation expires after seven days'),
+            new OA\Response(response: 401, description: 'Unauthenticated or invalid token'),
+            new OA\Response(response: 409, description: 'Email already belongs to an account or no family is associated'),
+            new OA\Response(response: 422, description: 'Invalid email'),
+        ],
+    )]
+    public function inviteParent(): void {}
+
+    #[OA\Operation\Get(
+        path: '/invitations/{token}',
+        tags: ['Family'],
+        summary: 'View a family invitation before accepting it',
+        parameters: [
+            new OA\Parameter(name: 'token', in: 'path', required: true, schema: new OA\Schema(type: 'string')),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Invitation email and family name'),
+            new OA\Response(response: 410, description: 'Invitation is invalid, expired, or already used'),
+        ],
+    )]
+    public function showFamilyInvitation(): void {}
+
+    #[OA\Operation\Post(
+        path: '/invitations/accept',
+        tags: ['Family'],
+        summary: 'Create a parent account and accept a family invitation',
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: [new OA\MediaType\Json(schema: new OA\Schema(
+                type: 'object',
+                required: ['token', 'name', 'phone', 'password', 'password_confirmation'],
+                properties: [
+                    new OA\Property(property: 'token', schema: new OA\Schema(type: 'string', minLength: 64, maxLength: 64)),
+                    new OA\Property(property: 'name', schema: new OA\Schema(type: 'string', maxLength: 255)),
+                    new OA\Property(property: 'phone', schema: new OA\Schema(type: 'string', maxLength: 20)),
+                    new OA\Property(property: 'password', schema: new OA\Schema(type: 'string', minLength: 8)),
+                    new OA\Property(property: 'password_confirmation', schema: new OA\Schema(type: 'string', minLength: 8)),
+                ],
+            ))],
+        ),
+        responses: [
+            new OA\Response(response: 201, description: 'Parent account created and joined family; returns bearer token'),
+            new OA\Response(response: 409, description: 'Email already belongs to an account'),
+            new OA\Response(response: 410, description: 'Invitation is invalid, expired, or already used'),
+            new OA\Response(response: 422, description: 'Validation failed'),
+        ],
+    )]
+    public function acceptFamilyInvitation(): void {}
+
+    #[OA\Operation\Patch(
+        path: '/children/{childId}',
+        tags: ['Children'],
+        summary: 'Update a child in the authenticated parent’s family',
+        security: [new OA\Security\Requirement(scheme: 'bearerAuth')],
+        parameters: [
+            new OA\Parameter(name: 'childId', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: [new OA\MediaType\Json(schema: new OA\Schema(
+                type: 'object',
+                properties: [
+                    new OA\Property(property: 'name', schema: new OA\Schema(type: 'string', maxLength: 255)),
+                    new OA\Property(property: 'date_of_birth', schema: new OA\Schema(type: 'string', format: 'date')),
+                    new OA\Property(property: 'avatar', schema: new OA\Schema(type: 'string', nullable: true, enum: ['bear', 'cat', 'dog', 'flower', 'rocket', 'star'])),
+                ],
+            ))],
+        ),
+        responses: [
+            new OA\Response(response: 200, description: 'Child updated'),
+            new OA\Response(response: 401, description: 'Unauthenticated or invalid token'),
+            new OA\Response(response: 404, description: 'Child is not in the authenticated parent’s family'),
+            new OA\Response(response: 422, description: 'Validation failed'),
+        ],
+    )]
+    public function updateChild(): void {}
+
+    #[OA\Operation\Delete(
+        path: '/children/{childId}',
+        tags: ['Children'],
+        summary: 'Remove a child with no ledger history from the authenticated parent’s family',
+        security: [new OA\Security\Requirement(scheme: 'bearerAuth')],
+        parameters: [
+            new OA\Parameter(name: 'childId', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Child removed'),
+            new OA\Response(response: 401, description: 'Unauthenticated or invalid token'),
+            new OA\Response(response: 404, description: 'Child is not in the authenticated parent’s family'),
+            new OA\Response(response: 409, description: 'Child has ledger history and cannot be removed'),
+        ],
+    )]
+    public function removeChild(): void {}
+
+    #[OA\Operation\Patch(
         path: '/children/{childId}/allocation',
         tags: ['Children'],
         summary: 'Save or restore a child’s budget allocation',

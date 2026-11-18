@@ -133,6 +133,45 @@ export function addChild(payload) {
   })
 }
 
+export function updateFamily(payload) {
+  return request('/family', {
+    method: 'PATCH',
+    payload,
+    authenticated: true,
+  })
+}
+
+export function inviteParent(email) {
+  return request('/family/invitations', {
+    method: 'POST',
+    payload: { email },
+    authenticated: true,
+  })
+}
+
+export function getFamilyInvitation(token) {
+  return request(`/invitations/${encodeURIComponent(token)}`)
+}
+
+export function acceptFamilyInvitation(payload) {
+  return authenticate('/invitations/accept', payload)
+}
+
+export function updateChild(childId, payload) {
+  return request(`/children/${encodeURIComponent(childId)}`, {
+    method: 'PATCH',
+    payload,
+    authenticated: true,
+  })
+}
+
+export function removeChild(childId) {
+  return request(`/children/${encodeURIComponent(childId)}`, {
+    method: 'DELETE',
+    authenticated: true,
+  })
+}
+
 export function updateChildAllocation(childId, allocation) {
   return request(`/children/${encodeURIComponent(childId)}/allocation`, {
     method: 'PATCH',

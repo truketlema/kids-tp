@@ -131,6 +131,102 @@
   background: #efbd54;
 }
 
+.family-inline-form,
+.family-setting-editor,
+.family-invitation-form {
+  display: flex;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.family-inline-form label,
+.family-setting-editor label,
+.family-invitation-form label {
+  display: grid;
+  gap: 4px;
+  min-width: 150px;
+  color: #64704f;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.family-inline-form input,
+.family-setting-editor input,
+.family-invitation-form input {
+  width: 100%;
+  min-height: 34px;
+  padding: 6px 9px;
+  border: 1px solid #dfe5d6;
+  border-radius: 7px;
+  background: #fff;
+  color: #39432c;
+  font: inherit;
+}
+
+.family-inline-form button,
+.family-setting-editor button,
+.family-invitation-form button {
+  min-height: 30px;
+  padding: 0 11px;
+  border: 0;
+  border-radius: 999px;
+  background: #f5c766;
+  color: #3e452e;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.family-inline-form .family-form-cancel,
+.family-setting-editor .family-form-cancel {
+  border: 1px solid #e6eadf;
+  background: #fff;
+}
+
+.family-inline-form button:disabled,
+.family-setting-editor button:disabled,
+.family-invitation-form button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.family-name-form {
+  margin-left: auto;
+}
+
+.family-setting-editor {
+  grid-column: 2 / -1;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+
+.family-setting-editor label {
+  width: 100%;
+  max-width: 230px;
+  margin-right: auto;
+}
+
+.family-invitation-form {
+  margin-top: 10px;
+  padding: 12px;
+  border: 1px solid #e7ecdc;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.family-invitation-form label {
+  flex: 1 1 220px;
+}
+
+.family-notice-error {
+  border-color: #efc8c3;
+  background: #fff5f3;
+  color: #9c443b;
+}
+
 .family-management-grid {
   display: grid;
   grid-template-columns: minmax(0, 1.25fr) minmax(300px, 0.9fr);
@@ -512,6 +608,7 @@
   }
 
   .family-summary-card {
+    flex-wrap: wrap;
     min-height: 76px;
     gap: 10px;
     margin-bottom: 17px;
@@ -526,6 +623,15 @@
     min-height: 29px;
     padding: 0 9px;
     font-size: 10px;
+  }
+
+  .family-name-form {
+    flex: 1 1 100%;
+    margin-left: 0;
+  }
+
+  .family-name-form label {
+    flex: 1;
   }
 
   .family-management-grid {

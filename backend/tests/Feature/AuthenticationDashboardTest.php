@@ -2,7 +2,11 @@
 
 namespace Tests\Feature;
 
+use App\Mail\FamilyInvitationMail;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
 
 class AuthenticationDashboardTest extends TestCase
@@ -157,6 +161,158 @@ class AuthenticationDashboardTest extends TestCase
                 ],
             ])
             ->assertNotFound();
+
+        $this->app['auth']->forgetGuards();
+        $this->withToken($secondToken)
+            ->patchJson("/api/children/{$childId}", ['name' => 'Not This Family'])
+            ->assertNotFound();
+
+        $this->app['auth']->forgetGuards();
+        $this->withToken($secondToken)
+            ->deleteJson("/api/children/{$childId}")
+            ->assertNotFound();
+    }
+
+    public function test_parent_can_update_family_name_and_shared_financial_settings(): void
+    {
+        $token = $this->registerParent();
+
+        $this->withToken($token)
+            ->patchJson('/api/family', [
+                'family_name' => 'Tesfaye Household',
+                'conversion_rate' => 12.5,
+                'daily_deduction_cap' => 8,
+            ])
+            ->assertOk()
+            ->assertJsonPath('family.family_name', 'Tesfaye Household')
+            ->assertJsonPath('family.conversion_rate', 12.5)
+            ->assertJsonPath('family.daily_deduction_cap', 8);
+
+        $this->withToken($token)
+            ->getJson('/api/user')
+            ->assertOk()
+            ->assertJsonPath('family.family_name', 'Tesfaye Household')
+            ->assertJsonPath('family.conversion_rate', 12.5)
+            ->assertJsonPath('family.users.0.email', 'selam@example.com');
+    }
+
+    public function test_family_settings_reject_invalid_values_and_empty_updates(): void
+    {
+        $token = $this->registerParent();
+
+        $this->withToken($token)
+            ->patchJson('/api/family', ['conversion_rate' => 0])
+            ->assertUnprocessable();
+
+        $this->withToken($token)
+            ->patchJson('/api/family', [])
+            ->assertUnprocessable()
+            ->assertJsonPath('message', 'Provide at least one family setting to update.');
+    }
+
+    public function test_parent_can_update_and_remove_a_child_without_ledger_history(): void
+    {
+        $token = $this->registerParent();
+        $childId = $this->withToken($token)
+            ->postJson('/api/children', [
+                'name' => 'Hana Abebe',
+                'date_of_birth' => '2014-05-21',
+                'avatar' => 'cat',
+            ])
+            ->assertCreated()
+            ->json('child.id');
+
+        $this->withToken($token)
+            ->patchJson("/api/children/{$childId}", [
+                'name' => 'Hana Tesfaye',
+                'date_of_birth' => '2014-06-21',
+                'avatar' => 'star',
+            ])
+            ->assertOk()
+            ->assertJsonPath('child.name', 'Hana Tesfaye')
+            ->assertJsonPath('child.avatar', 'star');
+
+        $this->withToken($token)
+            ->patchJson("/api/children/{$childId}", [])
+            ->assertUnprocessable();
+
+        $this->withToken($token)
+            ->deleteJson("/api/children/{$childId}")
+            ->assertOk();
+
+        $this->withToken($token)
+            ->getJson('/api/children')
+            ->assertOk()
+            ->assertJsonCount(0, 'children');
+    }
+
+    public function test_parent_cannot_remove_a_child_with_ledger_history(): void
+    {
+        $token = $this->registerParent();
+        $childId = $this->withToken($token)
+            ->postJson('/api/children', [
+                'name' => 'Hana Abebe',
+                'date_of_birth' => '2014-05-21',
+            ])
+            ->assertCreated()
+            ->json('child.id');
+        $parentId = DB::table('personal_access_tokens')
+            ->where('tokenable_type', User::class)
+            ->value('tokenable_id');
+
+        DB::table('ledgers')->insert([
+            'child_id' => $childId,
+            'recorded_by' => $parentId,
+            'type' => 'award',
+            'tp_amount' => 5,
+            'conversion_rate_snapshot' => 10,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $this->withToken($token)
+            ->deleteJson("/api/children/{$childId}")
+            ->assertConflict()
+            ->assertJsonPath('message', 'This child has ledger history and cannot be removed.');
+    }
+
+    public function test_parent_invitation_can_be_accepted_once_and_adds_user_to_family(): void
+    {
+        Mail::fake();
+        $token = $this->registerParent();
+
+        $this->withToken($token)
+            ->postJson('/api/family/invitations', ['email' => 'guardian@example.com'])
+            ->assertCreated()
+            ->assertJsonPath('message', 'Invitation email sent.');
+
+        $invitationToken = null;
+        Mail::assertSent(FamilyInvitationMail::class, function (FamilyInvitationMail $mail) use (&$invitationToken) {
+            parse_str((string) parse_url($mail->inviteUrl, PHP_URL_QUERY), $query);
+            $invitationToken = $query['invitation'] ?? null;
+
+            return $mail->hasTo('guardian@example.com') && is_string($invitationToken);
+        });
+
+        $this->assertIsString($invitationToken);
+        $this->getJson("/api/invitations/{$invitationToken}")
+            ->assertOk()
+            ->assertJsonPath('invitation.email', 'guardian@example.com')
+            ->assertJsonPath('invitation.family_name', 'Abebe family');
+
+        $this->postJson('/api/invitations/accept', [
+            'token' => $invitationToken,
+            'name' => 'Mimi Tesfaye',
+            'phone' => '+251912345679',
+            'password' => 'password123',
+            'password_confirmation' => 'password123',
+        ])
+            ->assertCreated()
+            ->assertJsonPath('user.name', 'Mimi Tesfaye')
+            ->assertJsonPath('user.email', 'guardian@example.com')
+            ->assertJsonPath('user.family.family_name', 'Abebe family');
+
+        $this->getJson("/api/invitations/{$invitationToken}")->assertGone();
     }
 
     private function registerParent(): string

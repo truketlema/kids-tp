@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\ChildController;
 use App\Http\Controllers\Api\FamilyController;
 use App\Http\Controllers\Api\FamilyInvitationController;
@@ -26,6 +27,16 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::patch('/family', [FamilyController::class, 'update']);
     Route::post('/family/invitations', [FamilyInvitationController::class, 'store']);
+    Route::get('/categories', [CategoryController::class, 'index']);
+    Route::post('/categories', [CategoryController::class, 'store']);
+    Route::delete('/categories/{categoryId}', [CategoryController::class, 'destroyCategory'])
+        ->whereNumber('categoryId');
+    Route::post('/categories/{categoryId}/activities', [CategoryController::class, 'storeActivity'])
+        ->whereNumber('categoryId');
+    Route::patch('/activities/{activityId}', [CategoryController::class, 'updateActivity'])
+        ->whereNumber('activityId');
+    Route::delete('/activities/{activityId}', [CategoryController::class, 'destroyActivity'])
+        ->whereNumber('activityId');
     Route::get('/children', [ChildController::class, 'index']);
     Route::post('/children', [ChildController::class, 'store']);
     Route::patch('/children/{childId}', [ChildController::class, 'update'])->whereNumber('childId');

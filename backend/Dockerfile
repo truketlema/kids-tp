@@ -19,6 +19,7 @@ RUN install-php-extensions \
 COPY --from=composer:2.9.5 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /app
+ENV PORT=10000
 
 # Copy Laravel application
 COPY . .
@@ -40,6 +41,6 @@ RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 # Set Laravel writable directories
 RUN chown -R www-data:www-data storage bootstrap/cache
 
-EXPOSE 8000
+EXPOSE 10000
 
 CMD ["frankenphp", "run", "--config", "/app/Caddyfile"]

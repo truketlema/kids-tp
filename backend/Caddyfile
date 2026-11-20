@@ -1,4 +1,4 @@
-http://:8000 {
+http://:{$PORT} {
     root * /app/public
 
     encode zstd br gzip

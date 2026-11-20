@@ -137,6 +137,13 @@ export function addCategory(payload) {
   })
 }
 
+export function deleteCategory(categoryId) {
+  return request(`/categories/${encodeURIComponent(categoryId)}`, {
+    method: 'DELETE',
+    authenticated: true,
+  })
+}
+
 export function addCategoryActivity(categoryId, payload) {
   return request(`/categories/${encodeURIComponent(categoryId)}/activities`, {
     method: 'POST',
@@ -149,6 +156,13 @@ export function updateActivity(activityId, payload) {
   return request(`/activities/${encodeURIComponent(activityId)}`, {
     method: 'PATCH',
     payload,
+    authenticated: true,
+  })
+}
+
+export function deleteActivity(activityId) {
+  return request(`/activities/${encodeURIComponent(activityId)}`, {
+    method: 'DELETE',
     authenticated: true,
   })
 }

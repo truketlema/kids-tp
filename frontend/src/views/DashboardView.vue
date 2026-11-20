@@ -1,58 +1,5 @@
 <template>
-  <main class="dashboard-page" :class="{ 'adding-child': isAddChildOpen }">
-    <header class="dashboard-header">
-      <div class="dashboard-header-inner">
-        <RouterLink class="dashboard-brand" to="/dashboard" aria-label="Kids TP dashboard">
-          <img src="/Logo.png" alt="" />
-          <span>kids tp</span>
-        </RouterLink>
-
-        <nav class="desktop-nav" aria-label="Main navigation">
-          <RouterLink class="nav-current" to="/dashboard">Dashboard</RouterLink>
-          <a href="#children">Children</a>
-          <RouterLink to="/activities">Activities</RouterLink>
-          <span aria-disabled="true">History</span>
-        </nav>
-
-        <div class="desktop-account">
-          <span class="date-chip">
-            <span class="date-dot" aria-hidden="true"></span>
-            {{ todayLabel }}
-          </span>
-
-          <span class="notification-icon" aria-label="Notifications">
-            <v-icon icon="mdi-bell-outline" />
-          </span>
-
-          <RouterLink class="profile-summary" to="/profile" aria-label="Open profile">
-            <span class="profile-avatar">{{ initials(profile?.name) }}</span>
-            <span class="profile-copy">
-              <strong>{{ profile?.name || 'Parent' }}</strong>
-              <small>{{ profile?.family?.family_name || 'Family account' }}</small>
-            </span>
-          </RouterLink>
-
-          <button class="sign-out" type="button" @click="signOut">
-            Sign out
-          </button>
-        </div>
-
-        <div class="mobile-brand">
-          <RouterLink
-            class="dashboard-brand"
-            to="/dashboard"
-            aria-label="Kids TP dashboard"
-          >
-            <img src="/Logo.png" alt="" />
-            <span>kids tp</span>
-          </RouterLink>
-          <span class="notification-icon" aria-label="Notifications">
-            <v-icon icon="mdi-bell-outline" />
-          </span>
-        </div>
-      </div>
-    </header>
-
+  <main class="dashboard-page account-page-main" :class="{ 'adding-child': isAddChildOpen }">
     <div class="dashboard-content">
       <span class="date-chip page-date-chip">
         <span class="date-dot" aria-hidden="true"></span>
@@ -174,22 +121,22 @@
     </div>
 
     <nav class="mobile-bottom-nav" aria-label="Dashboard navigation">
-      <a class="bottom-nav-current" href="#children">
+      <RouterLink class="bottom-nav-current" to="/dashboard">
         <v-icon icon="mdi-view-dashboard-outline" />
         <span>Home</span>
-      </a>
-      <a href="#children">
+      </RouterLink>
+      <RouterLink to="/family">
         <v-icon icon="mdi-account-group-outline" />
-        <span>Children</span>
-      </a>
+        <span>Family</span>
+      </RouterLink>
       <RouterLink to="/activities">
         <v-icon icon="mdi-format-list-checks" />
         <span>Activities</span>
       </RouterLink>
-      <span class="nav-unavailable" aria-disabled="true">
+      <RouterLink to="/history">
         <v-icon icon="mdi-history" />
         <span>History</span>
-      </span>
+      </RouterLink>
       <RouterLink to="/profile">
         <v-icon icon="mdi-account-outline" />
         <span>Profile</span>
@@ -321,7 +268,7 @@
 
           <div class="dialog-actions">
             <button class="dialog-submit" type="submit" :disabled="isAddingChild">
-              {{ isAddingChild ? 'Saving...' : 'Save' }}
+              {{ isAddingChild ? 'Continuing…' : 'Continue to Step 2' }}
             </button>
           </div>
         </form>
@@ -334,7 +281,6 @@
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import {
-  addChild,
   ApiError,
   clearAuthToken,
   fetchChildren,
@@ -492,37 +438,24 @@ async function submitAddChild() {
   isAddingChild.value = true
 
   try {
-    const result = await addChild({
+    const draft = {
       name: childForm.name,
       date_of_birth: childForm.dateOfBirth,
       avatar: childForm.avatar || null,
-    })
-
-    if (!result.child) {
-      throw new Error('The API did not return the new child.')
     }
 
-    children.value = [...children.value, result.child]
-      .sort((first, second) => first.name.localeCompare(second.name))
+    sessionStorage.setItem('kids-tp:child-setup-draft', JSON.stringify(draft))
+    await router.push({ name: 'child-activity-setup' })
     isAddChildOpen.value = false
     childForm.name = ''
     childForm.dateOfBirth = ''
     childForm.avatar = ''
     isAvatarPickerOpen.value = false
   } catch (error) {
-    if (await handleExpiredSession(error)) {
-      return
-    }
-
-    childFormError.value = getErrorMessage(error, 'Unable to add this child.')
+    childFormError.value = getErrorMessage(error, 'Unable to continue child setup.')
   } finally {
     isAddingChild.value = false
   }
-}
-
-async function signOut() {
-  clearAuthToken()
-  await router.replace({ name: 'home' })
 }
 
 onMounted(() => {

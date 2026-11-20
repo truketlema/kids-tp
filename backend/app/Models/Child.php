@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
-use App\Models\Family;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Fillable([
@@ -31,7 +31,12 @@ class Child extends Model
     }
 
     public function ledgers(): HasMany
-{
-    return $this->hasMany(Ledger::class);
-}
+    {
+        return $this->hasMany(Ledger::class);
+    }
+
+    public function commitments(): BelongsToMany
+    {
+        return $this->belongsToMany(Commitment::class, 'child_commitment');
+    }
 }

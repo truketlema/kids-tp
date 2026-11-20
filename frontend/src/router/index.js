@@ -7,7 +7,10 @@ import DashboardView from '../views/DashboardView.vue'
 import ProfileView from '../views/ProfileView.vue'
 import FamilyView from '../views/FamilyView.vue'
 import ChildProfileView from '../views/ChildProfileView.vue'
+import ChildActivitySetupView from '../views/ChildActivitySetupView.vue'
 import ActivitiesView from '../views/ActivitiesView.vue'
+import HistoryView from '../views/HistoryView.vue'
+import PointsEntryView from '../views/PointsEntryView.vue'
 import { getAuthToken } from '../services/auth.js'
 
 const router = createRouter({
@@ -45,6 +48,30 @@ const router = createRouter({
       path: '/activities/:categoryId',
       name: 'category-activities',
       component: ActivitiesView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/children/:childId/activities',
+      name: 'child-activities',
+      component: ActivitiesView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/children/setup/activities',
+      name: 'child-activity-setup',
+      component: ChildActivitySetupView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/history',
+      name: 'history',
+      component: HistoryView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/children/:childId/points/:type(award|deduct)',
+      name: 'child-points',
+      component: PointsEntryView,
       meta: { requiresAuth: true },
     },
     {

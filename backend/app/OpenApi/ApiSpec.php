@@ -88,6 +88,163 @@ class ApiSpec
     )]
     public function user(): void {}
 
+    #[OA\Operation\Patch(
+        path: '/user/profile',
+        tags: ['Account'],
+        summary: 'Update parent name, phone, and email',
+        description: 'Name and phone are updated immediately. A changed email remains pending until its emailed verification code is confirmed.',
+        security: [new OA\Security\Requirement(scheme: 'bearerAuth')],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: [new OA\MediaType\Json(schema: new OA\Schema(
+                type: 'object',
+                required: ['name', 'phone', 'email'],
+                properties: [
+                    new OA\Property(property: 'name', schema: new OA\Schema(type: 'string', maxLength: 255)),
+                    new OA\Property(property: 'phone', schema: new OA\Schema(type: 'string', maxLength: 20)),
+                    new OA\Property(property: 'email', schema: new OA\Schema(type: 'string', format: 'email')),
+                ],
+            ))],
+        ),
+        responses: [
+            new OA\Response(response: 200, description: 'Profile updated; includes pending_email when email verification is required'),
+            new OA\Response(response: 422, description: 'Validation failed'),
+        ],
+    )]
+    public function updateParentProfile(): void {}
+
+    #[OA\Operation\Post(
+        path: '/user/email/verify',
+        tags: ['Account'],
+        summary: 'Confirm a pending email address',
+        security: [new OA\Security\Requirement(scheme: 'bearerAuth')],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: [new OA\MediaType\Json(schema: new OA\Schema(
+                type: 'object',
+                required: ['code'],
+                properties: [
+                    new OA\Property(property: 'code', schema: new OA\Schema(type: 'string', minLength: 6, maxLength: 6)),
+                ],
+            ))],
+        ),
+        responses: [
+            new OA\Response(response: 200, description: 'Email address verified and updated'),
+            new OA\Response(response: 422, description: 'Code is invalid or expired'),
+        ],
+    )]
+    public function verifyParentEmail(): void {}
+
+    #[OA\Operation\Post(
+        path: '/user/password',
+        tags: ['Account'],
+        summary: 'Change the authenticated parent password',
+        security: [new OA\Security\Requirement(scheme: 'bearerAuth')],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: [new OA\MediaType\Json(schema: new OA\Schema(
+                type: 'object',
+                required: ['current_password', 'password', 'password_confirmation'],
+                properties: [
+                    new OA\Property(property: 'current_password', schema: new OA\Schema(type: 'string')),
+                    new OA\Property(property: 'password', schema: new OA\Schema(type: 'string', minLength: 8)),
+                    new OA\Property(property: 'password_confirmation', schema: new OA\Schema(type: 'string', minLength: 8)),
+                ],
+            ))],
+        ),
+        responses: [
+            new OA\Response(response: 200, description: 'Password changed and other active tokens revoked'),
+            new OA\Response(response: 422, description: 'Current password or new password validation failed'),
+        ],
+    )]
+    public function changeParentPassword(): void {}
+
+    #[OA\Operation\Delete(
+        path: '/user',
+        tags: ['Account'],
+        summary: 'Delete the authenticated parent account',
+        description: 'Requires the current password. If another parent remains, shared family data is retained. If this is the last parent, the family and its data are deleted.',
+        security: [new OA\Security\Requirement(scheme: 'bearerAuth')],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: [new OA\MediaType\Json(schema: new OA\Schema(
+                type: 'object',
+                required: ['password'],
+                properties: [
+                    new OA\Property(property: 'password', schema: new OA\Schema(type: 'string')),
+                ],
+            ))],
+        ),
+        responses: [
+            new OA\Response(response: 200, description: 'Account deleted; response indicates whether family data was also deleted'),
+            new OA\Response(response: 422, description: 'Password confirmation failed'),
+        ],
+    )]
+    public function deleteParentAccount(): void {}
+
+    #[OA\Operation\Get(
+        path: '/user/notification-preferences',
+        tags: ['Notifications'],
+        summary: 'Get in-app notification preferences',
+        security: [new OA\Security\Requirement(scheme: 'bearerAuth')],
+        responses: [new OA\Response(response: 200, description: 'Saved notification preferences')],
+    )]
+    public function notificationPreferences(): void {}
+
+    #[OA\Operation\Patch(
+        path: '/user/notification-preferences',
+        tags: ['Notifications'],
+        summary: 'Update in-app notification preferences',
+        security: [new OA\Security\Requirement(scheme: 'bearerAuth')],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: [new OA\MediaType\Json(schema: new OA\Schema(
+                type: 'object',
+                properties: [
+                    new OA\Property(property: 'points_recorded', schema: new OA\Schema(type: 'boolean')),
+                    new OA\Property(property: 'activity_assignment_changed', schema: new OA\Schema(type: 'boolean')),
+                    new OA\Property(property: 'family_access_changed', schema: new OA\Schema(type: 'boolean')),
+                ],
+            ))],
+        ),
+        responses: [
+            new OA\Response(response: 200, description: 'Notification preferences updated'),
+            new OA\Response(response: 422, description: 'No valid preference was provided'),
+        ],
+    )]
+    public function updateNotificationPreferences(): void {}
+
+    #[OA\Operation\Get(
+        path: '/notifications',
+        tags: ['Notifications'],
+        summary: 'List recent in-app notifications',
+        security: [new OA\Security\Requirement(scheme: 'bearerAuth')],
+        responses: [new OA\Response(response: 200, description: 'Up to 50 recent notifications and unread count')],
+    )]
+    public function notifications(): void {}
+
+    #[OA\Operation\Patch(
+        path: '/notifications/read-all',
+        tags: ['Notifications'],
+        summary: 'Mark all in-app notifications as read',
+        security: [new OA\Security\Requirement(scheme: 'bearerAuth')],
+        responses: [new OA\Response(response: 200, description: 'Notifications marked as read')],
+    )]
+    public function markAllNotificationsRead(): void {}
+
+    #[OA\Operation\Patch(
+        path: '/notifications/{notificationId}/read',
+        tags: ['Notifications'],
+        summary: 'Mark an in-app notification as read',
+        security: [new OA\Security\Requirement(scheme: 'bearerAuth')],
+        parameters: [new OA\Parameter(name: 'notificationId', in: 'path', required: true, schema: new OA\Schema(type: 'string', format: 'uuid'))],
+        responses: [
+            new OA\Response(response: 200, description: 'Notification marked as read'),
+            new OA\Response(response: 404, description: 'Notification does not belong to the authenticated parent'),
+        ],
+    )]
+    public function markNotificationRead(): void {}
+
     #[OA\Operation\Get(
         path: '/children',
         tags: ['Children'],
@@ -103,10 +260,68 @@ class ApiSpec
     public function children(): void {}
 
     #[OA\Operation\Get(
+        path: '/children/{childId}/ledger',
+        tags: ['Points'],
+        summary: 'Get a child’s point summary and recent ledger entries',
+        security: [new OA\Security\Requirement(scheme: 'bearerAuth')],
+        parameters: [new OA\Parameter(name: 'childId', in: 'path', required: true, schema: new OA\Schema(type: 'integer'))],
+        responses: [
+            new OA\Response(response: 200, description: 'Child balance, weekly totals, savings goal, and recent point entries'),
+            new OA\Response(response: 404, description: 'Child is not in the authenticated family'),
+        ],
+    )]
+    public function childLedger(): void {}
+
+    #[OA\Operation\Post(
+        path: '/children/{childId}/ledger',
+        tags: ['Points'],
+        summary: 'Award or deduct points for a child',
+        description: 'Activity earnings default to the activity TP and can be adjusted. Deductions default to the suggested deduction, are limited by the family daily cap, and may bring the child’s balance below zero.',
+        security: [new OA\Security\Requirement(scheme: 'bearerAuth')],
+        parameters: [new OA\Parameter(name: 'childId', in: 'path', required: true, schema: new OA\Schema(type: 'integer'))],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: [new OA\MediaType\Json(schema: new OA\Schema(
+                type: 'object',
+                required: ['type'],
+                properties: [
+                    new OA\Property(property: 'type', schema: new OA\Schema(type: 'string', enum: ['earning', 'deduction', 'bonus', 'adjustment'])),
+                    new OA\Property(property: 'commitment_id', schema: new OA\Schema(type: 'integer')),
+                    new OA\Property(property: 'tp_amount', schema: new OA\Schema(type: 'integer')),
+                    new OA\Property(property: 'remarks', schema: new OA\Schema(type: 'string', nullable: true)),
+                ],
+            ))],
+        ),
+        responses: [
+            new OA\Response(response: 201, description: 'Point activity recorded'),
+            new OA\Response(response: 404, description: 'Child or activity is outside the authenticated family'),
+            new OA\Response(response: 422, description: 'Validation, balance, or daily deduction limit failed'),
+        ],
+    )]
+    public function storeChildLedger(): void {}
+
+    #[OA\Operation\Get(
+        path: '/ledger',
+        tags: ['Points'],
+        summary: 'List recent point history for the authenticated family',
+        description: 'Returns up to 100 newest entries. Optional filters: type and child_id.',
+        security: [new OA\Security\Requirement(scheme: 'bearerAuth')],
+        parameters: [
+            new OA\Parameter(name: 'type', in: 'query', schema: new OA\Schema(type: 'string', enum: ['earning', 'deduction', 'bonus', 'adjustment'])),
+            new OA\Parameter(name: 'child_id', in: 'query', schema: new OA\Schema(type: 'integer')),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Family point history'),
+            new OA\Response(response: 401, description: 'Unauthenticated or invalid token'),
+        ],
+    )]
+    public function familyLedger(): void {}
+
+    #[OA\Operation\Get(
         path: '/categories',
         tags: ['Activities'],
         summary: 'List the available activity categories and Trust Point values',
-        description: 'Returns shared defaults in fixed catalog order (including family overrides in their original positions), followed by family-created categories in creation order. Category and activity records are marked is_default. Includes category icons, assigned child IDs, and weight multipliers. Catalog activities can only have their default TP reward edited.',
+        description: 'Returns shared defaults in fixed catalog order (including family overrides in their original positions), followed by family-created categories in creation order. Category and activity records are marked is_default. Includes category icons, assigned child IDs, per-child TP overrides, and weight multipliers. Catalog activity rewards and child assignments are stored as family-specific overrides.',
         security: [new OA\Security\Requirement(scheme: 'bearerAuth')],
         responses: [
             new OA\Response(response: 200, description: 'Categories with activity descriptions and point values'),
@@ -226,7 +441,7 @@ class ApiSpec
         path: '/activities/{activityId}',
         tags: ['Activities'],
         summary: 'Update a family activity',
-        description: 'Shared default activities can only have their default TP reward changed and are copied into the authenticated family before updating. Family-added activities can also update their title, description, suggested deduction, weight multiplier, and child assignments.',
+        description: 'Shared catalog activities can be assigned to children and are copied into the authenticated family before updating. Family-added activities can update their title, description, suggested deduction, weight multiplier, and child assignments. TP rewards are customized separately for each child.',
         security: [new OA\Security\Requirement(scheme: 'bearerAuth')],
         parameters: [
             new OA\Parameter(
@@ -243,7 +458,6 @@ class ApiSpec
                 properties: [
                     new OA\Property(property: 'title', schema: new OA\Schema(type: 'string', maxLength: 255)),
                     new OA\Property(property: 'description', schema: new OA\Schema(type: 'string', nullable: true)),
-                    new OA\Property(property: 'default_tp', schema: new OA\Schema(type: 'integer', minimum: 1, maximum: 4294967295)),
                     new OA\Property(property: 'suggested_deduction', schema: new OA\Schema(type: 'integer', minimum: 0, maximum: 4294967295)),
                     new OA\Property(property: 'weight_multiplier', schema: new OA\Schema(type: 'number', minimum: 0.1, maximum: 10)),
                     new OA\Property(
@@ -261,6 +475,90 @@ class ApiSpec
         ],
     )]
     public function updateCategoryActivity(): void {}
+
+    #[OA\Operation\Post(
+        path: '/children/{childId}/activities/{activityId}',
+        tags: ['Activities'],
+        summary: 'Assign an activity to a child with a TP reward',
+        description: 'Assigns an activity and sets its TP reward for that child in one operation. Shared catalog activities are copied into the authenticated family before assignment.',
+        security: [new OA\Security\Requirement(scheme: 'bearerAuth')],
+        parameters: [
+            new OA\Parameter(
+                name: 'childId',
+                in: 'path',
+                required: true,
+                schema: new OA\Schema(type: 'integer'),
+            ),
+            new OA\Parameter(
+                name: 'activityId',
+                in: 'path',
+                required: true,
+                schema: new OA\Schema(type: 'integer'),
+            ),
+        ],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: [new OA\MediaType\Json(schema: new OA\Schema(
+                type: 'object',
+                required: ['tp_override'],
+                properties: [
+                    new OA\Property(
+                        property: 'tp_override',
+                        schema: new OA\Schema(type: 'integer', minimum: 1, maximum: 4294967295),
+                    ),
+                ],
+            ))],
+        ),
+        responses: [
+            new OA\Response(response: 201, description: 'Activity assigned with the child-specific TP reward'),
+            new OA\Response(response: 401, description: 'Unauthenticated or invalid token'),
+            new OA\Response(response: 404, description: 'Child or activity not found in the authenticated family'),
+            new OA\Response(response: 422, description: 'Validation failed'),
+        ],
+    )]
+    public function assignChildActivity(): void {}
+
+    #[OA\Operation\Patch(
+        path: '/children/{childId}/activities/{activityId}',
+        tags: ['Activities'],
+        summary: 'Set a child-specific activity reward',
+        description: 'Updates the TP reward for one assigned child without changing the activity reward for other children.',
+        security: [new OA\Security\Requirement(scheme: 'bearerAuth')],
+        parameters: [
+            new OA\Parameter(
+                name: 'childId',
+                in: 'path',
+                required: true,
+                schema: new OA\Schema(type: 'integer'),
+            ),
+            new OA\Parameter(
+                name: 'activityId',
+                in: 'path',
+                required: true,
+                schema: new OA\Schema(type: 'integer'),
+            ),
+        ],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: [new OA\MediaType\Json(schema: new OA\Schema(
+                type: 'object',
+                required: ['tp_override'],
+                properties: [
+                    new OA\Property(
+                        property: 'tp_override',
+                        schema: new OA\Schema(type: 'integer', minimum: 1, maximum: 4294967295),
+                    ),
+                ],
+            ))],
+        ),
+        responses: [
+            new OA\Response(response: 200, description: 'Child-specific activity reward updated'),
+            new OA\Response(response: 401, description: 'Unauthenticated or invalid token'),
+            new OA\Response(response: 404, description: 'Child or assigned activity not found in the authenticated family'),
+            new OA\Response(response: 422, description: 'Validation failed'),
+        ],
+    )]
+    public function updateChildActivityReward(): void {}
 
     #[OA\Operation\Delete(
         path: '/activities/{activityId}',

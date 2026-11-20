@@ -121,8 +121,91 @@ export function getCurrentUser() {
   return request('/user', { authenticated: true })
 }
 
+export function updateProfile(payload) {
+  return request('/user/profile', {
+    method: 'PATCH',
+    payload,
+    authenticated: true,
+  })
+}
+
+export function verifyEmailChange(code) {
+  return request('/user/email/verify', {
+    method: 'POST',
+    payload: { code },
+    authenticated: true,
+  })
+}
+
+export function changePassword(payload) {
+  return request('/user/password', {
+    method: 'POST',
+    payload,
+    authenticated: true,
+  })
+}
+
+export function deleteAccount(password) {
+  return request('/user', {
+    method: 'DELETE',
+    payload: { password },
+    authenticated: true,
+  })
+}
+
+export function fetchNotificationPreferences() {
+  return request('/user/notification-preferences', { authenticated: true })
+}
+
+export function updateNotificationPreferences(payload) {
+  return request('/user/notification-preferences', {
+    method: 'PATCH',
+    payload,
+    authenticated: true,
+  })
+}
+
+export function fetchNotifications() {
+  return request('/notifications', { authenticated: true })
+}
+
+export function markNotificationRead(notificationId) {
+  return request(`/notifications/${encodeURIComponent(notificationId)}/read`, {
+    method: 'PATCH',
+    authenticated: true,
+  })
+}
+
+export function markAllNotificationsRead() {
+  return request('/notifications/read-all', {
+    method: 'PATCH',
+    authenticated: true,
+  })
+}
+
 export function fetchChildren() {
   return request('/children', { authenticated: true })
+}
+
+export function fetchChildLedger(childId) {
+  return request(`/children/${encodeURIComponent(childId)}/ledger`, { authenticated: true })
+}
+
+export function fetchFamilyLedger(filters = {}) {
+  const query = new URLSearchParams()
+  if (filters.type) query.set('type', filters.type)
+  if (filters.childId) query.set('child_id', filters.childId)
+  const suffix = query.size ? `?${query.toString()}` : ''
+
+  return request(`/ledger${suffix}`, { authenticated: true })
+}
+
+export function addLedgerEntry(childId, payload) {
+  return request(`/children/${encodeURIComponent(childId)}/ledger`, {
+    method: 'POST',
+    payload,
+    authenticated: true,
+  })
 }
 
 export function fetchCategories() {
@@ -158,6 +241,28 @@ export function updateActivity(activityId, payload) {
     payload,
     authenticated: true,
   })
+}
+
+export function assignChildActivity(childId, activityId, payload) {
+  return request(
+    `/children/${encodeURIComponent(childId)}/activities/${encodeURIComponent(activityId)}`,
+    {
+      method: 'POST',
+      payload,
+      authenticated: true,
+    },
+  )
+}
+
+export function updateChildActivityTp(childId, activityId, payload) {
+  return request(
+    `/children/${encodeURIComponent(childId)}/activities/${encodeURIComponent(activityId)}`,
+    {
+      method: 'PATCH',
+      payload,
+      authenticated: true,
+    },
+  )
 }
 
 export function deleteActivity(activityId) {

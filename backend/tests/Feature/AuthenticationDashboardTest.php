@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Mail\FamilyInvitationMail;
 use App\Models\User;
+use App\Notifications\FamilyEventNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
@@ -78,6 +79,135 @@ class AuthenticationDashboardTest extends TestCase
             ->assertJsonPath('children.0.avatar', 'cat');
     }
 
+    public function test_parent_can_record_and_view_child_point_history_with_family_limits(): void
+    {
+        $token = $this->registerParent();
+        $this->withToken($token)
+            ->patchJson('/api/family', ['daily_deduction_cap' => 10])
+            ->assertOk();
+
+        $childId = $this->withToken($token)
+            ->postJson('/api/children', [
+                'name' => 'Hana Abebe',
+                'date_of_birth' => '2014-05-21',
+            ])
+            ->assertCreated()
+            ->json('child.id');
+        $activityId = $this->withToken($token)
+            ->getJson('/api/categories')
+            ->assertOk()
+            ->json('categories.0.activities.0.id');
+
+        $this->withToken($token)
+            ->postJson("/api/children/{$childId}/ledger", [
+                'type' => 'earning',
+                'commitment_id' => $activityId,
+            ])
+            ->assertUnprocessable()
+            ->assertJsonPath('message', 'This activity is not assigned to this child.');
+
+        $this->withToken($token)
+            ->postJson("/api/children/{$childId}/ledger", [
+                'type' => 'deduction',
+                'tp_amount' => 1,
+                'commitment_id' => $activityId,
+            ])
+            ->assertUnprocessable()
+            ->assertJsonPath('message', 'This activity is not assigned to this child.');
+
+        $activityId = $this->withToken($token)
+            ->postJson("/api/children/{$childId}/activities/{$activityId}", [
+                'tp_override' => 3,
+            ])
+            ->assertCreated()
+            ->json('activity_id');
+
+        $this->withToken($token)
+            ->patchJson("/api/children/{$childId}", ['monthly_savings_goal' => 180])
+            ->assertOk()
+            ->assertJsonPath('child.monthly_savings_goal', 180);
+
+        $this->withToken($token)
+            ->postJson("/api/children/{$childId}/ledger", [
+                'type' => 'earning',
+                'commitment_id' => $activityId,
+            ])
+            ->assertCreated()
+            ->assertJsonPath('ledger.tp_amount', 3)
+            ->assertJsonPath('current_balance', 3);
+
+        $this->withToken($token)
+            ->postJson("/api/children/{$childId}/ledger", [
+                'type' => 'deduction',
+                'commitment_id' => $activityId,
+                'remarks' => 'Screen time limit',
+            ])
+            ->assertCreated()
+            ->assertJsonPath('ledger.tp_amount', -2)
+            ->assertJsonPath('current_balance', 1);
+
+        $this->withToken($token)
+            ->getJson("/api/children/{$childId}/ledger")
+            ->assertOk()
+            ->assertJsonPath('summary.current_balance', 1)
+            ->assertJsonPath('summary.earned_this_week', 3)
+            ->assertJsonPath('summary.earned_this_month', 3)
+            ->assertJsonPath('summary.deducted_this_week', 2)
+            ->assertJsonPath('summary.monthly_savings_goal', 180)
+            ->assertJsonCount(2, 'ledger');
+
+        $this->withToken($token)
+            ->postJson("/api/children/{$childId}/ledger", [
+                'type' => 'deduction',
+                'tp_amount' => 2,
+                'commitment_id' => $activityId,
+            ])
+            ->assertCreated()
+            ->assertJsonPath('ledger.tp_amount', -2)
+            ->assertJsonPath('current_balance', -1);
+
+        $this->withToken($token)
+            ->postJson("/api/children/{$childId}/ledger", [
+                'type' => 'deduction',
+                'tp_amount' => 7,
+                'commitment_id' => $activityId,
+            ])
+            ->assertUnprocessable();
+
+        $this->withToken($token)
+            ->getJson("/api/children/{$childId}/ledger")
+            ->assertOk()
+            ->assertJsonPath('summary.current_balance', -1)
+            ->assertJsonPath('summary.deducted_this_week', 4)
+            ->assertJsonCount(3, 'ledger');
+
+        $this->withToken($token)
+            ->getJson('/api/ledger?type=deduction')
+            ->assertOk()
+            ->assertJsonCount(2, 'ledger')
+            ->assertJsonPath('ledger.0.child_name', 'Hana Abebe');
+
+        $secondParent = $this->postJson('/api/register', [
+            'name' => 'Mekdes Tadesse',
+            'email' => 'mekdes@example.com',
+            'phone' => '+251912345679',
+            'password' => 'password123',
+            'password_confirmation' => 'password123',
+            'family_name' => 'Tadesse family',
+        ])->assertCreated();
+
+        $this->app['auth']->forgetGuards();
+        $this->withToken($secondParent->json('token'))
+            ->getJson("/api/children/{$childId}/ledger")
+            ->assertNotFound();
+
+        $this->app['auth']->forgetGuards();
+        $this->withToken($secondParent->json('token'))
+            ->getJson('/api/ledger')
+            ->assertOk()
+            ->assertJsonCount(0, 'ledger');
+    }
+
     public function test_parent_can_view_default_activity_categories_and_values(): void
     {
         $token = $this->registerParent();
@@ -116,17 +246,6 @@ class AuthenticationDashboardTest extends TestCase
                 'icon' => 'mdi-palette-outline',
             ])
             ->assertCreated();
-
-        $categories = $this->withToken($token)
-            ->getJson('/api/categories')
-            ->assertOk()
-            ->json('categories');
-        $education = collect($categories)->firstWhere('name', 'Education');
-        $activity = collect($education['activities'])->firstWhere('title', 'Complete homework');
-
-        $this->withToken($token)
-            ->patchJson("/api/activities/{$activity['id']}", ['default_tp' => 8])
-            ->assertOk();
 
         $orderedNames = $this->withToken($token)
             ->getJson('/api/categories')
@@ -185,18 +304,22 @@ class AuthenticationDashboardTest extends TestCase
             ->patchJson("/api/activities/{$activityId}", [
                 'title' => 'Plan a family trip',
                 'description' => 'Compare travel options together.',
-                'default_tp' => 7,
                 'suggested_deduction' => 2,
                 'weight_multiplier' => 1.5,
                 'child_ids' => [$childId],
             ])
             ->assertOk()
             ->assertJsonPath('activity.title', 'Plan a family trip')
-            ->assertJsonPath('activity.default_tp', 7)
+            ->assertJsonPath('activity.default_tp', 6)
             ->assertJsonPath('activity.suggested_deduction', 2);
+        $this->withToken($token)
+            ->patchJson("/api/activities/{$activityId}", ['default_tp' => 7])
+            ->assertUnprocessable()
+            ->assertJsonPath('message', 'TP rewards can only be updated individually for each child.');
         $this->assertDatabaseHas('commitments', [
             'id' => $activityId,
             'weight_multiplier' => 1.5,
+            'default_tp' => 6,
         ]);
         $this->assertDatabaseHas('child_commitment', [
             'child_id' => $childId,
@@ -369,7 +492,7 @@ class AuthenticationDashboardTest extends TestCase
         $this->assertDatabaseHas('commitments', ['id' => $activityId]);
     }
 
-    public function test_editing_a_shared_activity_creates_a_family_only_override(): void
+    public function test_catalog_activity_tp_cannot_be_updated_from_general_activities(): void
     {
         $token = $this->registerParent();
         $categories = $this->withToken($token)->getJson('/api/categories')->assertOk()->json('categories');
@@ -377,74 +500,145 @@ class AuthenticationDashboardTest extends TestCase
         $activity = collect($education['activities'])->firstWhere('title', 'Complete homework');
 
         $this->withToken($token)
-            ->patchJson("/api/activities/{$activity['id']}", [
-                'title' => 'Finish homework',
-            ])
-            ->assertUnprocessable()
-            ->assertJsonPath('message', 'Only the default TP reward can be updated for catalog activities.');
-
-        $updateResponse = $this->withToken($token)
             ->patchJson("/api/activities/{$activity['id']}", ['default_tp' => 8])
-            ->assertOk()
-            ->assertJsonPath('activity.title', 'Complete homework')
-            ->assertJsonPath('activity.default_tp', 8)
-            ->assertJsonPath('activity.suggested_deduction', 2);
-        $this->assertNotSame($education['id'], $updateResponse->json('category_id'));
+            ->assertUnprocessable()
+            ->assertJsonPath('message', 'TP rewards can only be updated individually for each child.');
 
         $familyCategories = $this->withToken($token)->getJson('/api/categories')
             ->assertOk()
-            ->assertJsonCount(7, 'categories');
-        $familyEducation = collect($familyCategories->json('categories'))->firstWhere('name', 'Education');
-        $this->assertTrue($familyEducation['is_default']);
+            ->assertJsonCount(7, 'categories')
+            ->json('categories');
+        $familyEducation = collect($familyCategories)->firstWhere('name', 'Education');
         $this->assertSame(
-            8,
+            3,
             collect($familyEducation['activities'])->firstWhere('title', 'Complete homework')['default_tp'],
-        );
-        $familyActivityId = collect($familyEducation['activities'])
-            ->firstWhere('title', 'Complete homework')['id'];
-        $this->withToken($token)
-            ->deleteJson("/api/categories/{$familyEducation['id']}")
-            ->assertNotFound();
-        $this->withToken($token)
-            ->deleteJson("/api/activities/{$familyActivityId}")
-            ->assertNotFound();
-        $this->assertTrue(
-            collect($familyEducation['activities'])
-                ->firstWhere('title', 'Complete homework')['is_default'],
         );
         $this->assertDatabaseHas('commitments', [
             'id' => $activity['id'],
             'family_id' => null,
             'default_tp' => 3,
         ]);
+    }
 
-        $secondParent = $this->postJson('/api/register', [
-            'name' => 'Mekdes Tadesse',
-            'email' => 'mekdes@example.com',
-            'phone' => '+251912345679',
-            'password' => 'password123',
-            'password_confirmation' => 'password123',
-            'family_name' => 'Tadesse family',
-        ])->assertCreated();
-
-        $this->app['auth']->forgetGuards();
-        $this->withToken($secondParent->json('token'))
+    public function test_assigning_a_catalog_activity_creates_a_family_only_child_assignment(): void
+    {
+        $token = $this->registerParent();
+        $childId = $this->withToken($token)
+            ->postJson('/api/children', [
+                'name' => 'Hana Abebe',
+                'date_of_birth' => '2014-05-21',
+            ])
+            ->assertCreated()
+            ->json('child.id');
+        $categories = $this->withToken($token)
             ->getJson('/api/categories')
             ->assertOk()
-            ->assertJsonPath('categories.0.activities.0.default_tp', 3)
-            ->assertJsonPath('categories.0.activities.0.title', 'Complete homework');
+            ->json('categories');
+        $education = collect($categories)->firstWhere('name', 'Education');
+        $activity = collect($education['activities'])->firstWhere('title', 'Complete homework');
 
-        $this->app['auth']->forgetGuards();
-        $this->withToken($secondParent->json('token'))
-            ->patchJson("/api/activities/{$familyActivityId}", [
-                'default_tp' => 4,
-            ])
-            ->assertNotFound();
-
-        $this->app['auth']->forgetGuards();
         $this->withToken($token)
-            ->patchJson("/api/activities/{$activity['id']}", ['default_tp' => 4294967296])
+            ->postJson("/api/children/{$childId}/activities/{$activity['id']}", [
+                'tp_override' => 0,
+            ])
             ->assertUnprocessable();
+
+        $this->assertDatabaseMissing('child_commitment', [
+            'child_id' => $childId,
+        ]);
+
+        $this->withToken($token)
+            ->postJson("/api/children/{$childId}/activities/{$activity['id']}", [
+                'tp_override' => 7,
+            ])
+            ->assertCreated()
+            ->assertJsonPath('tp_override', 7);
+        $familyCategories = $this->withToken($token)
+            ->getJson('/api/categories')
+            ->assertOk()
+            ->json('categories');
+        $familyEducation = collect($familyCategories)->firstWhere('name', 'Education');
+        $familyActivity = collect($familyEducation['activities'])
+            ->firstWhere('title', 'Complete homework');
+
+        $this->assertSame([$childId], $familyActivity['child_ids']);
+        $this->assertSame(
+            [['child_id' => $childId, 'tp_override' => 7]],
+            $familyActivity['child_tp_overrides'],
+        );
+        $this->assertDatabaseHas('commitments', [
+            'id' => $activity['id'],
+            'family_id' => null,
+            'default_tp' => 3,
+        ]);
+        $this->assertDatabaseHas('child_commitment', [
+            'child_id' => $childId,
+            'commitment_id' => $familyActivity['id'],
+            'tp_override' => 7,
+        ]);
+    }
+
+    public function test_activity_rewards_can_be_overridden_per_child_and_used_for_awards(): void
+    {
+        $token = $this->registerParent();
+        $children = collect(['Hana Abebe', 'Mikael Abebe'])
+            ->map(fn (string $name) => $this->withToken($token)
+                ->postJson('/api/children', [
+                    'name' => $name,
+                    'date_of_birth' => '2014-05-21',
+                ])
+                ->assertCreated()
+                ->json('child.id'));
+        $categoryId = $this->withToken($token)
+            ->postJson('/api/categories', [
+                'name' => 'Personal Rewards',
+                'description' => 'Activities for each child.',
+                'icon' => 'mdi-heart-outline',
+            ])
+            ->assertCreated()
+            ->json('category.id');
+        $activityId = $this->withToken($token)
+            ->postJson("/api/categories/{$categoryId}/activities", [
+                'title' => 'Practice piano',
+                'default_tp' => 4,
+                'weight_multiplier' => 1,
+                'child_ids' => $children->all(),
+            ])
+            ->assertCreated()
+            ->json('activity.id');
+
+        $this->withToken($token)
+            ->patchJson("/api/children/{$children[0]}/activities/{$activityId}", [
+                'tp_override' => 8,
+            ])
+            ->assertOk()
+            ->assertJsonPath('tp_override', 8);
+
+        $familyCategories = $this->withToken($token)
+            ->getJson('/api/categories')
+            ->assertOk()
+            ->json('categories');
+        $familyActivity = collect($familyCategories)
+            ->firstWhere('name', 'Personal Rewards')['activities'][0];
+        $this->assertSame(
+            [['child_id' => $children[0], 'tp_override' => 8]],
+            $familyActivity['child_tp_overrides'],
+        );
+
+        $this->withToken($token)
+            ->postJson("/api/children/{$children[0]}/ledger", [
+                'type' => 'earning',
+                'commitment_id' => $activityId,
+            ])
+            ->assertCreated()
+            ->assertJsonPath('ledger.tp_amount', 8);
+        $this->withToken($token)
+            ->postJson("/api/children/{$children[1]}/ledger", [
+                'type' => 'earning',
+                'commitment_id' => $activityId,
+            ])
+            ->assertCreated()
+            ->assertJsonPath('ledger.tp_amount', 4);
     }
 
     public function test_parent_can_save_and_restore_a_child_budget_allocation(): void
@@ -680,6 +874,11 @@ class AuthenticationDashboardTest extends TestCase
             ->assertJsonPath('user.name', 'Mimi Tesfaye')
             ->assertJsonPath('user.email', 'guardian@example.com')
             ->assertJsonPath('user.family.family_name', 'Abebe family');
+
+        $this->assertDatabaseHas('notifications', [
+            'notifiable_id' => User::query()->where('email', 'selam@example.com')->value('id'),
+            'type' => FamilyEventNotification::class,
+        ]);
 
         $this->getJson("/api/invitations/{$invitationToken}")->assertGone();
     }

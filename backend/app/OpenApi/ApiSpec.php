@@ -102,6 +102,189 @@ class ApiSpec
     )]
     public function children(): void {}
 
+    #[OA\Operation\Get(
+        path: '/categories',
+        tags: ['Activities'],
+        summary: 'List the available activity categories and Trust Point values',
+        description: 'Returns shared defaults in fixed catalog order (including family overrides in their original positions), followed by family-created categories in creation order. Category and activity records are marked is_default. Includes category icons, assigned child IDs, and weight multipliers. Catalog activities can only have their default TP reward edited.',
+        security: [new OA\Security\Requirement(scheme: 'bearerAuth')],
+        responses: [
+            new OA\Response(response: 200, description: 'Categories with activity descriptions and point values'),
+            new OA\Response(response: 401, description: 'Unauthenticated or invalid token'),
+            new OA\Response(response: 409, description: 'Account is not associated with a family'),
+        ],
+    )]
+    public function categories(): void {}
+
+    #[OA\Operation\Post(
+        path: '/categories',
+        tags: ['Activities'],
+        summary: 'Add a category to the authenticated family',
+        security: [new OA\Security\Requirement(scheme: 'bearerAuth')],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: [new OA\MediaType\Json(schema: new OA\Schema(
+                type: 'object',
+                required: ['name', 'icon'],
+                properties: [
+                    new OA\Property(property: 'name', schema: new OA\Schema(type: 'string', maxLength: 100)),
+                    new OA\Property(property: 'description', schema: new OA\Schema(type: 'string', maxLength: 140, nullable: true)),
+                    new OA\Property(
+                        property: 'icon',
+                        schema: new OA\Schema(type: 'string', enum: [
+                            'mdi-palette-outline',
+                            'mdi-book-open-variant',
+                            'mdi-school-outline',
+                            'mdi-emoticon-happy-outline',
+                            'mdi-music-note',
+                            'mdi-sprout',
+                            'mdi-run',
+                            'mdi-heart-outline',
+                            'mdi-home-outline',
+                            'mdi-lightbulb-outline',
+                            'mdi-star-outline',
+                            'mdi-account-group-outline',
+                        ]),
+                    ),
+                ],
+            ))],
+        ),
+        responses: [
+            new OA\Response(response: 201, description: 'Family category created'),
+            new OA\Response(response: 401, description: 'Unauthenticated or invalid token'),
+            new OA\Response(response: 409, description: 'Account is not associated with a family'),
+            new OA\Response(response: 422, description: 'Validation failed or category name is already in use'),
+        ],
+    )]
+    public function createCategory(): void {}
+
+    #[OA\Operation\Delete(
+        path: '/categories/{categoryId}',
+        tags: ['Activities'],
+        summary: 'Delete a family-created category and its activities',
+        description: 'Shared default categories and family copies of defaults cannot be deleted. Deletion is blocked if any activity in the category has point history.',
+        security: [new OA\Security\Requirement(scheme: 'bearerAuth')],
+        parameters: [
+            new OA\Parameter(
+                name: 'categoryId',
+                in: 'path',
+                required: true,
+                schema: new OA\Schema(type: 'integer'),
+            ),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Category and its activities deleted'),
+            new OA\Response(response: 401, description: 'Unauthenticated or invalid token'),
+            new OA\Response(response: 404, description: 'Category is not deletable by the authenticated family'),
+            new OA\Response(response: 409, description: 'Category has activity point history'),
+        ],
+    )]
+    public function deleteCategory(): void {}
+
+    #[OA\Operation\Post(
+        path: '/categories/{categoryId}/activities',
+        tags: ['Activities'],
+        summary: 'Add an activity to a family category',
+        description: 'Adding an activity to a shared default category first creates a family-owned copy of that category and its default activities.',
+        security: [new OA\Security\Requirement(scheme: 'bearerAuth')],
+        parameters: [
+            new OA\Parameter(
+                name: 'categoryId',
+                in: 'path',
+                required: true,
+                schema: new OA\Schema(type: 'integer'),
+            ),
+        ],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: [new OA\MediaType\Json(schema: new OA\Schema(
+                type: 'object',
+                required: ['title', 'default_tp', 'weight_multiplier'],
+                properties: [
+                    new OA\Property(property: 'title', schema: new OA\Schema(type: 'string', maxLength: 255)),
+                    new OA\Property(property: 'description', schema: new OA\Schema(type: 'string', nullable: true)),
+                    new OA\Property(property: 'default_tp', schema: new OA\Schema(type: 'integer', minimum: 1, maximum: 4294967295)),
+                    new OA\Property(property: 'suggested_deduction', schema: new OA\Schema(type: 'integer', minimum: 0, maximum: 4294967295, nullable: true)),
+                    new OA\Property(property: 'weight_multiplier', schema: new OA\Schema(type: 'number', minimum: 0.1, maximum: 10)),
+                    new OA\Property(
+                        property: 'child_ids',
+                        schema: new OA\Schema(type: 'array', items: new OA\Schema(type: 'integer')),
+                    ),
+                ],
+            ))],
+        ),
+        responses: [
+            new OA\Response(response: 201, description: 'Activity created'),
+            new OA\Response(response: 401, description: 'Unauthenticated or invalid token'),
+            new OA\Response(response: 404, description: 'Category not found in the authenticated family or shared catalog'),
+            new OA\Response(response: 422, description: 'Validation failed'),
+        ],
+    )]
+    public function createCategoryActivity(): void {}
+
+    #[OA\Operation\Patch(
+        path: '/activities/{activityId}',
+        tags: ['Activities'],
+        summary: 'Update a family activity',
+        description: 'Shared default activities can only have their default TP reward changed and are copied into the authenticated family before updating. Family-added activities can also update their title, description, suggested deduction, weight multiplier, and child assignments.',
+        security: [new OA\Security\Requirement(scheme: 'bearerAuth')],
+        parameters: [
+            new OA\Parameter(
+                name: 'activityId',
+                in: 'path',
+                required: true,
+                schema: new OA\Schema(type: 'integer'),
+            ),
+        ],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: [new OA\MediaType\Json(schema: new OA\Schema(
+                type: 'object',
+                properties: [
+                    new OA\Property(property: 'title', schema: new OA\Schema(type: 'string', maxLength: 255)),
+                    new OA\Property(property: 'description', schema: new OA\Schema(type: 'string', nullable: true)),
+                    new OA\Property(property: 'default_tp', schema: new OA\Schema(type: 'integer', minimum: 1, maximum: 4294967295)),
+                    new OA\Property(property: 'suggested_deduction', schema: new OA\Schema(type: 'integer', minimum: 0, maximum: 4294967295)),
+                    new OA\Property(property: 'weight_multiplier', schema: new OA\Schema(type: 'number', minimum: 0.1, maximum: 10)),
+                    new OA\Property(
+                        property: 'child_ids',
+                        schema: new OA\Schema(type: 'array', items: new OA\Schema(type: 'integer')),
+                    ),
+                ],
+            ))],
+        ),
+        responses: [
+            new OA\Response(response: 200, description: 'Activity updated'),
+            new OA\Response(response: 401, description: 'Unauthenticated or invalid token'),
+            new OA\Response(response: 404, description: 'Activity not found in the authenticated family or shared catalog'),
+            new OA\Response(response: 422, description: 'Validation failed or no fields were supplied'),
+        ],
+    )]
+    public function updateCategoryActivity(): void {}
+
+    #[OA\Operation\Delete(
+        path: '/activities/{activityId}',
+        tags: ['Activities'],
+        summary: 'Delete a family-created activity without point history',
+        description: 'Shared default activities and family copies of defaults cannot be deleted. Activities referenced by point history are protected.',
+        security: [new OA\Security\Requirement(scheme: 'bearerAuth')],
+        parameters: [
+            new OA\Parameter(
+                name: 'activityId',
+                in: 'path',
+                required: true,
+                schema: new OA\Schema(type: 'integer'),
+            ),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Activity deleted'),
+            new OA\Response(response: 401, description: 'Unauthenticated or invalid token'),
+            new OA\Response(response: 404, description: 'Activity is not deletable by the authenticated family'),
+            new OA\Response(response: 409, description: 'Activity has point history'),
+        ],
+    )]
+    public function deleteCategoryActivity(): void {}
+
     #[OA\Operation\Post(
         path: '/children',
         tags: ['Children'],

@@ -10,7 +10,7 @@
         <nav class="desktop-nav" aria-label="Main navigation">
           <RouterLink class="nav-current" to="/dashboard">Dashboard</RouterLink>
           <a href="#children">Children</a>
-          <span aria-disabled="true">Activities</span>
+          <RouterLink to="/activities">Activities</RouterLink>
           <span aria-disabled="true">History</span>
         </nav>
 
@@ -182,10 +182,10 @@
         <v-icon icon="mdi-account-group-outline" />
         <span>Children</span>
       </a>
-      <span class="nav-unavailable" aria-disabled="true">
+      <RouterLink to="/activities">
         <v-icon icon="mdi-format-list-checks" />
         <span>Activities</span>
-      </span>
+      </RouterLink>
       <span class="nav-unavailable" aria-disabled="true">
         <v-icon icon="mdi-history" />
         <span>History</span>
@@ -525,7 +525,9 @@ async function signOut() {
   await router.replace({ name: 'home' })
 }
 
-onMounted(loadDashboard)
+onMounted(() => {
+  loadDashboard()
+})
 </script>
 
 <style scoped src="../assets/styles/dashboard.css"></style>

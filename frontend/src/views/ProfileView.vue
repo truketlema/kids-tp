@@ -155,10 +155,10 @@
         <v-icon icon="mdi-account-group-outline" />
         <span>Children</span>
       </RouterLink>
-      <span class="profile-nav-unavailable" aria-disabled="true">
+      <RouterLink to="/activities">
         <v-icon icon="mdi-format-list-checks" />
         <span>Activities</span>
-      </span>
+      </RouterLink>
       <span class="profile-nav-unavailable" aria-disabled="true">
         <v-icon icon="mdi-history" />
         <span>History</span>

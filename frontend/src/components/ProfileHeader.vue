@@ -9,7 +9,13 @@
       <nav class="account-desktop-nav" aria-label="Main navigation">
         <RouterLink to="/dashboard">Dashboard</RouterLink>
         <RouterLink to="/dashboard#children">Children</RouterLink>
-        <span aria-disabled="true">Activities</span>
+        <RouterLink
+          to="/activities"
+          :class="{ 'account-nav-current': active === 'activities' }"
+          :aria-current="active === 'activities' ? 'page' : undefined"
+        >
+          Activities
+        </RouterLink>
         <span aria-disabled="true">History</span>
       </nav>
 
@@ -49,10 +55,14 @@
 </template>
 
 <script setup>
-const { profile } = defineProps({
+const { profile, active } = defineProps({
   profile: {
     type: Object,
     default: null,
+  },
+  active: {
+    type: String,
+    default: '',
   },
 })
 
@@ -127,6 +137,11 @@ function initials(name) {
 }
 
 .account-desktop-nav a:hover {
+  border-bottom-color: #667342;
+  color: #38432c;
+}
+
+.account-desktop-nav .account-nav-current {
   border-bottom-color: #667342;
   color: #38432c;
 }

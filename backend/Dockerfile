@@ -43,4 +43,4 @@ RUN chown -R www-data:www-data storage bootstrap/cache
 
 EXPOSE 10000
 
-CMD ["frankenphp", "run", "--config", "/app/Caddyfile"]
+CMD ["sh", "-c", "php artisan serve --host=0.0.0.0 --port=${PORT:-10000}"]

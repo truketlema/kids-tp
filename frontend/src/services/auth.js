@@ -125,6 +125,34 @@ export function fetchChildren() {
   return request('/children', { authenticated: true })
 }
 
+export function fetchCategories() {
+  return request('/categories', { authenticated: true })
+}
+
+export function addCategory(payload) {
+  return request('/categories', {
+    method: 'POST',
+    payload,
+    authenticated: true,
+  })
+}
+
+export function addCategoryActivity(categoryId, payload) {
+  return request(`/categories/${encodeURIComponent(categoryId)}/activities`, {
+    method: 'POST',
+    payload,
+    authenticated: true,
+  })
+}
+
+export function updateActivity(activityId, payload) {
+  return request(`/activities/${encodeURIComponent(activityId)}`, {
+    method: 'PATCH',
+    payload,
+    authenticated: true,
+  })
+}
+
 export function addChild(payload) {
   return request('/children', {
     method: 'POST',

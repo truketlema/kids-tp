@@ -1,6 +1,6 @@
 <template>
-  <div class="activity-editor-fields" :class="{ 'activity-default-only': defaultOnly }">
-    <div v-if="!defaultOnly" class="activity-form-fields">
+  <div class="activity-editor-fields">
+    <div class="activity-form-fields">
       <label class="activity-form-field-wide">
         <span>Activity name <span class="activity-required">*</span></span>
         <input :value="modelValue.title" required maxlength="255" @input="updateField('title', $event.target.value)" />
@@ -17,7 +17,7 @@
     </div>
 
     <div class="activity-form-fields">
-      <label>
+      <label v-if="!hideDefaultTp">
         <span>Default TP reward <span class="activity-required">*</span></span>
         <input
           :value="modelValue.default_tp"
@@ -29,7 +29,7 @@
           @input="updateField('default_tp', numericValue($event.target.value))"
         />
       </label>
-      <label v-if="!defaultOnly">
+      <label>
         <span>Suggested deduction <span class="activity-optional">(optional)</span></span>
         <input
           :value="modelValue.suggested_deduction"
@@ -40,7 +40,7 @@
           @input="updateField('suggested_deduction', numericValue($event.target.value))"
         />
       </label>
-      <label v-if="!defaultOnly" class="activity-form-field-wide">
+      <label class="activity-form-field-wide">
         Weight multiplier
         <select
           :value="modelValue.weight_multiplier"
@@ -56,7 +56,7 @@
       </label>
     </div>
 
-    <section v-if="!defaultOnly" class="activity-child-assignment" aria-label="Assign to children">
+    <section class="activity-child-assignment" aria-label="Assign to children">
       <header>
         <strong>Assign to children</strong>
         <button type="button" class="activity-select-all" @click="toggleAllChildren">
@@ -92,7 +92,7 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
-  defaultOnly: {
+  hideDefaultTp: {
     type: Boolean,
     default: false,
   },
@@ -183,10 +183,6 @@ function numericValue(value) {
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 11px;
   min-width: 0;
-}
-
-.activity-default-only .activity-form-fields {
-  grid-template-columns: minmax(0, 1fr);
 }
 
 .activity-form-field-wide {

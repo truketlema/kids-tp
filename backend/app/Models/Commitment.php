@@ -37,6 +37,7 @@ class Commitment extends Model
 
     public function children(): BelongsToMany
     {
-        return $this->belongsToMany(Child::class, 'child_commitment');
+        return $this->belongsToMany(Child::class, 'child_commitment')
+            ->withPivot('tp_override');
     }
 }

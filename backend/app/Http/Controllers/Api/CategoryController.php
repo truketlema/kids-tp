@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Commitment;
 use App\Models\Family;
+use App\Services\FamilyNotificationService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -123,6 +124,13 @@ class CategoryController extends Controller
                     'suggested_deduction' => $commitment->suggested_deduction,
                     'weight_multiplier' => $commitment->weight_multiplier,
                     'child_ids' => $commitment->children->pluck('id')->values(),
+                    'child_tp_overrides' => $commitment->children
+                        ->filter(fn ($child) => $child->pivot->tp_override !== null)
+                        ->map(fn ($child) => [
+                            'child_id' => $child->id,
+                            'tp_override' => (int) $child->pivot->tp_override,
+                        ])
+                        ->values(),
                 ])->values(),
             ])->values(),
         ]);
@@ -295,36 +303,39 @@ class CategoryController extends Controller
             ], 404);
         }
 
-        $isDefault = $source->family_id === null || $source->source_commitment_id !== null;
-        $allowedFields = $isDefault
-            ? ['default_tp']
-            : ['title', 'description', 'default_tp', 'suggested_deduction', 'weight_multiplier', 'child_ids'];
+        $isCatalogActivity = $source->family_id === null || $source->source_commitment_id !== null;
+        $allowedFields = $isCatalogActivity
+            ? ['child_ids']
+            : ['title', 'description', 'suggested_deduction', 'weight_multiplier', 'child_ids'];
         $disallowedFields = array_diff(array_keys($request->all()), $allowedFields);
 
         if ($disallowedFields !== []) {
+            $message = in_array('default_tp', $disallowedFields, true)
+                ? 'TP rewards can only be updated individually for each child.'
+                : ($isCatalogActivity
+                    ? 'Catalog activity details cannot be changed here.'
+                    : 'The request contains fields that cannot be updated.');
+
             return response()->json([
-                'message' => $isDefault
-                    ? 'Only the default TP reward can be updated for catalog activities.'
-                    : 'The request contains fields that cannot be updated.',
+                'message' => $message,
             ], 422);
         }
 
         $rules = [
-            'default_tp' => [$isDefault ? 'required' : 'sometimes', 'integer', 'between:1,4294967295'],
+            'child_ids' => ['sometimes', 'array'],
+            'child_ids.*' => [
+                'integer',
+                'distinct',
+                Rule::exists('children', 'id')->where('family_id', $family->id),
+            ],
         ];
 
-        if (! $isDefault) {
+        if (! $isCatalogActivity) {
             $rules += [
                 'title' => ['sometimes', 'required', 'string', 'max:255'],
                 'description' => ['sometimes', 'nullable', 'string', 'max:2000'],
                 'suggested_deduction' => ['sometimes', 'required', 'integer', 'between:0,4294967295'],
                 'weight_multiplier' => ['sometimes', 'required', 'numeric', 'between:0.1,10'],
-                'child_ids' => ['sometimes', 'array'],
-                'child_ids.*' => [
-                    'integer',
-                    'distinct',
-                    Rule::exists('children', 'id')->where('family_id', $family->id),
-                ],
             ];
         }
 
@@ -343,27 +354,7 @@ class CategoryController extends Controller
                 return null;
             }
 
-            if ($source->family_id === $family->id) {
-                $activity = $source;
-            } elseif ($source->family_id === null && $source->category?->family_id === null) {
-                if (! $source->category) {
-                    return null;
-                }
-
-                $activity = Commitment::query()
-                    ->where('family_id', $family->id)
-                    ->where('source_commitment_id', $source->id)
-                    ->first();
-
-                if (! $activity) {
-                    $familyCategory = $this->familyCategory($source->category, $family);
-                    $activity = $familyCategory->commitments()
-                        ->where('source_commitment_id', $source->id)
-                        ->first();
-                }
-            } else {
-                return null;
-            }
+            $activity = $this->familyActivity($source, $family);
 
             if (! $activity) {
                 return null;
@@ -392,6 +383,133 @@ class CategoryController extends Controller
             'message' => 'Activity updated successfully.',
             'activity' => $activity,
             'category_id' => $activity->category_id,
+        ]);
+    }
+
+    public function assignChildActivity(Request $request, int $childId, int $activityId): JsonResponse
+    {
+        $family = $request->user()->family;
+
+        if (! $family) {
+            return response()->json([
+                'message' => 'This account is not associated with a family.',
+            ], 409);
+        }
+
+        $child = $family->children()->find($childId);
+
+        if (! $child) {
+            return response()->json([
+                'message' => 'This child was not found in your family.',
+            ], 404);
+        }
+
+        $validated = $request->validate([
+            'tp_override' => ['required', 'integer', 'between:1,4294967295'],
+        ]);
+
+        $result = DB::transaction(function () use ($activityId, $child, $family, $request, $validated) {
+            $source = Commitment::query()
+                ->with('category')
+                ->lockForUpdate()
+                ->find($activityId);
+
+            if (! $source) {
+                return null;
+            }
+
+            $activity = $this->familyActivity($source, $family);
+
+            if (! $activity) {
+                return null;
+            }
+
+            $wasAssigned = $child->commitments()->whereKey($activity->id)->exists();
+            $child->commitments()->syncWithoutDetaching([
+                $activity->id => ['tp_override' => $validated['tp_override']],
+            ]);
+
+            if (! $wasAssigned) {
+                app(FamilyNotificationService::class)->notifyOtherParents(
+                    $family,
+                    $request->user(),
+                    'activity_assignment_changed',
+                    'A child activity was assigned',
+                    $request->user()->name.' assigned '.$activity->title.' to '.$child->name.'.',
+                    ['child_id' => $child->id, 'activity_id' => $activity->id],
+                );
+            }
+
+            return ['activity' => $activity];
+        });
+
+        if (! $result) {
+            return response()->json([
+                'message' => 'This activity was not found in your family.',
+            ], 404);
+        }
+
+        return response()->json([
+            'message' => 'Activity assigned successfully.',
+            'child_id' => $child->id,
+            'activity_id' => $result['activity']->id,
+            'tp_override' => (int) $validated['tp_override'],
+        ], 201);
+    }
+
+    public function updateChildTp(Request $request, int $childId, int $activityId): JsonResponse
+    {
+        $family = $request->user()->family;
+
+        if (! $family) {
+            return response()->json([
+                'message' => 'This account is not associated with a family.',
+            ], 409);
+        }
+
+        $child = $family->children()->find($childId);
+
+        if (! $child) {
+            return response()->json([
+                'message' => 'This child was not found in your family.',
+            ], 404);
+        }
+
+        $validated = $request->validate([
+            'tp_override' => ['required', 'integer', 'between:1,4294967295'],
+        ]);
+
+        $activity = Commitment::query()
+            ->where('family_id', $family->id)
+            ->whereKey($activityId)
+            ->whereHas('children', fn (Builder $query) => $query->whereKey($child->id))
+            ->first();
+
+        if (! $activity) {
+            return response()->json([
+                'message' => 'This activity is not assigned to this child in your family.',
+            ], 404);
+        }
+
+        DB::transaction(function () use ($activity, $child, $family, $request, $validated) {
+            $child->commitments()->updateExistingPivot($activity->id, [
+                'tp_override' => $validated['tp_override'],
+            ]);
+            app(FamilyNotificationService::class)->notifyOtherParents(
+                $family,
+                $request->user(),
+                'activity_assignment_changed',
+                'A child activity reward changed',
+                $request->user()->name.' updated the TP reward for '.$activity->title.' assigned to '.$child->name.'.',
+                ['child_id' => $child->id, 'activity_id' => $activity->id],
+            );
+        });
+
+        return response()->json([
+            'message' => 'Child activity reward updated successfully.',
+            'child_id' => $child->id,
+            'activity_id' => $activity->id,
+            'tp_override' => (int) $validated['tp_override'],
         ]);
     }
 
@@ -478,5 +596,31 @@ class CategoryController extends Controller
             });
 
         return $familyCategory;
+    }
+
+    private function familyActivity(Commitment $source, Family $family): ?Commitment
+    {
+        if ($source->family_id === $family->id) {
+            return $source;
+        }
+
+        if ($source->family_id !== null || ! $source->category || $source->category->family_id !== null) {
+            return null;
+        }
+
+        $familyCategory = $this->familyCategory($source->category, $family);
+
+        return $familyCategory->commitments()
+            ->where('source_commitment_id', $source->id)
+            ->first()
+            ?? $familyCategory->commitments()->create([
+                'family_id' => $family->id,
+                'source_commitment_id' => $source->id,
+                'title' => $source->title,
+                'description' => $source->description,
+                'weight_multiplier' => $source->weight_multiplier,
+                'default_tp' => $source->default_tp,
+                'suggested_deduction' => $source->suggested_deduction,
+            ]);
     }
 }

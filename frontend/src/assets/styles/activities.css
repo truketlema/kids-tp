@@ -1,4 +1,6 @@
 .activities-page {
+  position: relative;
+  isolation: isolate;
   min-height: 100vh;
   min-height: 100dvh;
   background: #f7f9f2;
@@ -50,13 +52,180 @@
 .activities-page-heading h1 {
   margin: 0;
   color: #39432c;
-  font-size: 25px;
+  font-size: var(--text-heading);
 }
 
 .activities-page-heading p {
   margin: 6px 0 0;
   color: #828979;
   font-size: var(--text-small);
+}
+
+.child-activity-assignment-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(38, 48, 29, 0.52);
+  backdrop-filter: blur(5px);
+}
+
+.child-activity-assignment-panel {
+  display: grid;
+  gap: 14px;
+  width: min(100%, 900px);
+  max-height: calc(100vh - 48px);
+  max-height: calc(100dvh - 48px);
+  overflow: auto;
+  padding: 22px;
+  border: 1px solid #dfe8ce;
+  border-radius: 15px;
+  background: #fff;
+  box-shadow: 0 18px 45px rgba(49, 61, 36, 0.24);
+}
+
+.child-activity-assignment-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.child-activity-assignment-heading h2 {
+  margin: 0;
+  color: #39432c;
+  font-size: var(--text-large);
+}
+
+.child-activity-assignment-heading p {
+  margin: 5px 0 0;
+  color: #828979;
+  font-size: var(--text-caption);
+}
+
+.child-activity-assignment-categories {
+  display: grid;
+  gap: 13px;
+}
+
+.child-activity-assignment-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  min-height: 48px;
+  padding: 8px 11px;
+  border: 0;
+  border-radius: 10px;
+  background: #f7f9f2;
+  color: #53633a;
+  text-align: left;
+  cursor: pointer;
+}
+
+.child-activity-assignment-toggle:hover {
+  background: #edf4d9;
+}
+
+.child-activity-assignment-toggle > span {
+  display: grid;
+  gap: 3px;
+}
+
+.child-activity-assignment-toggle strong {
+  font-size: var(--text-small);
+}
+
+.child-activity-assignment-toggle small {
+  color: #828979;
+  font-size: var(--text-caption);
+}
+
+.child-activity-assignment-category ul {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.child-activity-assignment-category li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 9px 11px;
+  border: 1px solid #edf0e7;
+  border-radius: 10px;
+  background: #fbfcf8;
+}
+
+.child-activity-assignment-category li > span {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.child-activity-assignment-reward {
+  display: grid;
+  flex: 0 0 110px;
+  gap: 3px;
+  color: #657052;
+  font-size: var(--text-caption);
+  font-weight: 700;
+}
+
+.child-activity-assignment-reward input {
+  width: 100%;
+  min-width: 0;
+  min-height: 32px;
+  padding: 5px 7px;
+  border: 1px solid #dfe5d6;
+  border-radius: 7px;
+  background: #fff;
+  color: #39432c;
+  font: inherit;
+  font-size: var(--text-caption);
+}
+
+.child-activity-assignment-reward input:focus {
+  border-color: #9bab73;
+  outline: 2px solid rgba(155, 171, 115, 0.18);
+}
+
+.child-activity-assignment-category li strong {
+  color: #3e472f;
+  font-size: var(--text-caption);
+}
+
+.child-activity-assignment-category li small {
+  color: #828979;
+  font-size: var(--text-caption);
+}
+
+.child-activity-assignment-category .activity-primary-button {
+  min-height: 32px;
+  flex: 0 0 auto;
+  padding: 0 13px;
+  font-size: var(--text-caption);
+}
+
+.child-activity-assignment-category .activity-primary-button:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+.child-activity-assignment-empty {
+  margin: 0;
+  padding: 14px;
+  border-radius: 10px;
+  background: #f7f9f2;
+  color: #657052;
+  font-size: var(--text-caption);
+  text-align: center;
 }
 
 .category-detail-heading {
@@ -88,7 +257,7 @@
 .category-detail-copy h1 {
   margin: 0;
   color: #39432c;
-  font-size: 21px;
+  font-size: var(--text-heading);
 }
 
 .category-detail-copy p {
@@ -100,7 +269,7 @@
 .category-detail-activities h2 {
   margin: 0;
   color: #46513a;
-  font-size: var(--text-small);
+  font-size: var(--text-large);
 }
 
 .category-empty-inline {
@@ -137,7 +306,7 @@
 .category-empty-state h2 {
   margin: 0;
   color: #46513a;
-  font-size: 19px;
+  font-size: var(--text-large);
 }
 
 .category-empty-state p {
@@ -169,7 +338,7 @@
   border-radius: 999px;
   background: #edf4df;
   color: #627444;
-  font-size: 10px;
+  font-size: var(--text-caption);
   font-weight: 700;
   white-space: nowrap;
 }
@@ -185,6 +354,16 @@
   border-radius: 15px;
   background: #fff;
   box-shadow: 0 4px 14px rgba(49, 61, 36, 0.035);
+  transition:
+    transform 280ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 280ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@media (hover: hover) {
+  .category-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 24px rgba(75, 96, 46, 0.12);
+  }
 }
 
 .category-card-expanded {
@@ -489,7 +668,7 @@
 .delete-confirmation-header h2 {
   margin: 0;
   color: #3e472f;
-  font-size: 18px;
+  font-size: var(--text-large);
 }
 
 .delete-confirmation-header p {
@@ -526,7 +705,7 @@
 .activity-dialog-header h2 {
   margin: 0;
   color: #3e472f;
-  font-size: 18px;
+  font-size: var(--text-large);
 }
 
 .activity-dialog-header p {
@@ -573,7 +752,7 @@
 .activity-optional,
 .activity-field-hint {
   color: #8a907e;
-  font-size: 10px;
+  font-size: var(--text-caption);
   font-weight: 400;
 }
 
@@ -614,7 +793,7 @@
 
 .category-icon-preview small {
   color: #858c7a;
-  font-size: 10px;
+  font-size: var(--text-caption);
 }
 
 .category-icon-selected {
@@ -685,7 +864,7 @@
 .activity-dialog-category small,
 .activity-dialog-category-hint {
   color: #858c7a;
-  font-size: 10px;
+  font-size: var(--text-caption);
 }
 
 .activity-dialog-category strong {
@@ -714,7 +893,7 @@
 
 .activity-dialog-activity small {
   color: #858c7a;
-  font-size: 10px;
+  font-size: var(--text-caption);
 }
 
 .activity-dialog-activity strong {
@@ -746,10 +925,6 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 11px;
-}
-
-.activity-default-only .activity-form-fields {
-  grid-template-columns: 1fr;
 }
 
 .activity-form-field-wide {
@@ -815,7 +990,7 @@
 
 .activity-copy small {
   color: #858c7a;
-  font-size: 11px;
+  font-size: var(--text-caption);
   line-height: 1.35;
 }
 
@@ -834,7 +1009,7 @@
 
 .activity-values small {
   color: #858c7a;
-  font-size: 10px;
+  font-size: var(--text-caption);
 }
 
 .activities-state {
@@ -931,6 +1106,40 @@
     backdrop-filter: none;
   }
 
+  .child-activity-assignment-backdrop {
+    padding: 0;
+    place-items: stretch;
+  }
+
+  .child-activity-assignment-panel {
+    width: 100%;
+    height: 100vh;
+    height: 100dvh;
+    max-height: 100vh;
+    max-height: 100dvh;
+    padding: 18px 15px max(18px, env(safe-area-inset-bottom));
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .child-activity-assignment-category li {
+    flex-wrap: wrap;
+  }
+
+  .child-activity-assignment-category li > span {
+    flex: 1 1 100%;
+  }
+
+  .child-activity-assignment-reward {
+    flex: 1 1 110px;
+    max-width: 110px;
+  }
+
+  .child-activity-assignment-category .activity-primary-button {
+    margin-left: auto;
+  }
+
   .activity-dialog,
   .category-dialog {
     width: 100%;
@@ -960,7 +1169,7 @@
   }
 
   .activity-dialog-header h2 {
-    font-size: 20px;
+    font-size: var(--text-large);
   }
 
   .category-empty-state {
@@ -988,12 +1197,12 @@
   }
 
   .activities-page-heading h1 {
-    font-size: 22px;
+    font-size: var(--text-heading);
   }
 
   .activities-page-heading p {
     max-width: 250px;
-    font-size: var(--text-caption);
+    font-size: var(--text-small);
     line-height: 1.4;
   }
 
@@ -1013,16 +1222,16 @@
   }
 
   .category-detail-copy h1 {
-    font-size: 18px;
+    font-size: var(--text-heading);
   }
 
   .category-detail-copy p {
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
 
   .category-detail-activities h2 {
     margin-bottom: 8px;
-    font-size: var(--text-caption);
+    font-size: var(--text-large);
   }
 
   .category-list {
@@ -1046,12 +1255,12 @@
   }
 
   .category-copy strong {
-    font-size: var(--text-caption);
+    font-size: var(--text-small);
   }
 
   .category-copy small {
     max-width: 220px;
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
 
   .category-action {
@@ -1099,12 +1308,12 @@
 
   .activity-copy strong,
   .activity-values strong {
-    font-size: 11px;
+    font-size: var(--text-caption);
   }
 
   .activity-copy small,
   .activity-values small {
-    font-size: 9px;
+    font-size: var(--text-caption);
   }
 
   .activities-footer {

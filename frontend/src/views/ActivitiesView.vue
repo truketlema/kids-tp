@@ -1,6 +1,6 @@
 <template>
-  <main class="activities-page">
-    <ProfileHeader :profile="profile" active="activities" />
+  <main class="activities-page account-page-main">
+    <PagePrintDecoration />
 
     <div class="activities-page-content">
       <nav class="activities-breadcrumb" aria-label="Breadcrumb">
@@ -12,18 +12,37 @@
         <template v-else>
           <RouterLink to="/dashboard">Dashboard</RouterLink>
           <span aria-hidden="true">/</span>
-          <span>Activities</span>
+          <span>{{ isChildActivitiesPage ? `${selectedChild?.name || 'Child'}'s Activities` : 'Activities' }}</span>
         </template>
       </nav>
 
       <header v-if="!isCategoryDetail" class="activities-page-heading">
         <div>
-          <h1>Categories</h1>
-          <p>Choose a category to view its activities and default Trust Points.</p>
+          <h1 v-if="isChildActivitiesPage">{{ selectedChild?.name || 'Child' }}'s Activities</h1>
+          <h1 v-else>Categories</h1>
+          <p v-if="isChildActivitiesPage">
+            Activities assigned specifically to {{ selectedChild?.name || 'this child' }}.
+          </p>
+          <p v-else>Browse activities by category. Customize TP rewards from each child’s Activities page.</p>
         </div>
         <div class="activities-heading-actions">
           <span class="activities-total">{{ activityCount }} activities</span>
-          <button type="button" class="activity-primary-button" @click="openCategoryForm">
+          <button
+            v-if="isChildActivitiesPage"
+            type="button"
+            class="activity-primary-button"
+            :aria-expanded="assignmentPanelOpen"
+            aria-controls="child-activity-assignment-panel"
+            @click="toggleAssignmentPanel"
+          >
+            {{ assignmentPanelOpen ? 'Close assignments' : 'Assign Activities' }}
+          </button>
+          <button
+            v-if="!isChildActivitiesPage"
+            type="button"
+            class="activity-primary-button"
+            @click="openCategoryForm"
+          >
             Add Category
           </button>
         </div>
@@ -36,6 +55,10 @@
         <p>{{ loadError }}</p>
         <button type="button" @click="loadActivities()">Try again</button>
       </div>
+      <div v-else-if="isChildActivitiesPage && !selectedChild" class="activities-state">
+        This child could not be found in your family.
+        <RouterLink to="/dashboard">Back to dashboard</RouterLink>
+      </div>
       <template v-else-if="isCategoryDetail && selectedCategory">
         <header class="category-detail-heading">
           <span class="category-detail-icon" :class="categoryColorClass(selectedCategory.name)">
@@ -44,9 +67,12 @@
           <span class="category-detail-copy">
             <h1>{{ selectedCategory.name }}</h1>
             <p>{{ selectedCategory.description }}</p>
+            <p v-if="!isChildActivitiesPage">
+              Customize TP rewards from each child’s Activities page.
+            </p>
           </span>
           <button
-            v-if="selectedCategory.is_default === false"
+            v-if="!isChildActivitiesPage && selectedCategory.is_default === false"
             type="button"
             class="activity-delete-button"
             :aria-label="`Delete ${selectedCategory.name} category`"
@@ -85,15 +111,16 @@
                   </small>
                 </span>
                 <button
+                  v-if="!isChildActivitiesPage && activity.is_default === false"
                   type="button"
                   class="activity-edit-button"
-                  :aria-label="activity.is_default ? `Edit TP for ${activity.title}` : `Edit ${activity.title}`"
+                  :aria-label="`Edit ${activity.title}`"
                   @click="startEditingActivity(activity, selectedCategory)"
                 >
                   <v-icon icon="mdi-pencil-outline" />
                 </button>
                 <button
-                  v-if="activity.is_default === false"
+                  v-if="!isChildActivitiesPage && activity.is_default === false"
                   type="button"
                   class="activity-delete-button"
                   :aria-label="`Delete ${activity.title}`"
@@ -105,7 +132,7 @@
               </div>
             </li>
           </ul>
-          <div class="category-detail-add-activity">
+          <div v-if="!isChildActivitiesPage" class="category-detail-add-activity">
             <button type="button" class="activity-primary-button" @click="openActivityForm(selectedCategory)">
               <v-icon icon="mdi-plus" /> Add Activity
             </button>
@@ -114,28 +141,39 @@
         <section v-else class="category-empty-state">
           <img class="category-empty-logo" src="/Logo.png" alt="Kids TP logo" />
           <h2>No activities yet</h2>
-          <p>Add activities that fit this category and choose their TP values.</p>
-          <button type="button" class="activity-primary-button" @click="openActivityForm(selectedCategory)">
-            <v-icon icon="mdi-plus" /> Add Activity
-          </button>
+          <p v-if="isChildActivitiesPage">
+            No activities in this category are assigned to {{ selectedChild?.name }}.
+          </p>
+          <template v-else>
+            <p>Add activities that fit this category and choose their TP values.</p>
+            <button type="button" class="activity-primary-button" @click="openActivityForm(selectedCategory)">
+              <v-icon icon="mdi-plus" /> Add Activity
+            </button>
+          </template>
         </section>
       </template>
       <div v-else-if="isCategoryDetail" class="activities-state">
         This category could not be found.
         <RouterLink to="/activities">Back to categories</RouterLink>
       </div>
-      <div v-else-if="categories.length" class="category-list">
+      <div v-else-if="visibleCategories.length" class="category-list">
         <article
-          v-for="category in categories"
+          v-for="category in visibleCategories"
           :key="category.id"
           class="category-card"
-          :class="{ 'category-card-expanded': expandedCategoryIds.includes(category.id) }"
+          :class="{
+            'category-card-expanded': isChildActivitiesPage
+              ? expandedAssignedCategoryIds.includes(category.id)
+              : expandedCategoryIds.includes(category.id),
+          }"
         >
           <div class="category-heading-row">
             <button
               class="category-toggle"
               type="button"
-              :aria-expanded="expandedCategoryIds.includes(category.id)"
+              :aria-expanded="isChildActivitiesPage
+                ? expandedAssignedCategoryIds.includes(category.id)
+                : expandedCategoryIds.includes(category.id)"
               :aria-controls="`category-activities-${category.id}`"
               @click="selectCategory(category.id)"
             >
@@ -148,12 +186,26 @@
                 <span class="category-count">{{ category.activities.length }} activities</span>
               </span>
               <span class="category-action">
-                <span>{{ expandedCategoryIds.includes(category.id) ? 'Hide activities' : 'View activities' }}</span>
-                <v-icon :icon="expandedCategoryIds.includes(category.id) ? 'mdi-chevron-up' : 'mdi-chevron-right'" />
+                <span>
+                  {{
+                    (isChildActivitiesPage
+                      ? expandedAssignedCategoryIds.includes(category.id)
+                      : expandedCategoryIds.includes(category.id))
+                      ? 'Hide activities'
+                      : 'View activities'
+                  }}
+                </span>
+                <v-icon
+                  :icon="(isChildActivitiesPage
+                    ? expandedAssignedCategoryIds.includes(category.id)
+                    : expandedCategoryIds.includes(category.id))
+                    ? 'mdi-chevron-up'
+                    : 'mdi-chevron-right'"
+                />
               </span>
             </button>
             <button
-              v-if="category.is_default === false"
+              v-if="!isChildActivitiesPage && category.is_default === false"
               type="button"
               class="activity-delete-button category-delete-button"
               :aria-label="`Delete ${category.name} category`"
@@ -165,7 +217,9 @@
           </div>
 
           <ul
-            v-if="expandedCategoryIds.includes(category.id)"
+            v-if="isChildActivitiesPage
+              ? expandedAssignedCategoryIds.includes(category.id)
+              : expandedCategoryIds.includes(category.id)"
             :id="`category-activities-${category.id}`"
             class="activity-list"
           >
@@ -179,22 +233,32 @@
                   <small>{{ activity.description }}</small>
                 </span>
                 <span class="activity-values">
-                  <strong>+{{ activity.default_tp }} TP</strong>
+                  <strong>+{{ activityPointValue(activity) }} TP</strong>
                   <small>
                     Suggested deduction:
                     {{ activity.suggested_deduction ? `−${activity.suggested_deduction} TP` : 'None' }}
                   </small>
                 </span>
                 <button
+                  v-if="isChildActivitiesPage"
                   type="button"
                   class="activity-edit-button"
-                  :aria-label="activity.is_default ? `Edit TP for ${activity.title}` : `Edit ${activity.title}`"
+                  :aria-label="`Edit ${activity.title} TP for ${selectedChild?.name || 'this child'}`"
+                  @click="startEditingChildReward(activity)"
+                >
+                  <v-icon icon="mdi-pencil-outline" />
+                </button>
+                <button
+                  v-if="!isChildActivitiesPage && activity.is_default === false"
+                  type="button"
+                  class="activity-edit-button"
+                  :aria-label="`Edit ${activity.title}`"
                   @click="startEditingActivity(activity, category)"
                 >
                   <v-icon icon="mdi-pencil-outline" />
                 </button>
                 <button
-                  v-if="activity.is_default === false"
+                  v-if="!isChildActivitiesPage && activity.is_default === false"
                   type="button"
                   class="activity-delete-button"
                   :aria-label="`Delete ${activity.title}`"
@@ -207,12 +271,17 @@
             </li>
           </ul>
           <p
-            v-if="expandedCategoryIds.includes(category.id) && !category.activities.length"
+            v-if="(isChildActivitiesPage
+              ? expandedAssignedCategoryIds.includes(category.id)
+              : expandedCategoryIds.includes(category.id)) && !category.activities.length"
             class="category-empty-inline"
           >
             No activities yet. Add one to get started.
           </p>
-          <div v-if="expandedCategoryIds.includes(category.id)" class="category-add-activity">
+          <div
+            v-if="expandedCategoryIds.includes(category.id) && !isChildActivitiesPage"
+            class="category-add-activity"
+          >
             <button
               type="button"
               class="activity-primary-button"
@@ -223,7 +292,167 @@
           </div>
         </article>
       </div>
-      <p v-else class="activities-state">No categories are available.</p>
+      <div v-else class="activities-state">
+        <template v-if="isChildActivitiesPage">
+          <p>No activities are assigned to {{ selectedChild?.name }} yet.</p>
+        </template>
+        <template v-else>No categories are available.</template>
+      </div>
+
+      <div
+        v-if="isChildActivitiesPage && !isLoading && !loadError && selectedChild && !isCategoryDetail && assignmentPanelOpen"
+        class="child-activity-assignment-backdrop"
+        @click.self="assignmentPanelOpen = false"
+      >
+        <section
+          id="child-activity-assignment-panel"
+          class="child-activity-assignment-panel"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="child-activity-assignment-title"
+          @keydown.esc.stop="assignmentPanelOpen = false"
+        >
+          <header class="child-activity-assignment-heading">
+            <div>
+              <h2 id="child-activity-assignment-title">Assign activities to {{ selectedChild.name }}</h2>
+              <p>Set this child’s TP reward before assigning each activity.</p>
+            </div>
+            <button
+              type="button"
+              class="activity-dialog-close"
+              aria-label="Close assignments"
+              @click="assignmentPanelOpen = false"
+            >
+              <v-icon icon="mdi-close" />
+            </button>
+          </header>
+          <p v-if="assignmentError" class="activities-state-error" role="alert">
+            {{ assignmentError }}
+          </p>
+          <div v-if="assignableCategories.length" class="child-activity-assignment-categories">
+            <section
+              v-for="category in assignableCategories"
+              :key="category.id"
+              class="child-activity-assignment-category"
+            >
+              <button
+                type="button"
+                class="child-activity-assignment-toggle"
+                :aria-expanded="expandedAssignmentCategoryIds.includes(category.id)"
+                :aria-controls="`child-assignment-activities-${category.id}`"
+                @click="toggleAssignmentCategory(category.id)"
+              >
+                <span>
+                  <strong>{{ category.name }}</strong>
+                  <small>{{ category.activities.length }} available activities</small>
+                </span>
+                <v-icon
+                  :icon="expandedAssignmentCategoryIds.includes(category.id)
+                    ? 'mdi-chevron-up'
+                    : 'mdi-chevron-down'"
+                />
+              </button>
+              <ul
+                v-if="expandedAssignmentCategoryIds.includes(category.id)"
+                :id="`child-assignment-activities-${category.id}`"
+              >
+                <li v-for="activity in category.activities" :key="activity.id">
+                  <span>
+                    <strong>{{ activity.title }}</strong>
+                    <small>Default: +{{ activity.default_tp }} TP</small>
+                  </span>
+                  <label class="child-activity-assignment-reward">
+                    TP for {{ selectedChild.name }}
+                    <input
+                      type="number"
+                      min="1"
+                      max="4294967295"
+                      :aria-label="`TP reward for ${activity.title} for ${selectedChild.name}`"
+                      :value="assignmentTpValue(activity)"
+                      :disabled="isAssigningActivityId === activity.id"
+                      @input="updateAssignmentTpDraft(activity, $event.target.value)"
+                    />
+                  </label>
+                  <button
+                    type="button"
+                    class="activity-primary-button"
+                    :disabled="isAssigningActivityId === activity.id"
+                    @click="assignActivityToChild(activity)"
+                  >
+                    {{ isAssigningActivityId === activity.id ? 'Assigning…' : 'Assign' }}
+                  </button>
+                </li>
+              </ul>
+            </section>
+          </div>
+          <p v-else class="child-activity-assignment-empty">
+            All available activities are already assigned to {{ selectedChild.name }}.
+          </p>
+        </section>
+      </div>
+      <div
+        v-if="editingChildReward && selectedChild"
+        class="activity-dialog-backdrop"
+        @click.self="closeChildRewardDialog"
+      >
+        <section
+          class="activity-dialog"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="child-reward-dialog-title"
+        >
+          <header class="activity-dialog-header">
+            <div>
+              <h2 id="child-reward-dialog-title">Edit {{ selectedChild.name }}’s TP reward</h2>
+              <p>{{ editingChildReward.title }}</p>
+            </div>
+            <button
+              type="button"
+              class="activity-dialog-close"
+              aria-label="Close"
+              :disabled="isSavingChildReward"
+              @click="closeChildRewardDialog"
+            >
+              <v-icon icon="mdi-close" />
+            </button>
+          </header>
+          <form class="activity-dialog-form" @submit.prevent="saveChildReward">
+            <label class="activity-dialog-field">
+              Trust Points for {{ selectedChild.name }}
+              <input
+                v-model.number="childRewardDraft"
+                type="number"
+                min="1"
+                max="4294967295"
+                required
+              />
+            </label>
+            <p class="activity-dialog-category-hint">
+              This reward changes only for {{ selectedChild.name }}.
+            </p>
+            <p v-if="childRewardError" class="activity-form-error" role="alert">
+              {{ childRewardError }}
+            </p>
+            <div class="activity-dialog-actions">
+              <button
+                type="button"
+                class="activity-secondary-button"
+                :disabled="isSavingChildReward"
+                @click="closeChildRewardDialog"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                class="activity-primary-button"
+                :disabled="isSavingChildReward"
+              >
+                {{ isSavingChildReward ? 'Saving…' : 'Save TP reward' }}
+              </button>
+            </div>
+          </form>
+        </section>
+      </div>
     </div>
 
     <div
@@ -315,7 +544,7 @@
         <header class="activity-dialog-header">
           <div>
             <h2 id="activity-dialog-title">
-              {{ activeEditingActivity?.is_default ? 'Edit TP Reward' : activeEditingActivity ? 'Edit Activity' : 'Add Activity' }}
+              {{ activeEditingActivity ? 'Edit Activity' : 'Add Activity' }}
             </h2>
           </div>
           <button type="button" class="activity-dialog-close" aria-label="Close" @click="closeActivityDialog">
@@ -335,23 +564,10 @@
           <p v-if="activeActivityCategory.description" class="activity-dialog-category-hint">
             Category is selected automatically.
           </p>
-          <div
-            v-if="activeEditingActivity?.is_default"
-            class="activity-dialog-activity"
-            aria-label="Activity being edited"
-          >
-            <span class="activity-icon" :class="categoryColorClass(activeActivityCategory.name)">
-              <v-icon :icon="activityIcon(activeEditingActivity.title, activeActivityCategory.name)" />
-            </span>
-            <span>
-              <small>Activity</small>
-              <strong>{{ activeEditingActivity.title }}</strong>
-            </span>
-          </div>
           <ActivityEditorFields
             v-model="activityDraft"
             :family-children="familyChildren"
-            :default-only="Boolean(activeEditingActivity?.is_default)"
+            :hide-default-tp="Boolean(activeEditingActivity)"
           />
           <p v-if="activityError" class="activity-form-error" role="alert">{{ activityError }}</p>
           <div class="activity-dialog-actions">
@@ -441,15 +657,15 @@
       <RouterLink to="/dashboard">
         <v-icon icon="mdi-view-dashboard-outline" /><span>Home</span>
       </RouterLink>
-      <RouterLink to="/dashboard#children">
-        <v-icon icon="mdi-account-group-outline" /><span>Children</span>
+      <RouterLink to="/family">
+        <v-icon icon="mdi-account-group-outline" /><span>Family</span>
       </RouterLink>
       <RouterLink class="activities-nav-current" to="/activities">
         <v-icon icon="mdi-format-list-checks" /><span>{{ isCategoryDetail ? 'Categories' : 'Activities' }}</span>
       </RouterLink>
-      <span aria-disabled="true">
+      <RouterLink to="/history">
         <v-icon icon="mdi-history" /><span>History</span>
-      </span>
+      </RouterLink>
       <RouterLink to="/profile">
         <v-icon icon="mdi-account-outline" /><span>Profile</span>
       </RouterLink>
@@ -458,14 +674,15 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import ActivityEditorFields from '../components/ActivityEditorFields.vue'
-import ProfileHeader from '../components/ProfileHeader.vue'
+import PagePrintDecoration from '../components/PagePrintDecoration.vue'
 import {
   ApiError,
   addCategory,
   addCategoryActivity,
+  assignChildActivity,
   clearAuthToken,
   deleteActivity as deleteActivityRequest,
   deleteCategory as deleteCategoryRequest,
@@ -473,6 +690,7 @@ import {
   fetchChildren,
   getCurrentUser,
   updateActivity,
+  updateChildActivityTp,
 } from '../services/auth.js'
 
 const categoryIconOptions = [
@@ -495,8 +713,18 @@ const profile = ref(null)
 const categories = ref([])
 const familyChildren = ref([])
 const expandedCategoryIds = ref([])
+const expandedAssignedCategoryIds = ref([])
+const expandedAssignmentCategoryIds = ref([])
 const isLoading = ref(true)
 const loadError = ref('')
+const assignmentPanelOpen = ref(false)
+const assignmentError = ref('')
+const assignmentTpDrafts = ref({})
+const isAssigningActivityId = ref(null)
+const editingChildReward = ref(null)
+const childRewardDraft = ref(1)
+const childRewardError = ref('')
+const isSavingChildReward = ref(false)
 const categoryFormOpen = ref(false)
 const categoryDraft = ref({ name: '', description: '' })
 const categoryError = ref('')
@@ -513,9 +741,41 @@ const deleteConfirmation = ref(null)
 const isDeletingCategoryId = ref(null)
 const isDeletingActivityId = ref(null)
 const activityCount = computed(() =>
-  categories.value.reduce((total, category) => total + category.activities.length, 0),
+  visibleCategories.value.reduce((total, category) => total + category.activities.length, 0),
 )
 const isCategoryDetail = computed(() => Boolean(route.params.categoryId))
+const isChildActivitiesPage = computed(() => Boolean(route.params.childId))
+const selectedChild = computed(() =>
+  familyChildren.value.find((child) => String(child.id) === String(route.params.childId)),
+)
+const visibleCategories = computed(() => {
+  if (!isChildActivitiesPage.value || !selectedChild.value) {
+    return categories.value
+  }
+
+  return categories.value
+    .map((category) => ({
+      ...category,
+      activities: category.activities.filter((activity) =>
+        isActivityAssignedToChild(activity, selectedChild.value.id),
+      ),
+    }))
+    .filter((category) => category.activities.length > 0)
+})
+const assignableCategories = computed(() => {
+  if (!selectedChild.value) {
+    return []
+  }
+
+  return categories.value
+    .map((category) => ({
+      ...category,
+      activities: category.activities.filter((activity) =>
+        !isActivityAssignedToChild(activity, selectedChild.value.id),
+      ),
+    }))
+    .filter((category) => category.activities.length > 0)
+})
 const activeActivityCategory = computed(() =>
   categories.value.find((category) => String(category.id) === String(activityFormCategoryId.value)),
 )
@@ -525,8 +785,16 @@ const activeEditingActivity = computed(() =>
   ),
 )
 const selectedCategory = computed(() =>
-  categories.value.find((category) => String(category.id) === String(route.params.categoryId)),
+  visibleCategories.value.find((category) => String(category.id) === String(route.params.categoryId)),
 )
+
+watch(() => route.params.childId, () => {
+  expandedAssignedCategoryIds.value = []
+  expandedAssignmentCategoryIds.value = []
+  assignmentPanelOpen.value = false
+  assignmentError.value = ''
+  assignmentTpDrafts.value = {}
+})
 
 function categoryIcon(categoryOrName) {
   const name = typeof categoryOrName === 'string' ? categoryOrName : categoryOrName?.name
@@ -549,6 +817,23 @@ function categoryIcon(categoryOrName) {
 
 function categoryColorClass(name) {
   return `category-icon-${name.toLowerCase().replace(/[^a-z]+/g, '-')}`
+}
+
+function isActivityAssignedToChild(activity, childId) {
+  return (activity.child_ids || []).some((id) => String(id) === String(childId))
+}
+
+function openAssignmentPanel() {
+  assignmentPanelOpen.value = true
+}
+
+function toggleAssignmentPanel() {
+  if (assignmentPanelOpen.value) {
+    assignmentPanelOpen.value = false
+    return
+  }
+
+  openAssignmentPanel()
 }
 
 function activityIcon(title, categoryName) {
@@ -576,7 +861,83 @@ function activityIcon(title, categoryName) {
   return categoryName === 'Education' ? 'mdi-book-open-variant' : categoryIcon(categoryName)
 }
 
+function activityPointValue(activity) {
+  const override = activity.child_tp_overrides?.find(
+    (item) => String(item.child_id) === String(selectedChild.value?.id),
+  )
+
+  return Number(override?.tp_override ?? activity.default_tp)
+}
+
+function assignmentTpValue(activity) {
+  return assignmentTpDrafts.value[activity.id] ?? activity.default_tp
+}
+
+function updateAssignmentTpDraft(activity, value) {
+  assignmentTpDrafts.value = {
+    ...assignmentTpDrafts.value,
+    [activity.id]: value,
+  }
+  assignmentError.value = ''
+}
+
+function startEditingChildReward(activity) {
+  editingChildReward.value = activity
+  childRewardDraft.value = activityPointValue(activity)
+  childRewardError.value = ''
+}
+
+function closeChildRewardDialog() {
+  if (isSavingChildReward.value) {
+    return
+  }
+
+  editingChildReward.value = null
+  childRewardError.value = ''
+}
+
+async function saveChildReward() {
+  const child = selectedChild.value
+  const activity = editingChildReward.value
+  const tpOverride = Number(childRewardDraft.value)
+
+  if (!child || !activity) {
+    return
+  }
+
+  if (!Number.isInteger(tpOverride) || tpOverride < 1 || tpOverride > 4294967295) {
+    childRewardError.value = 'Enter a whole TP value between 1 and 4,294,967,295.'
+    return
+  }
+
+  isSavingChildReward.value = true
+  childRewardError.value = ''
+
+  try {
+    await updateChildActivityTp(child.id, activity.id, { tp_override: tpOverride })
+    await loadActivities(false)
+    editingChildReward.value = null
+  } catch (error) {
+    if (error instanceof ApiError && error.status === 401) {
+      clearAuthToken()
+      await router.replace({ name: 'login' })
+      return
+    }
+
+    childRewardError.value = error instanceof Error
+      ? error.message
+      : 'Unable to update this child’s TP reward.'
+  } finally {
+    isSavingChildReward.value = false
+  }
+}
+
 function selectCategory(categoryId) {
+  if (isChildActivitiesPage.value) {
+    toggleExpandedCategory(categoryId, expandedAssignedCategoryIds)
+    return
+  }
+
   if (window.matchMedia('(max-width: 760px)').matches) {
     router.push({ name: 'category-activities', params: { categoryId } })
     return
@@ -586,9 +947,17 @@ function selectCategory(categoryId) {
 }
 
 function toggleCategory(categoryId) {
-  expandedCategoryIds.value = expandedCategoryIds.value.includes(categoryId)
-    ? expandedCategoryIds.value.filter((id) => id !== categoryId)
-    : [...expandedCategoryIds.value, categoryId]
+  toggleExpandedCategory(categoryId, expandedCategoryIds)
+}
+
+function toggleAssignmentCategory(categoryId) {
+  toggleExpandedCategory(categoryId, expandedAssignmentCategoryIds)
+}
+
+function toggleExpandedCategory(categoryId, expandedIds) {
+  expandedIds.value = expandedIds.value.includes(categoryId)
+    ? expandedIds.value.filter((id) => id !== categoryId)
+    : [...expandedIds.value, categoryId]
 }
 
 function createActivityDraft() {
@@ -682,10 +1051,20 @@ async function submitActivityDialog() {
 
   try {
     if (activeEditingActivity.value) {
-      const payload = activeEditingActivity.value.is_default
-        ? { default_tp: activityDraft.value.default_tp }
-        : activityDraft.value
-      await updateActivity(activeEditingActivity.value.id, payload)
+      const {
+        title,
+        description,
+        suggested_deduction,
+        weight_multiplier,
+        child_ids,
+      } = activityDraft.value
+      await updateActivity(activeEditingActivity.value.id, {
+        title,
+        description,
+        suggested_deduction,
+        weight_multiplier,
+        child_ids,
+      })
     } else {
       await addCategoryActivity(category.id, activityDraft.value)
     }
@@ -745,6 +1124,42 @@ function requestActivityDelete(activity, category) {
     id: activity.id,
     name: activity.title,
     categoryName: category.name,
+  }
+}
+
+async function assignActivityToChild(activity) {
+  const child = selectedChild.value
+  if (!child || isAssigningActivityId.value !== null) {
+    return
+  }
+
+  const tpOverride = Number(assignmentTpValue(activity))
+  if (!Number.isInteger(tpOverride) || tpOverride < 1 || tpOverride > 4294967295) {
+    assignmentError.value = 'Enter a whole TP value between 1 and 4,294,967,295.'
+    return
+  }
+
+  assignmentError.value = ''
+  isAssigningActivityId.value = activity.id
+
+  try {
+    await assignChildActivity(child.id, activity.id, { tp_override: tpOverride })
+    const nextDrafts = { ...assignmentTpDrafts.value }
+    delete nextDrafts[activity.id]
+    assignmentTpDrafts.value = nextDrafts
+    await loadActivities(false)
+  } catch (error) {
+    if (error instanceof ApiError && error.status === 401) {
+      clearAuthToken()
+      await router.replace({ name: 'login' })
+      return
+    }
+
+    assignmentError.value = error instanceof Error
+      ? error.message
+      : 'Unable to assign this activity.'
+  } finally {
+    isAssigningActivityId.value = null
   }
 }
 
@@ -815,8 +1230,10 @@ async function refreshCategory(categoryName) {
   }
 }
 
-async function loadActivities() {
-  isLoading.value = true
+async function loadActivities(showLoading = true) {
+  if (showLoading) {
+    isLoading.value = true
+  }
   loadError.value = ''
 
   try {
@@ -853,7 +1270,9 @@ async function loadActivities() {
 
     loadError.value = error instanceof Error ? error.message : 'Unable to load activity categories.'
   } finally {
-    isLoading.value = false
+    if (showLoading) {
+      isLoading.value = false
+    }
   }
 }
 

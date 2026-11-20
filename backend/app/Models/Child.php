@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
     'date_of_birth',
     'avatar',
     'budget_allocation',
+    'monthly_savings_goal',
 ])]
 class Child extends Model
 {
@@ -37,6 +38,7 @@ class Child extends Model
 
     public function commitments(): BelongsToMany
     {
-        return $this->belongsToMany(Commitment::class, 'child_commitment');
+        return $this->belongsToMany(Commitment::class, 'child_commitment')
+            ->withPivot('tp_override');
     }
 }

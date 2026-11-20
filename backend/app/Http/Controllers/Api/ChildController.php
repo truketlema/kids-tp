@@ -23,7 +23,7 @@ class ChildController extends Controller
         return response()->json([
             'children' => $family->children()
                 ->orderBy('name')
-                ->get(['id', 'name', 'date_of_birth', 'avatar', 'budget_allocation']),
+                ->get(['id', 'name', 'date_of_birth', 'avatar', 'budget_allocation', 'monthly_savings_goal']),
         ]);
     }
 
@@ -33,6 +33,7 @@ class ChildController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'date_of_birth' => ['required', 'date', 'before_or_equal:today'],
             'avatar' => ['nullable', 'string', Rule::in(Child::AVATARS)],
+            'monthly_savings_goal' => ['sometimes', 'required', 'integer', 'between:1,2147483647'],
         ]);
 
         $family = $request->user()->family;
@@ -73,6 +74,7 @@ class ChildController extends Controller
             'name' => ['sometimes', 'required', 'string', 'max:255'],
             'date_of_birth' => ['sometimes', 'required', 'date', 'before_or_equal:today'],
             'avatar' => ['sometimes', 'nullable', 'string', Rule::in(Child::AVATARS)],
+            'monthly_savings_goal' => ['sometimes', 'required', 'integer', 'between:1,2147483647'],
         ]);
 
         if ($validated === []) {

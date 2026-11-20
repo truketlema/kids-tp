@@ -1,6 +1,6 @@
 <template>
-  <main class="child-profile-page">
-    <ProfileHeader :profile="profile" />
+  <main class="child-profile-page account-page-main">
+    <PagePrintDecoration />
 
     <div class="child-profile-content">
       <nav class="child-profile-breadcrumb" aria-label="Breadcrumb">
@@ -8,12 +8,9 @@
         <span aria-hidden="true">/</span>
         <span>{{ child?.name || 'Child profile' }}</span>
         <span aria-hidden="true">/</span>
-        <span>Profile &amp; Settings</span>
+        <span>Profile</span>
       </nav>
 
-      <div v-if="notice" class="child-profile-notice" role="status" aria-live="polite">
-        {{ notice }}
-      </div>
       <div v-if="childActionError" class="child-profile-notice child-profile-notice-error" role="alert">
         {{ childActionError }}
       </div>
@@ -67,6 +64,10 @@
               </option>
             </select>
           </label>
+          <label>
+            <span>Monthly TP goal</span>
+            <input v-model.number="childDraft.monthly_savings_goal" type="number" min="1" required />
+          </label>
           <div class="child-edit-actions">
             <button type="submit" :disabled="isSavingChild">
               {{ isSavingChild ? 'Saving…' : 'Save changes' }}
@@ -77,170 +78,51 @@
           </div>
         </form>
 
-        <div class="child-stat-grid">
-          <section class="child-stat-card">
-            <span class="child-stat-heading"><v-icon icon="mdi-star-circle-outline" /> Total Points</span>
-            <strong>Not available yet</strong>
-            <small>Point totals are not currently provided by the API.</small>
-          </section>
-          <section class="child-stat-card">
-            <span class="child-stat-heading"><v-icon icon="mdi-trending-up" /> This Month’s Earnings</span>
-            <strong>Not available yet</strong>
-            <small>Monthly earnings are not currently provided by the API.</small>
-          </section>
+        <section class="child-points-overview" aria-label="Points overview">
+          <article class="child-point-balance"><small>CURRENT BALANCE</small><strong>{{ ledgerSummary.current_balance }} <span>TP</span></strong><span>Verified ledger</span></article>
+          <article class="child-point-earned"><small>EARNED THIS WEEK</small><strong>+{{ ledgerSummary.earned_this_week }} <span>TP</span></strong><span>Points awarded</span></article>
+          <article class="child-point-deducted"><small>DEDUCTIONS THIS WEEK</small><strong>−{{ ledgerSummary.deducted_this_week }} <span>TP</span></strong><span>Daily limit: {{ deductionCapLabel }}</span></article>
+        </section>
+        <div class="child-point-actions">
+          <button type="button" class="child-deduct-action" @click="openPointDialog('deduct')"><v-icon icon="mdi-minus-circle-outline" /> Deduct Points</button>
+          <button type="button" class="child-award-action" @click="openPointDialog('award')"><v-icon icon="mdi-plus-circle-outline" /> Award Points</button>
+          <RouterLink
+            class="child-activities-action"
+            :to="{ name: 'child-activities', params: { childId: child.id } }"
+          >
+            <v-icon icon="mdi-format-list-checks" />
+            <span>View {{ child.name }}’s Activities</span>
+          </RouterLink>
         </div>
+        <section class="child-responsibility-card">
+          <header><span><v-icon icon="mdi-finance" /> Financial Responsibility</span><small>Estimate only</small></header>
+          <div class="child-value-estimate">
+            <small>Current balance equivalent</small>
+            <strong>{{ ledgerSummary.current_balance }} TP = {{ formatCurrency(estimatedValue) }} ETB</strong>
+          </div>
+          <div class="child-goal-heading"><span>Points earned this month</span><strong>{{ goalProgress }}%</strong></div>
+          <div class="child-goal-track"><span :style="{ width: `${goalProgress}%` }"></span></div>
+          <small class="child-goal-note">
+            {{ ledgerSummary.earned_this_month }} / {{ child.monthly_savings_goal }} TP toward the monthly goal.
+          </small>
+        </section>
+        <section class="child-recent-activity">
+          <header><h2>Recent Point Activity</h2><RouterLink :to="{ name: 'history', query: { child_id: child.id } }">View All History ›</RouterLink></header>
+          <div class="child-activity-filters">
+            <button v-for="filter in pointFilters" :key="filter.value" type="button" :class="{ active: activePointFilter === filter.value }" @click="activePointFilter = filter.value">{{ filter.label }}</button>
+          </div>
+          <ul v-if="filteredPointEntries.length" class="child-recent-list">
+            <li v-for="entry in filteredPointEntries.slice(0, 7)" :key="entry.id">
+              <span class="child-recent-icon" :class="`child-recent-${entry.type}`"><v-icon :icon="pointEntryIcon(entry.type)" /></span>
+              <span class="child-recent-copy"><strong>{{ entry.activity?.title || entry.remarks || pointTypeLabel(entry.type) }}</strong><small>{{ entry.activity?.category || pointTypeLabel(entry.type) }}</small><small>{{ formatDateTime(entry.created_at) }}</small></span>
+              <strong class="child-recent-amount" :class="{ negative: entry.tp_amount < 0 }">{{ entry.tp_amount > 0 ? '+' : '' }}{{ entry.tp_amount }} TP</strong>
+            </li>
+          </ul>
+          <p v-else class="child-recent-empty">No point activity has been recorded yet.</p>
+        </section>
 
         <div class="child-profile-grid">
           <section class="child-profile-main-column">
-            <button
-              class="child-reward-settings"
-              type="button"
-              @click="showUnavailable('Reward settings')"
-            >
-              <span class="child-profile-icon"><v-icon icon="mdi-trophy-outline" /></span>
-              <span>
-                <strong>Reward Settings</strong>
-                <small>Manage rewards and special achievements.</small>
-              </span>
-              <v-icon class="child-profile-chevron" icon="mdi-chevron-right" />
-            </button>
-
-            <section class="child-value-card">
-              <span class="child-profile-icon child-value-icon">
-                <v-icon icon="mdi-diamond-stone" />
-              </span>
-              <span class="child-value-copy">
-                <strong>Point Value</strong>
-                <small>How much is each point worth?</small>
-              </span>
-              <span class="child-value-rate">
-                <small>TP → ETB Rate</small>
-                <strong>{{ conversionRateLabel }}</strong>
-              </span>
-              <button
-                type="button"
-                aria-label="Edit point value"
-                @click="showUnavailable('Changing point value')"
-              >
-                <v-icon icon="mdi-chevron-down" />
-              </button>
-            </section>
-
-            <section class="child-budget-card">
-              <header class="child-budget-heading">
-                <div>
-                  <h2>Budget Allocation</h2>
-                  <p>Allocation details for {{ child.name }}.</p>
-                </div>
-                <button
-                  v-if="!isEditingAllocation"
-                  type="button"
-                  @click="editBudgetAllocation"
-                >
-                  <v-icon icon="mdi-pencil-outline" />
-                  Edit Allocation
-                </button>
-              </header>
-              <div v-if="!isEditingAllocation" class="child-budget-content">
-                <div
-                  class="child-budget-chart"
-                  :style="allocationChartStyle"
-                  role="img"
-                  :aria-label="`Budget allocation: ${allocationDescription}`"
-                >
-                  <span>
-                    Allocation
-                    <strong>100%</strong>
-                  </span>
-                </div>
-                <ul class="child-budget-list">
-                  <li
-                    v-for="allocation in budgetAllocation"
-                    :key="allocation.key"
-                    :style="{ '--allocation-color': allocation.color }"
-                  >
-                    <span
-                      class="child-budget-dot"
-                      :style="{ '--allocation-color': allocation.color }"
-                      aria-hidden="true"
-                    ></span>
-                    <span class="child-budget-label">{{ allocation.label }}</span>
-                    <strong>{{ allocation.percentage }}%</strong>
-                  </li>
-                </ul>
-                <p class="child-budget-note">
-                  {{
-                    child.budget_allocation
-                      ? 'Custom allocation saved for this child.'
-                      : 'Using the fixed default allocation. Edit to set custom percentages.'
-                  }}
-                </p>
-              </div>
-              <form
-                v-else
-                class="child-allocation-editor"
-                @submit.prevent="saveBudgetAllocation()"
-              >
-                <p>Set the percentage for each category. The total must equal 100%.</p>
-                <label
-                  v-for="allocation in budgetAllocation"
-                  :key="allocation.key"
-                  class="child-allocation-input"
-                >
-                  <span
-                    class="child-budget-dot"
-                    :style="{ '--allocation-color': allocation.color }"
-                    aria-hidden="true"
-                  ></span>
-                  <span>{{ allocation.label }}</span>
-                  <input
-                    v-model.number="draftAllocation[allocation.key]"
-                    type="number"
-                    min="0"
-                    max="100"
-                    step="1"
-                    :aria-label="`${allocation.label} percentage`"
-                  />
-                  <span>%</span>
-                </label>
-                <p
-                  class="child-allocation-total"
-                  :class="{ 'child-allocation-total-invalid': allocationDraftTotal !== 100 }"
-                  aria-live="polite"
-                >
-                  Total: {{ allocationDraftTotal }}%
-                </p>
-                <p v-if="allocationError" class="child-allocation-error" role="alert">
-                  {{ allocationError }}
-                </p>
-                <div class="child-allocation-actions">
-                  <button
-                    type="button"
-                    class="child-allocation-reset"
-                    :disabled="isSavingAllocation"
-                    @click="saveBudgetAllocation(true)"
-                  >
-                    Restore fixed defaults
-                  </button>
-                  <span></span>
-                  <button
-                    type="button"
-                    class="child-allocation-cancel"
-                    :disabled="isSavingAllocation"
-                    @click="cancelBudgetAllocation"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    :disabled="isSavingAllocation || allocationDraftTotal !== 100"
-                  >
-                    {{ isSavingAllocation ? 'Saving…' : 'Save allocation' }}
-                  </button>
-                </div>
-              </form>
-            </section>
-
             <p class="child-profile-info-note">
               This profile shows information currently available for your family.
             </p>
@@ -248,7 +130,7 @@
               class="child-remove-button"
               type="button"
               :disabled="isRemovingChild"
-              @click="removeChildProfile"
+              @click="openRemoveConfirmation"
             >
               <v-icon icon="mdi-delete-outline" />
               {{ isRemovingChild ? 'Removing…' : 'Remove Child from Family' }}
@@ -256,38 +138,58 @@
             </button>
           </section>
 
-          <aside class="child-financial-card">
-            <header>
-              <h2>Financial setting</h2>
-              <p>Shared family settings</p>
-            </header>
-            <article class="child-financial-setting">
-              <span class="child-profile-icon"><v-icon icon="mdi-swap-horizontal" /></span>
-              <div>
-                <strong>TP to ETB Conversion Rate</strong>
-                <small>Current rate</small>
-                <b>{{ conversionRateLabel }}</b>
-                <p>Family-wide rate used when calculating ETB equivalents.</p>
-              </div>
-              <RouterLink to="/family">Edit</RouterLink>
-            </article>
-            <article class="child-financial-setting">
-              <span class="child-profile-icon"><v-icon icon="mdi-shield-outline" /></span>
-              <div>
-                <strong>Daily Deduction Cap</strong>
-                <small>Current limit</small>
-                <b>{{ deductionCapLabel }}</b>
-                <p>Family-wide limit for daily point deductions.</p>
-              </div>
-              <RouterLink to="/family">Edit</RouterLink>
-            </article>
-            <p class="child-financial-note">
-              <v-icon icon="mdi-information-outline" />
-              These settings are shared across the family.
-            </p>
-          </aside>
         </div>
       </template>
+      <div
+        v-if="isRemoveConfirmationOpen && child"
+        class="child-remove-confirmation-backdrop"
+        @click.self="cancelRemoveConfirmation"
+      >
+        <section
+          class="child-remove-confirmation-dialog"
+          role="alertdialog"
+          aria-modal="true"
+          aria-labelledby="child-remove-confirmation-title"
+          aria-describedby="child-remove-confirmation-description"
+          @keydown.esc.stop="cancelRemoveConfirmation"
+        >
+          <header class="child-remove-confirmation-heading">
+            <span class="child-remove-confirmation-icon" aria-hidden="true">
+              <v-icon icon="mdi-delete-outline" />
+            </span>
+            <div>
+              <h2 id="child-remove-confirmation-title">Remove child from family?</h2>
+              <p>This action cannot be undone.</p>
+            </div>
+          </header>
+          <p id="child-remove-confirmation-description" class="child-remove-confirmation-description">
+            This will permanently remove <strong>{{ child.name }}</strong>’s profile from your family.
+          </p>
+          <p v-if="removeChildError" class="child-remove-confirmation-error" role="alert">
+            {{ removeChildError }}
+          </p>
+          <div class="child-remove-confirmation-actions">
+            <button
+              type="button"
+              class="child-remove-cancel"
+              ref="removeConfirmationCancel"
+              :disabled="isRemovingChild"
+              @click="cancelRemoveConfirmation"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              class="child-remove-confirm"
+              :disabled="isRemovingChild"
+              @click="removeChildProfile"
+            >
+              <v-icon icon="mdi-delete-outline" />
+              {{ isRemovingChild ? 'Removing…' : 'Remove child' }}
+            </button>
+          </div>
+        </section>
+      </div>
     </div>
 
     <footer class="child-profile-footer">
@@ -299,15 +201,13 @@
       <RouterLink to="/dashboard">
         <v-icon icon="mdi-view-dashboard-outline" /><span>Home</span>
       </RouterLink>
-      <RouterLink to="/dashboard#children">
-        <v-icon icon="mdi-account-group-outline" /><span>Children</span>
+      <RouterLink to="/family">
+        <v-icon icon="mdi-account-group-outline" /><span>Family</span>
       </RouterLink>
       <RouterLink to="/activities">
         <v-icon icon="mdi-format-list-checks" /><span>Activities</span>
       </RouterLink>
-      <span class="child-nav-unavailable" aria-disabled="true">
-        <v-icon icon="mdi-history" /><span>History</span>
-      </span>
+      <RouterLink to="/history"><v-icon icon="mdi-history" /><span>History</span></RouterLink>
       <RouterLink class="child-nav-current" to="/profile">
         <v-icon icon="mdi-account-outline" /><span>Profile</span>
       </RouterLink>
@@ -316,26 +216,20 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from 'vue'
+import { computed, nextTick, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import ProfileHeader from '../components/ProfileHeader.vue'
+import PagePrintDecoration from '../components/PagePrintDecoration.vue'
 import {
   ApiError,
   clearAuthToken,
   fetchChildren,
+  fetchChildLedger,
   getCurrentUser,
   removeChild,
   updateChild,
-  updateChildAllocation,
 } from '../services/auth.js'
 
 const availableAvatars = ['bear', 'cat', 'dog', 'flower', 'rocket', 'star']
-const defaultBudgetAllocation = [
-  { key: 'long_term_savings', label: 'Long-term Savings', percentage: 40, color: '#264f3a' },
-  { key: 'planned_purchase', label: 'Planned Purchase', percentage: 25, color: '#7bd16b' },
-  { key: 'discretionary_spending', label: 'Discretionary Spending', percentage: 20, color: '#f5c64c' },
-  { key: 'reserve', label: 'Reserve', percentage: 15, color: '#fa987d' },
-]
 const avatarIcons = {
   bear: 'mdi-teddy-bear',
   cat: 'mdi-cat',
@@ -348,46 +242,28 @@ const route = useRoute()
 const router = useRouter()
 const profile = ref(null)
 const child = ref(null)
+const ledgerSummary = ref({ current_balance: 0, earned_this_week: 0, earned_this_month: 0, deducted_this_week: 0 })
+const pointEntries = ref([])
+const activePointFilter = ref('all')
+const pointFilters = [
+  { value: 'all', label: 'All' },
+  { value: 'earning', label: 'Earned' },
+  { value: 'deduction', label: 'Deduction' },
+  { value: 'bonus', label: 'Bonus' },
+  { value: 'adjustment', label: 'Adjustment' },
+]
 const isLoading = ref(true)
 const loadError = ref('')
-const notice = ref('')
 const childActionError = ref('')
-const isEditingAllocation = ref(false)
-const isSavingAllocation = ref(false)
-const allocationError = ref('')
-const draftAllocation = ref({})
 const isEditingChild = ref(false)
 const isSavingChild = ref(false)
 const isRemovingChild = ref(false)
-const childDraft = ref({ name: '', date_of_birth: '', avatar: '' })
+const isRemoveConfirmationOpen = ref(false)
+const removeChildError = ref('')
+const removeConfirmationCancel = ref(null)
+const removeChildTrigger = ref(null)
+const childDraft = ref({ name: '', date_of_birth: '', avatar: '', monthly_savings_goal: 150 })
 const todayInput = new Date().toISOString().slice(0, 10)
-const budgetAllocation = computed(() => defaultBudgetAllocation.map((item) => ({
-  ...item,
-  percentage: Number(child.value?.budget_allocation?.[item.key] ?? item.percentage),
-})))
-const allocationDraftTotal = computed(() =>
-  Object.values(draftAllocation.value).reduce((total, percentage) => total + Number(percentage || 0), 0),
-)
-const allocationDescription = computed(() =>
-  budgetAllocation.value
-    .map(({ label, percentage }) => `${label} ${percentage}%`)
-    .join(', '),
-)
-const allocationChartStyle = computed(() => {
-  let start = 0
-  const segments = budgetAllocation.value.map(({ percentage, color }) => {
-    const end = start + percentage
-    const segment = `${color} ${start}% ${end}%`
-    start = end
-    return segment
-  })
-
-  return { background: `conic-gradient(${segments.join(', ')})` }
-})
-const conversionRateLabel = computed(() => {
-  const rate = Number(profile.value?.family?.conversion_rate)
-  return Number.isFinite(rate) && rate > 0 ? `1 TP = ${rate.toFixed(2)} ETB` : 'Not configured'
-})
 const deductionCapLabel = computed(() => {
   const cap = Number(profile.value?.family?.daily_deduction_cap)
   return Number.isInteger(cap) && cap >= 0 ? `${cap} TP per day` : 'Not configured'
@@ -415,6 +291,16 @@ const childAge = computed(() => {
 
   return age >= 0 ? `Age ${age}` : 'Age unavailable'
 })
+const filteredPointEntries = computed(() => activePointFilter.value === 'all'
+  ? pointEntries.value
+  : pointEntries.value.filter((entry) => entry.type === activePointFilter.value))
+const goalProgress = computed(() => Math.max(0, Math.min(100, Math.round(
+  (Number(ledgerSummary.value.earned_this_month || 0) / Number(child.value?.monthly_savings_goal || 150)) * 100,
+))))
+const familyConversionRate = computed(() => Number(profile.value?.family?.conversion_rate) || 0)
+const estimatedValue = computed(() =>
+  Number(ledgerSummary.value.current_balance) * familyConversionRate.value,
+)
 
 function initials(name) {
   return (name || 'C')
@@ -440,9 +326,23 @@ function formatDate(date) {
         day: 'numeric',
       }).format(parsedDate)
 }
-
-function showUnavailable(feature) {
-  notice.value = `${feature} is not available yet.`
+function formatCurrency(value) {
+  return new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 }).format(value)
+}
+function formatDateTime(value) {
+  const date = new Date(value)
+  return Number.isNaN(date.getTime()) ? 'Date unavailable' : new Intl.DateTimeFormat(undefined, {
+    month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit',
+  }).format(date)
+}
+function pointEntryIcon(type) {
+  return { earning: 'mdi-plus', deduction: 'mdi-minus', bonus: 'mdi-gift-outline', adjustment: 'mdi-swap-vertical' }[type] || 'mdi-history'
+}
+function pointTypeLabel(type) {
+  return type.charAt(0).toUpperCase() + type.slice(1)
+}
+function openPointDialog(type) {
+  router.push({ name: 'child-points', params: { childId: child.value.id, type } })
 }
 
 function toggleChildEdit() {
@@ -457,6 +357,7 @@ function toggleChildEdit() {
     name: child.value.name,
     date_of_birth: child.value.date_of_birth,
     avatar: child.value.avatar || '',
+    monthly_savings_goal: child.value.monthly_savings_goal || 150,
   }
   isEditingChild.value = true
 }
@@ -469,10 +370,10 @@ async function saveChildDetails() {
     const result = await updateChild(child.value.id, {
       ...childDraft.value,
       avatar: childDraft.value.avatar || null,
+      monthly_savings_goal: Number(childDraft.value.monthly_savings_goal),
     })
     child.value = { ...child.value, ...result.child }
     isEditingChild.value = false
-    notice.value = result.message
   } catch (error) {
     if (error instanceof ApiError && error.status === 401) {
       clearAuthToken()
@@ -486,75 +387,48 @@ async function saveChildDetails() {
   }
 }
 
+async function openRemoveConfirmation(event) {
+  removeChildTrigger.value = event.currentTarget
+  removeChildError.value = ''
+  isRemoveConfirmationOpen.value = true
+  await nextTick()
+  removeConfirmationCancel.value?.focus()
+}
+
+async function cancelRemoveConfirmation() {
+  if (isRemovingChild.value) {
+    return
+  }
+
+  isRemoveConfirmationOpen.value = false
+  removeChildError.value = ''
+  await nextTick()
+  removeChildTrigger.value?.focus()
+}
+
 async function removeChildProfile() {
-  if (!window.confirm(`Remove ${child.value.name} from your family? This cannot be undone.`)) {
+  if (!child.value || isRemovingChild.value) {
     return
   }
 
   isRemovingChild.value = true
-  childActionError.value = ''
+  removeChildError.value = ''
 
   try {
     await removeChild(child.value.id)
+    isRemoveConfirmationOpen.value = false
     await router.replace({ name: 'dashboard' })
   } catch (error) {
     if (error instanceof ApiError && error.status === 401) {
+      isRemoveConfirmationOpen.value = false
       clearAuthToken()
       await router.replace({ name: 'login' })
       return
     }
 
-    childActionError.value = error instanceof Error ? error.message : 'Unable to remove this child.'
+    removeChildError.value = error instanceof Error ? error.message : 'Unable to remove this child.'
   } finally {
     isRemovingChild.value = false
-  }
-}
-
-function editBudgetAllocation() {
-  draftAllocation.value = Object.fromEntries(
-    budgetAllocation.value.map(({ key, percentage }) => [key, percentage]),
-  )
-  allocationError.value = ''
-  isEditingAllocation.value = true
-}
-
-function cancelBudgetAllocation() {
-  allocationError.value = ''
-  isEditingAllocation.value = false
-}
-
-async function saveBudgetAllocation(restoreDefaults = false) {
-  if (!restoreDefaults && allocationDraftTotal.value !== 100) {
-    allocationError.value = 'The allocation percentages must total 100%.'
-    return
-  }
-
-  isSavingAllocation.value = true
-  allocationError.value = ''
-
-  try {
-    const allocation = restoreDefaults
-      ? null
-      : Object.fromEntries(
-          defaultBudgetAllocation.map(({ key }) => [key, Number(draftAllocation.value[key])]),
-        )
-    const result = await updateChildAllocation(child.value.id, allocation)
-
-    if (!Object.prototype.hasOwnProperty.call(result, 'allocation')) {
-      throw new Error('The API response did not include the saved budget allocation.')
-    }
-
-    child.value = { ...child.value, budget_allocation: result.allocation }
-    isEditingAllocation.value = false
-    notice.value = restoreDefaults
-      ? 'The fixed budget allocation has been restored.'
-      : 'Budget allocation saved.'
-  } catch (error) {
-    allocationError.value = error instanceof Error
-      ? error.message
-      : 'Unable to save the budget allocation.'
-  } finally {
-    isSavingAllocation.value = false
   }
 }
 
@@ -579,6 +453,8 @@ async function loadChildProfile() {
 
     if (!child.value) {
       loadError.value = 'This child was not found in your family.'
+    } else {
+      await loadPointData()
     }
   } catch (error) {
     if (error instanceof ApiError && error.status === 401) {
@@ -591,6 +467,12 @@ async function loadChildProfile() {
   } finally {
     isLoading.value = false
   }
+}
+
+async function loadPointData() {
+  const ledgerResult = await fetchChildLedger(child.value.id)
+  ledgerSummary.value = ledgerResult.summary
+  pointEntries.value = ledgerResult.ledger
 }
 
 onMounted(loadChildProfile)

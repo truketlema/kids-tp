@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Mail\FamilyInvitationMail;
 use App\Models\FamilyInvitation;
 use App\Models\User;
+use App\Services\FamilyNotificationService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -125,6 +126,14 @@ class FamilyInvitationController extends Controller
 
             $invitation->accepted_at = now();
             $invitation->save();
+
+            app(FamilyNotificationService::class)->notifyOtherParents(
+                $user->family,
+                $user,
+                'family_access_changed',
+                'A parent joined your family',
+                $user->name.' joined your family.',
+            );
 
             return [
                 'user' => $user,

@@ -1,6 +1,6 @@
 <template>
-  <main class="family-page">
-    <ProfileHeader :profile="profile" />
+  <main class="family-page account-page-main">
+    <PagePrintDecoration />
 
     <div class="family-content">
       <nav class="family-breadcrumb" aria-label="Breadcrumb">
@@ -208,8 +208,80 @@
               <v-icon icon="mdi-information-outline" />
               These settings apply across the family.
             </p>
+            <section class="family-reward-settings">
+              <span class="family-setting-icon"><v-icon icon="mdi-trophy-outline" /></span>
+              <div>
+                <h3>Reward Settings</h3>
+                <p>Manage rewards and special achievements for your family.</p>
+                <small>Reward configuration is not available yet.</small>
+              </div>
+              <span class="family-coming-soon">Coming soon</span>
+            </section>
           </aside>
         </div>
+
+        <section class="family-budget-section" aria-labelledby="family-budget-title">
+          <header class="family-budget-section-heading">
+            <div>
+              <h2 id="family-budget-title">Children’s Budget Allocations</h2>
+              <p>Set how each child’s Trust Points are divided across their goals.</p>
+            </div>
+          </header>
+          <p v-if="!children.length" class="family-budget-empty">
+            Add a child to set up a budget allocation.
+          </p>
+          <div v-else class="family-budget-grid">
+            <article v-for="child in children" :key="child.id" class="family-budget-card">
+              <header>
+                <div class="family-budget-child">
+                  <span class="family-member-avatar">
+                    <v-icon v-if="avatarIcon(child.avatar)" :icon="avatarIcon(child.avatar)" />
+                    <template v-else>{{ initials(child.name) }}</template>
+                  </span>
+                  <span><strong>{{ child.name }}</strong><small>Budget allocation</small></span>
+                </div>
+                <button
+                  type="button"
+                  :disabled="isSavingAllocation"
+                  @click="allocationEditingId === child.id ? cancelAllocation() : editAllocation(child)"
+                >
+                  {{ allocationEditingId === child.id ? 'Cancel' : 'Edit allocation' }}
+                </button>
+              </header>
+              <template v-if="allocationEditingId !== child.id">
+                <div class="family-budget-content">
+                  <div class="family-budget-chart" :style="allocationChartStyle(child)" aria-hidden="true">
+                    <span>Allocation<strong>100%</strong></span>
+                  </div>
+                  <ul>
+                    <li v-for="item in allocationFor(child)" :key="item.key" :style="{ '--allocation-color': item.color }">
+                      <span class="family-budget-dot"></span><span>{{ item.label }}</span><strong>{{ item.percentage }}%</strong>
+                    </li>
+                  </ul>
+                </div>
+                <p class="family-budget-note">
+                  {{ child.budget_allocation ? 'Custom allocation saved for this child.' : 'Using the fixed default allocation.' }}
+                </p>
+              </template>
+              <form v-else class="family-budget-editor" @submit.prevent="saveAllocation(child)">
+                <p>Percentages must total 100%.</p>
+                <label v-for="item in defaultBudgetAllocation" :key="item.key">
+                  <span class="family-budget-dot" :style="{ '--allocation-color': item.color }"></span>
+                  <span>{{ item.label }}</span>
+                  <input v-model.number="budgetDraft[item.key]" type="number" min="0" max="100" step="1" />
+                  <span>%</span>
+                </label>
+                <strong :class="{ 'family-budget-total-invalid': allocationTotal !== 100 }">Total: {{ allocationTotal }}%</strong>
+                <p v-if="allocationError" class="family-notice-error" role="alert">{{ allocationError }}</p>
+                <div class="family-budget-actions">
+                  <button type="button" class="family-budget-reset" :disabled="isSavingAllocation" @click="saveAllocation(child, true)">Restore defaults</button>
+                  <span></span>
+                  <button type="submit" :disabled="isSavingAllocation || allocationTotal !== 100">{{ isSavingAllocation ? 'Saving…' : 'Save allocation' }}</button>
+                </div>
+              </form>
+            </article>
+          </div>
+        </section>
       </template>
     </div>
 
@@ -222,16 +294,16 @@
       <RouterLink to="/dashboard">
         <v-icon icon="mdi-view-dashboard-outline" /><span>Home</span>
       </RouterLink>
-      <RouterLink to="/dashboard#children">
-        <v-icon icon="mdi-account-group-outline" /><span>Children</span>
+      <RouterLink class="family-nav-current" to="/family">
+        <v-icon icon="mdi-account-group-outline" /><span>Family</span>
       </RouterLink>
       <RouterLink to="/activities">
         <v-icon icon="mdi-format-list-checks" /><span>Activities</span>
       </RouterLink>
-      <span class="family-nav-unavailable" aria-disabled="true">
+      <RouterLink to="/history">
         <v-icon icon="mdi-history" /><span>History</span>
-      </span>
-      <RouterLink class="family-nav-current" to="/profile">
+      </RouterLink>
+      <RouterLink to="/profile">
         <v-icon icon="mdi-account-outline" /><span>Profile</span>
       </RouterLink>
     </nav>
@@ -241,16 +313,23 @@
 <script setup>
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import ProfileHeader from '../components/ProfileHeader.vue'
+import PagePrintDecoration from '../components/PagePrintDecoration.vue'
 import {
   ApiError,
   clearAuthToken,
   fetchChildren,
   getCurrentUser,
   inviteParent,
+  updateChildAllocation,
   updateFamily,
 } from '../services/auth.js'
 
+const defaultBudgetAllocation = [
+  { key: 'long_term_savings', label: 'Long-term Savings', percentage: 40, color: '#264f3a' },
+  { key: 'planned_purchase', label: 'Planned Purchase', percentage: 25, color: '#7bd16b' },
+  { key: 'discretionary_spending', label: 'Discretionary Spending', percentage: 20, color: '#f5c64c' },
+  { key: 'reserve', label: 'Reserve', percentage: 15, color: '#fa987d' },
+]
 const avatarIcons = {
   bear: 'mdi-teddy-bear',
   cat: 'mdi-cat',
@@ -277,6 +356,13 @@ const familyDraft = reactive({
 const isInvitationFormOpen = ref(false)
 const invitationEmail = ref('')
 const isSendingInvitation = ref(false)
+const allocationEditingId = ref(null)
+const isSavingAllocation = ref(false)
+const allocationError = ref('')
+const budgetDraft = reactive(Object.fromEntries(defaultBudgetAllocation.map(({ key, percentage }) => [key, percentage])))
+const allocationTotal = computed(() =>
+  Object.values(budgetDraft).reduce((total, percentage) => total + Number(percentage || 0), 0),
+)
 const todayLabel = new Intl.DateTimeFormat(undefined, {
   weekday: 'long',
   day: 'numeric',
@@ -308,6 +394,71 @@ function initials(name) {
 
 function avatarIcon(avatar) {
   return avatarIcons[avatar] || ''
+}
+
+function allocationFor(child) {
+  return defaultBudgetAllocation.map((item) => ({
+    ...item,
+    percentage: Number(child.budget_allocation?.[item.key] ?? item.percentage),
+  }))
+}
+
+function allocationChartStyle(child) {
+  let start = 0
+  const segments = allocationFor(child).map(({ percentage, color }) => {
+    const end = start + percentage
+    const segment = `${color} ${start}% ${end}%`
+    start = end
+    return segment
+  })
+
+  return { background: `conic-gradient(${segments.join(', ')})` }
+}
+
+function editAllocation(child) {
+  allocationError.value = ''
+  allocationEditingId.value = child.id
+  for (const item of allocationFor(child)) {
+    budgetDraft[item.key] = item.percentage
+  }
+}
+
+function cancelAllocation() {
+  allocationEditingId.value = null
+  allocationError.value = ''
+}
+
+async function saveAllocation(child, restoreDefaults = false) {
+  if (!restoreDefaults && allocationTotal.value !== 100) {
+    allocationError.value = 'The allocation percentages must total 100%.'
+    return
+  }
+
+  isSavingAllocation.value = true
+  allocationError.value = ''
+  try {
+    const allocation = restoreDefaults
+      ? null
+      : Object.fromEntries(defaultBudgetAllocation.map(({ key }) => [key, Number(budgetDraft[key])]))
+    const result = await updateChildAllocation(child.id, allocation)
+    if (!Object.prototype.hasOwnProperty.call(result, 'allocation')) {
+      throw new Error('The API response did not include the saved budget allocation.')
+    }
+    children.value = children.value.map((item) =>
+      item.id === child.id ? { ...item, budget_allocation: result.allocation } : item,
+    )
+    allocationEditingId.value = null
+    notice.value = restoreDefaults ? 'The fixed budget allocation was restored.' : 'Budget allocation saved.'
+  } catch (error) {
+    if (error instanceof ApiError && error.status === 401) {
+      clearAuthToken()
+      await router.replace({ name: 'login' })
+      return
+    }
+    allocationError.value = error instanceof Error ? error.message : 'Unable to save the budget allocation.'
+  } finally {
+    isSavingAllocation.value = false
+  }
 }
 
 function childAge(dateOfBirth) {

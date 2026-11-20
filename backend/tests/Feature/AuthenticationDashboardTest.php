@@ -78,6 +78,375 @@ class AuthenticationDashboardTest extends TestCase
             ->assertJsonPath('children.0.avatar', 'cat');
     }
 
+    public function test_parent_can_view_default_activity_categories_and_values(): void
+    {
+        $token = $this->registerParent();
+
+        $response = $this->withToken($token)
+            ->getJson('/api/categories')
+            ->assertOk()
+            ->assertJsonCount(7, 'categories')
+            ->assertJsonPath('categories.0.name', 'Education')
+            ->assertJsonPath('categories.0.is_default', true)
+            ->assertJsonPath('categories.0.activities.0.title', 'Complete homework')
+            ->assertJsonPath('categories.0.activities.0.is_default', true)
+            ->assertJsonPath('categories.0.activities.0.default_tp', 3)
+            ->assertJsonPath('categories.0.activities.0.suggested_deduction', 2)
+            ->assertJsonPath('categories.5.name', 'Digital Responsibility')
+            ->assertJsonPath('categories.6.name', 'Financial Literacy');
+
+        $this->assertSame(
+            34,
+            collect($response->json('categories'))->sum(fn (array $category) => count($category['activities'])),
+        );
+    }
+
+    public function test_category_order_keeps_defaults_fixed_and_custom_categories_in_creation_order(): void
+    {
+        $token = $this->registerParent();
+        $this->withToken($token)
+            ->postJson('/api/categories', [
+                'name' => 'Family Projects',
+                'icon' => 'mdi-palette-outline',
+            ])
+            ->assertCreated();
+        $this->withToken($token)
+            ->postJson('/api/categories', [
+                'name' => 'Weekend Plans',
+                'icon' => 'mdi-palette-outline',
+            ])
+            ->assertCreated();
+
+        $categories = $this->withToken($token)
+            ->getJson('/api/categories')
+            ->assertOk()
+            ->json('categories');
+        $education = collect($categories)->firstWhere('name', 'Education');
+        $activity = collect($education['activities'])->firstWhere('title', 'Complete homework');
+
+        $this->withToken($token)
+            ->patchJson("/api/activities/{$activity['id']}", ['default_tp' => 8])
+            ->assertOk();
+
+        $orderedNames = $this->withToken($token)
+            ->getJson('/api/categories')
+            ->assertOk()
+            ->assertJsonCount(9, 'categories')
+            ->json('categories');
+
+        $this->assertSame([
+            'Education',
+            'Personal Care',
+            'Household',
+            'Trust & Character',
+            'Time Management',
+            'Digital Responsibility',
+            'Financial Literacy',
+            'Family Projects',
+            'Weekend Plans',
+        ], collect($orderedNames)->pluck('name')->all());
+    }
+
+    public function test_parent_can_add_categories_and_activities_without_exposing_them_to_other_families(): void
+    {
+        $token = $this->registerParent();
+        $childId = $this->withToken($token)
+            ->postJson('/api/children', [
+                'name' => 'Hana Abebe',
+                'date_of_birth' => '2014-05-21',
+            ])
+            ->assertCreated()
+            ->json('child.id');
+        $categoryId = $this->withToken($token)
+            ->postJson('/api/categories', [
+                'name' => 'Family Projects',
+                'description' => 'Activities we choose together.',
+                'icon' => 'mdi-palette-outline',
+            ])
+            ->assertCreated()
+            ->assertJsonPath('category.name', 'Family Projects')
+            ->json('category.id');
+
+        $activityId = $this->withToken($token)
+            ->postJson("/api/categories/{$categoryId}/activities", [
+                'title' => 'Help plan a family trip',
+                'description' => 'Compare options with a parent.',
+                'default_tp' => 6,
+                'suggested_deduction' => 1,
+                'weight_multiplier' => 1,
+                'child_ids' => [$childId],
+            ])
+            ->assertCreated()
+            ->assertJsonPath('activity.default_tp', 6)
+            ->assertJsonPath('activity.suggested_deduction', 1)
+            ->json('activity.id');
+
+        $this->withToken($token)
+            ->patchJson("/api/activities/{$activityId}", [
+                'title' => 'Plan a family trip',
+                'description' => 'Compare travel options together.',
+                'default_tp' => 7,
+                'suggested_deduction' => 2,
+                'weight_multiplier' => 1.5,
+                'child_ids' => [$childId],
+            ])
+            ->assertOk()
+            ->assertJsonPath('activity.title', 'Plan a family trip')
+            ->assertJsonPath('activity.default_tp', 7)
+            ->assertJsonPath('activity.suggested_deduction', 2);
+        $this->assertDatabaseHas('commitments', [
+            'id' => $activityId,
+            'weight_multiplier' => 1.5,
+        ]);
+        $this->assertDatabaseHas('child_commitment', [
+            'child_id' => $childId,
+            'commitment_id' => $activityId,
+        ]);
+
+        $this->withToken($token)
+            ->patchJson("/api/activities/{$activityId}", [])
+            ->assertUnprocessable();
+
+        $familyCategories = $this->withToken($token)->getJson('/api/categories')->assertOk();
+        $customCategory = collect($familyCategories->json('categories'))
+            ->firstWhere('name', 'Family Projects');
+        $this->assertFalse($customCategory['activities'][0]['is_default']);
+
+        $this->withToken($token)
+            ->postJson('/api/categories', [
+                'name' => 'Education',
+                'icon' => 'mdi-book-open-variant',
+            ])
+            ->assertUnprocessable();
+
+        $secondParent = $this->postJson('/api/register', [
+            'name' => 'Mekdes Tadesse',
+            'email' => 'mekdes@example.com',
+            'phone' => '+251912345679',
+            'password' => 'password123',
+            'password_confirmation' => 'password123',
+            'family_name' => 'Tadesse family',
+        ])->assertCreated();
+
+        $this->app['auth']->forgetGuards();
+        $this->withToken($secondParent->json('token'))
+            ->getJson('/api/categories')
+            ->assertOk()
+            ->assertJsonCount(7, 'categories');
+
+        $this->app['auth']->forgetGuards();
+        $this->withToken($secondParent->json('token'))
+            ->postJson("/api/categories/{$categoryId}/activities", [
+                'title' => 'Not allowed',
+                'default_tp' => 5,
+                'suggested_deduction' => 0,
+                'weight_multiplier' => 1,
+            ])
+            ->assertNotFound();
+    }
+
+    public function test_family_can_delete_created_activities_and_categories_but_not_defaults_or_other_families_data(): void
+    {
+        $token = $this->registerParent();
+        $categoryId = $this->withToken($token)
+            ->postJson('/api/categories', [
+                'name' => 'Weekend Activities',
+                'icon' => 'mdi-sprout',
+            ])
+            ->assertCreated()
+            ->json('category.id');
+        $activityId = $this->withToken($token)
+            ->postJson("/api/categories/{$categoryId}/activities", [
+                'title' => 'Water plants',
+                'default_tp' => 2,
+                'weight_multiplier' => 1,
+            ])
+            ->assertCreated()
+            ->json('activity.id');
+
+        $categories = $this->withToken($token)->getJson('/api/categories')->assertOk();
+        $this->assertFalse(
+            collect($categories->json('categories'))->firstWhere('id', $categoryId)['is_default'],
+        );
+        $defaultCategory = collect($categories->json('categories'))->firstWhere('name', 'Education');
+        $defaultActivityId = collect($defaultCategory['activities'])
+            ->firstWhere('title', 'Complete homework')['id'];
+        $this->withToken($token)
+            ->deleteJson("/api/categories/{$defaultCategory['id']}")
+            ->assertNotFound();
+        $this->withToken($token)
+            ->deleteJson("/api/activities/{$defaultActivityId}")
+            ->assertNotFound();
+
+        $secondParent = $this->postJson('/api/register', [
+            'name' => 'Mekdes Tadesse',
+            'email' => 'mekdes@example.com',
+            'phone' => '+251912345679',
+            'password' => 'password123',
+            'password_confirmation' => 'password123',
+            'family_name' => 'Tadesse family',
+        ])->assertCreated();
+
+        $this->app['auth']->forgetGuards();
+        $this->withToken($secondParent->json('token'))
+            ->deleteJson("/api/categories/{$categoryId}")
+            ->assertNotFound();
+        $this->withToken($secondParent->json('token'))
+            ->deleteJson("/api/activities/{$activityId}")
+            ->assertNotFound();
+
+        $this->app['auth']->forgetGuards();
+        $this->withToken($token)
+            ->deleteJson("/api/activities/{$activityId}")
+            ->assertOk();
+        $this->assertDatabaseMissing('commitments', ['id' => $activityId]);
+
+        $remainingActivityId = $this->withToken($token)
+            ->postJson("/api/categories/{$categoryId}/activities", [
+                'title' => 'Read together',
+                'default_tp' => 3,
+                'weight_multiplier' => 1,
+            ])
+            ->assertCreated()
+            ->json('activity.id');
+
+        $this->withToken($token)
+            ->deleteJson("/api/categories/{$categoryId}")
+            ->assertOk()
+            ->assertJsonPath('message', 'Category and its activities deleted successfully.');
+        $this->assertDatabaseMissing('categories', ['id' => $categoryId]);
+        $this->assertDatabaseMissing('commitments', ['id' => $remainingActivityId]);
+    }
+
+    public function test_created_activities_and_categories_with_point_history_cannot_be_deleted(): void
+    {
+        $token = $this->registerParent();
+        $childId = $this->withToken($token)
+            ->postJson('/api/children', [
+                'name' => 'Hana Abebe',
+                'date_of_birth' => '2014-05-21',
+            ])
+            ->assertCreated()
+            ->json('child.id');
+        $categoryId = $this->withToken($token)
+            ->postJson('/api/categories', [
+                'name' => 'Family Projects',
+                'icon' => 'mdi-palette-outline',
+            ])
+            ->assertCreated()
+            ->json('category.id');
+        $activityId = $this->withToken($token)
+            ->postJson("/api/categories/{$categoryId}/activities", [
+                'title' => 'Build a garden box',
+                'default_tp' => 5,
+                'weight_multiplier' => 1,
+            ])
+            ->assertCreated()
+            ->json('activity.id');
+
+        DB::table('ledgers')->insert([
+            'child_id' => $childId,
+            'commitment_id' => $activityId,
+            'recorded_by' => User::query()->where('email', 'selam@example.com')->value('id'),
+            'type' => 'earned',
+            'tp_amount' => 5,
+            'conversion_rate_snapshot' => 1,
+            'remarks' => null,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $this->withToken($token)
+            ->deleteJson("/api/activities/{$activityId}")
+            ->assertConflict()
+            ->assertJsonPath('message', 'This activity has point history and cannot be deleted.');
+        $this->withToken($token)
+            ->deleteJson("/api/categories/{$categoryId}")
+            ->assertConflict()
+            ->assertJsonPath('message', 'This category has activities with point history and cannot be deleted.');
+
+        $this->assertDatabaseHas('categories', ['id' => $categoryId]);
+        $this->assertDatabaseHas('commitments', ['id' => $activityId]);
+    }
+
+    public function test_editing_a_shared_activity_creates_a_family_only_override(): void
+    {
+        $token = $this->registerParent();
+        $categories = $this->withToken($token)->getJson('/api/categories')->assertOk()->json('categories');
+        $education = collect($categories)->firstWhere('name', 'Education');
+        $activity = collect($education['activities'])->firstWhere('title', 'Complete homework');
+
+        $this->withToken($token)
+            ->patchJson("/api/activities/{$activity['id']}", [
+                'title' => 'Finish homework',
+            ])
+            ->assertUnprocessable()
+            ->assertJsonPath('message', 'Only the default TP reward can be updated for catalog activities.');
+
+        $updateResponse = $this->withToken($token)
+            ->patchJson("/api/activities/{$activity['id']}", ['default_tp' => 8])
+            ->assertOk()
+            ->assertJsonPath('activity.title', 'Complete homework')
+            ->assertJsonPath('activity.default_tp', 8)
+            ->assertJsonPath('activity.suggested_deduction', 2);
+        $this->assertNotSame($education['id'], $updateResponse->json('category_id'));
+
+        $familyCategories = $this->withToken($token)->getJson('/api/categories')
+            ->assertOk()
+            ->assertJsonCount(7, 'categories');
+        $familyEducation = collect($familyCategories->json('categories'))->firstWhere('name', 'Education');
+        $this->assertTrue($familyEducation['is_default']);
+        $this->assertSame(
+            8,
+            collect($familyEducation['activities'])->firstWhere('title', 'Complete homework')['default_tp'],
+        );
+        $familyActivityId = collect($familyEducation['activities'])
+            ->firstWhere('title', 'Complete homework')['id'];
+        $this->withToken($token)
+            ->deleteJson("/api/categories/{$familyEducation['id']}")
+            ->assertNotFound();
+        $this->withToken($token)
+            ->deleteJson("/api/activities/{$familyActivityId}")
+            ->assertNotFound();
+        $this->assertTrue(
+            collect($familyEducation['activities'])
+                ->firstWhere('title', 'Complete homework')['is_default'],
+        );
+        $this->assertDatabaseHas('commitments', [
+            'id' => $activity['id'],
+            'family_id' => null,
+            'default_tp' => 3,
+        ]);
+
+        $secondParent = $this->postJson('/api/register', [
+            'name' => 'Mekdes Tadesse',
+            'email' => 'mekdes@example.com',
+            'phone' => '+251912345679',
+            'password' => 'password123',
+            'password_confirmation' => 'password123',
+            'family_name' => 'Tadesse family',
+        ])->assertCreated();
+
+        $this->app['auth']->forgetGuards();
+        $this->withToken($secondParent->json('token'))
+            ->getJson('/api/categories')
+            ->assertOk()
+            ->assertJsonPath('categories.0.activities.0.default_tp', 3)
+            ->assertJsonPath('categories.0.activities.0.title', 'Complete homework');
+
+        $this->app['auth']->forgetGuards();
+        $this->withToken($secondParent->json('token'))
+            ->patchJson("/api/activities/{$familyActivityId}", [
+                'default_tp' => 4,
+            ])
+            ->assertNotFound();
+
+        $this->app['auth']->forgetGuards();
+        $this->withToken($token)
+            ->patchJson("/api/activities/{$activity['id']}", ['default_tp' => 4294967296])
+            ->assertUnprocessable();
+    }
+
     public function test_parent_can_save_and_restore_a_child_budget_allocation(): void
     {
         $token = $this->registerParent();

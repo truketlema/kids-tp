@@ -7,8 +7,20 @@
       </RouterLink>
 
       <nav class="account-desktop-nav" aria-label="Main navigation">
-        <RouterLink to="/dashboard">Dashboard</RouterLink>
-        <RouterLink to="/dashboard#children">Children</RouterLink>
+        <RouterLink
+          to="/dashboard"
+          :class="{ 'account-nav-current': active === 'dashboard' }"
+          :aria-current="active === 'dashboard' ? 'page' : undefined"
+        >
+          Dashboard
+        </RouterLink>
+        <RouterLink
+          to="/family"
+          :class="{ 'account-nav-current': active === 'family' }"
+          :aria-current="active === 'family' ? 'page' : undefined"
+        >
+          Family
+        </RouterLink>
         <RouterLink
           to="/activities"
           :class="{ 'account-nav-current': active === 'activities' }"
@@ -16,7 +28,13 @@
         >
           Activities
         </RouterLink>
-        <span aria-disabled="true">History</span>
+        <RouterLink
+          to="/history"
+          :class="{ 'account-nav-current': active === 'history' }"
+          :aria-current="active === 'history' ? 'page' : undefined"
+        >
+          History
+        </RouterLink>
       </nav>
 
       <div class="account-header-details">
@@ -24,9 +42,9 @@
           <span aria-hidden="true"></span>
           {{ todayLabel }}
         </span>
-        <span class="account-bell" aria-label="Notifications">
+        <RouterLink class="account-bell" to="/profile?panel=notifications" aria-label="Open notifications">
           <v-icon icon="mdi-bell-outline" />
-        </span>
+        </RouterLink>
         <RouterLink
           v-if="profile"
           class="account-header-user"
@@ -39,6 +57,7 @@
             <small>{{ profile.family?.family_name || 'Family account' }}</small>
           </span>
         </RouterLink>
+        <button class="account-sign-out" type="button" @click="signOut">Sign out</button>
       </div>
 
       <div class="account-mobile-header">
@@ -46,15 +65,18 @@
           <img src="/Logo.png" alt="" />
           <span>kids tp</span>
         </RouterLink>
-        <span class="account-bell" aria-label="Notifications">
+        <RouterLink class="account-bell" to="/profile?panel=notifications" aria-label="Open notifications">
           <v-icon icon="mdi-bell-outline" />
-        </span>
+        </RouterLink>
       </div>
     </div>
   </header>
 </template>
 
 <script setup>
+import { useRouter } from 'vue-router'
+import { clearAuthToken } from '../services/auth.js'
+
 const { profile, active } = defineProps({
   profile: {
     type: Object,
@@ -66,12 +88,19 @@ const { profile, active } = defineProps({
   },
 })
 
+const router = useRouter()
+
 const todayLabel = new Intl.DateTimeFormat(undefined, {
   weekday: 'long',
   day: 'numeric',
   month: 'long',
   year: 'numeric',
 }).format(new Date())
+
+async function signOut() {
+  clearAuthToken()
+  await router.replace({ name: 'home' })
+}
 
 function initials(name) {
   return (name || 'P')
@@ -156,6 +185,23 @@ function initials(name) {
   gap: 16px;
 }
 
+.account-sign-out {
+  padding: 7px 10px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: #667342;
+  font: inherit;
+  font-size: var(--text-caption);
+  font-weight: 800;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.account-sign-out:hover {
+  background: #f1f4e9;
+}
+
 .account-date {
   display: inline-flex;
   align-items: center;
@@ -182,6 +228,12 @@ function initials(name) {
   width: 32px;
   height: 32px;
   color: #455333;
+  border-radius: 50%;
+  text-decoration: none;
+}
+
+.account-bell:hover {
+  background: #f1f4e9;
 }
 
 .account-header-user {
@@ -254,7 +306,19 @@ function initials(name) {
     gap: 8px;
   }
 
+  .account-sign-out {
+    padding-right: 7px;
+    padding-left: 7px;
+    font-size: var(--text-small);
+  }
+
   .account-header-user small {
+    display: none;
+  }
+}
+
+@media (max-width: 880px) and (min-width: 761px) {
+  .account-date {
     display: none;
   }
 }

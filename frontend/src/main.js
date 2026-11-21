@@ -7,13 +7,17 @@ import './assets/styles/variables.css'
 import './assets/styles/global.css'
 
 import 'vuetify/styles'
-import '@mdi/font/css/materialdesignicons.css'
 
 import { createVuetify } from 'vuetify'
 import { VApp, VIcon } from 'vuetify/components'
+import { mdiSvgIconSet } from './mdiIcons.js'
 
 const vuetify = createVuetify({
   components: { VApp, VIcon },
+  icons: {
+    defaultSet: 'mdi',
+    sets: { mdi: mdiSvgIconSet },
+  },
   theme: {
     defaultTheme: 'kidsTpTheme',
     themes: {

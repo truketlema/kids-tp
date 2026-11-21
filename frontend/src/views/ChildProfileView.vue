@@ -222,7 +222,6 @@ import PagePrintDecoration from '../components/PagePrintDecoration.vue'
 import {
   ApiError,
   clearAuthToken,
-  fetchChildren,
   fetchChildLedger,
   getCurrentUser,
   removeChild,
@@ -437,25 +436,19 @@ async function loadChildProfile() {
   loadError.value = ''
 
   try {
-    const [userResult, childrenResult] = await Promise.all([
+    const [userResult, ledgerResult] = await Promise.all([
       getCurrentUser(),
-      fetchChildren(),
+      fetchChildLedger(route.params.childId),
     ])
 
-    if (!Array.isArray(childrenResult.children)) {
-      throw new Error('The API returned an invalid children list.')
+    if (!ledgerResult.child) {
+      throw new Error('The API did not return this child profile.')
     }
 
     profile.value = userResult
-    child.value = childrenResult.children.find(
-      (item) => String(item.id) === String(route.params.childId),
-    ) || null
-
-    if (!child.value) {
-      loadError.value = 'This child was not found in your family.'
-    } else {
-      await loadPointData()
-    }
+    child.value = ledgerResult.child
+    ledgerSummary.value = ledgerResult.summary
+    pointEntries.value = ledgerResult.ledger
   } catch (error) {
     if (error instanceof ApiError && error.status === 401) {
       clearAuthToken()
@@ -467,12 +460,6 @@ async function loadChildProfile() {
   } finally {
     isLoading.value = false
   }
-}
-
-async function loadPointData() {
-  const ledgerResult = await fetchChildLedger(child.value.id)
-  ledgerSummary.value = ledgerResult.summary
-  pointEntries.value = ledgerResult.ledger
 }
 
 onMounted(loadChildProfile)

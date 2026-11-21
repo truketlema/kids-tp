@@ -243,16 +243,22 @@ function formatDateTime(value) {
         minute: '2-digit',
       }).format(date)
 }
+function setSelectedChild(result) {
+  child.value = result.child
+  summary.value = result.summary
+}
 async function loadData() {
   isLoading.value = true
   loadError.value = ''
   try {
-    const [user, categoryResult] = await Promise.all([
-      getCurrentUser(), fetchCategories(),
+    const [user, categoryResult, childResult] = await Promise.all([
+      getCurrentUser(),
+      fetchCategories(),
+      fetchChildLedger(childId.value),
     ])
     categories.value = categoryResult.categories
     profile.value = user
-    await loadSelectedChild()
+    setSelectedChild(childResult)
     if (!selectedActivity.value && eligibleCategories.value.length) {
       categoryId.value = String(eligibleCategories.value[0].id)
       selectFirstActivity()
@@ -270,8 +276,7 @@ async function loadData() {
 }
 async function loadSelectedChild() {
   const result = await fetchChildLedger(childId.value)
-  child.value = result.child
-  summary.value = result.summary
+  setSelectedChild(result)
 }
 watch(childId, async () => {
   try {

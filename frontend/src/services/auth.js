@@ -1,5 +1,8 @@
 const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '/api').replace(/\/+$/, '')
 const TOKEN_STORAGE_KEY = 'kids-tp-token'
+const API_READ_CACHE_TTL_MS = 15_000
+const apiReadCache = new Map()
+let apiReadCacheVersion = 0
 
 export class ApiError extends Error {
   constructor(message, status) {
@@ -16,6 +19,27 @@ export function getAuthToken() {
 export function clearAuthToken() {
   localStorage.removeItem(TOKEN_STORAGE_KEY)
   sessionStorage.removeItem(TOKEN_STORAGE_KEY)
+  clearApiReadCache()
+}
+
+function clearApiReadCache() {
+  apiReadCache.clear()
+  apiReadCacheVersion += 1
+}
+
+function getCachedApiResponse(cacheKey) {
+  const cached = apiReadCache.get(cacheKey)
+
+  if (!cached) {
+    return null
+  }
+
+  if (Date.now() - cached.cachedAt >= API_READ_CACHE_TTL_MS) {
+    apiReadCache.delete(cacheKey)
+    return null
+  }
+
+  return structuredClone(cached.data)
 }
 
 async function request(endpoint, { method = 'GET', payload, authenticated = false } = {}) {
@@ -29,6 +53,9 @@ async function request(endpoint, { method = 'GET', payload, authenticated = fals
     options.body = JSON.stringify(payload)
   }
 
+  let cacheKey = null
+  const cacheVersion = apiReadCacheVersion
+
   if (authenticated) {
     const token = getAuthToken()
 
@@ -37,6 +64,15 @@ async function request(endpoint, { method = 'GET', payload, authenticated = fals
     }
 
     headers.Authorization = `Bearer ${token}`
+
+    if (method === 'GET') {
+      cacheKey = `${token}:${endpoint}`
+      const cachedResponse = getCachedApiResponse(cacheKey)
+
+      if (cachedResponse) {
+        return cachedResponse
+      }
+    }
   }
 
   let response
@@ -87,6 +123,15 @@ async function request(endpoint, { method = 'GET', payload, authenticated = fals
       `The API request failed with status ${response.status}.`,
       response.status,
     )
+  }
+
+  if (method === 'GET' && cacheKey && cacheVersion === apiReadCacheVersion) {
+    apiReadCache.set(cacheKey, {
+      data: structuredClone(data),
+      cachedAt: Date.now(),
+    })
+  } else if (method !== 'GET') {
+    clearApiReadCache()
   }
 
   return data

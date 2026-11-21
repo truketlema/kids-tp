@@ -130,11 +130,11 @@ async function loadHistory() {
   isLoading.value = true
   loadError.value = ''
   try {
-    const [user, result] = await Promise.all([
+    const [user, result, childData] = await Promise.all([
       getCurrentUser(),
       fetchFamilyLedger({ childId: route.query.child_id }),
+      fetchChildren(),
     ])
-    const childData = await fetchChildren()
     profile.value = user
     entries.value = result.ledger
     children.value = childData.children

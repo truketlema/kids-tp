@@ -2,7 +2,7 @@
   <header class="account-header">
     <div class="account-header-inner">
       <RouterLink class="account-brand" to="/dashboard" aria-label="Kids TP dashboard">
-        <img src="/Logo.png" alt="" />
+        <img src="/logo.png" alt="" />
         <span>kids tp</span>
       </RouterLink>
 
@@ -62,7 +62,7 @@
 
       <div class="account-mobile-header">
         <RouterLink class="account-brand" to="/dashboard" aria-label="Kids TP dashboard">
-          <img src="/Logo.png" alt="" />
+          <img src="/logo.png" alt="" />
           <span>kids tp</span>
         </RouterLink>
         <RouterLink class="account-bell" to="/profile?panel=notifications" aria-label="Open notifications">

@@ -2,7 +2,7 @@
   <main class="login-page">
     <div class="login-layout">
       <aside class="login-brand-panel" aria-label="Kids TP">
-        <img src="/Logo.png" alt="Kids TP" class="login-mascot" />
+        <img src="/logo.png" alt="Kids TP" class="login-mascot" />
       </aside>
 
       <section class="login-form-panel" aria-labelledby="login-title">

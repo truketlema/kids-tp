@@ -3,7 +3,7 @@
     <div class="page">
       <!-- Left brand panel -->
       <aside class="brand-panel" aria-label="Kids TP family benefits">
-        <img class="mascot" src="/Logo.png" alt="Kids TP mascot" />
+        <img class="mascot" src="/logo.png" alt="Kids TP mascot" />
 
         <div class="brand-copy">
           <p class="eyebrow">

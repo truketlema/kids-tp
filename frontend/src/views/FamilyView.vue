@@ -1,6 +1,5 @@
 <template>
   <main class="family-page account-page-main">
-    <PagePrintDecoration />
 
     <div class="family-content">
       <nav class="family-breadcrumb" aria-label="Breadcrumb">
@@ -314,7 +313,6 @@
 import { computed, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { usePageActivation } from '../composables/usePageActivation.js'
-import PagePrintDecoration from '../components/PagePrintDecoration.vue'
 import {
   ApiError,
   clearAuthToken,

@@ -3,8 +3,8 @@
   min-height: 100vh;
   min-height: 100dvh;
   overflow-x: hidden;
-  background: #f7f9f2;
-  color: #3e472f;
+  background: var(--app-page-background);
+  color: var(--color-primary-dark);
 }
 
 .dashboard-header {
@@ -365,7 +365,7 @@
   padding: 0 20px;
   border: 0;
   border-radius: 999px;
-  background: #f5c766;
+  background: var(--color-primary-light);
   color: #3e452e;
   font: inherit;
   font-size: var(--text-small);
@@ -376,7 +376,7 @@
 
 .add-child-button:hover {
   transform: translateY(-1px);
-  background: #ffd77c;
+  background: var(--color-primary-light-hover);
 }
 
 .empty-children h2 {
@@ -532,35 +532,6 @@
   .overview-card:hover .overview-meter::after {
     transform: scaleX(1);
   }
-}
-
-.dashboard-print-decoration {
-  position: fixed;
-  bottom: 0;
-  left: -18px;
-  z-index: 0;
-  display: block;
-  width: 145px;
-  height: 170px;
-  overflow: hidden;
-  pointer-events: none;
-}
-
-.dashboard-print {
-  position: absolute;
-  height: auto;
-}
-
-.dashboard-print-one {
-  top: 8px;
-  left: -56px;
-  width: 126px;
-}
-
-.dashboard-print-two {
-  top: 55px;
-  left: -14px;
-  width: 132px;
 }
 
 .mobile-bottom-nav {
@@ -844,7 +815,7 @@
   align-items: center;
   justify-content: center;
   gap: 5px;
-  background: #f5c766;
+  background: var(--color-primary-light);
   color: #3e452e;
 }
 
@@ -1097,35 +1068,6 @@
 
   .family-overview {
     display: none;
-  }
-
-  .dashboard-print-decoration {
-    position: fixed;
-    bottom: 58px;
-    left: -18px;
-    z-index: 0;
-    display: block;
-    width: 138px;
-    height: 158px;
-    overflow: hidden;
-    pointer-events: none;
-  }
-
-  .dashboard-print {
-    position: absolute;
-    height: auto;
-  }
-
-  .dashboard-print-one {
-    top: 8px;
-    left: -56px;
-    width: 116px;
-  }
-
-  .dashboard-print-two {
-    top: 49px;
-    left: -14px;
-    width: 122px;
   }
 
   .mobile-bottom-nav {

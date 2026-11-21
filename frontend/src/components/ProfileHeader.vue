@@ -116,7 +116,7 @@ function initials(name) {
 <style scoped>
 .account-header {
   border-bottom: 1px solid #e6e9df;
-  background: #fff;
+  background: var(--app-page-background);
 }
 
 .account-header-inner {
@@ -130,10 +130,11 @@ function initials(name) {
 }
 
 .account-brand {
+  position: relative;
   display: inline-flex;
   flex: 0 0 auto;
   align-items: center;
-  gap: 6px;
+  gap: 0;
   color: #4b5632;
   font-size: 19px;
   font-weight: 900;
@@ -142,10 +143,14 @@ function initials(name) {
 }
 
 .account-brand img {
+  position: relative;
+  z-index: 1;
   display: block;
-  width: 42px;
-  height: 36px;
+  width: 76px;
+  height: 62px;
+  margin-right: -13px;
   object-fit: contain;
+  transform: translateY(-7px);
 }
 
 .account-desktop-nav {
@@ -343,13 +348,15 @@ function initials(name) {
   }
 
   .account-mobile-header .account-brand {
-    gap: 5px;
+    gap: 0;
     font-size: 17px;
   }
 
   .account-mobile-header .account-brand img {
-    width: 34px;
-    height: 30px;
+    width: 58px;
+    height: 48px;
+    margin-right: -10px;
+    transform: translateY(-5px);
   }
 }
 </style>

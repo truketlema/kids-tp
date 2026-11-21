@@ -1,6 +1,5 @@
 <template>
   <main class="profile-page account-page-main">
-    <PagePrintDecoration />
 
     <div class="profile-content">
       <div class="profile-title-row">
@@ -366,7 +365,6 @@
 <script setup>
 import { computed, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import PagePrintDecoration from '../components/PagePrintDecoration.vue'
 import { usePageActivation } from '../composables/usePageActivation.js'
 import {
   ApiError,

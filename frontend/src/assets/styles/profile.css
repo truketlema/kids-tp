@@ -4,8 +4,8 @@
   min-height: 100vh;
   min-height: 100dvh;
   padding-bottom: 0;
-  background: #f7f9f2;
-  color: #3e472f;
+  background: var(--app-page-background);
+  color: var(--color-primary-dark);
 }
 
 .profile-header {
@@ -270,7 +270,7 @@
   padding: 0 12px;
   border: 0;
   border-radius: 999px;
-  background: #f5c766;
+  background: var(--color-primary-light);
   color: #3e452e;
   font: inherit;
   font-size: var(--text-caption);
@@ -494,7 +494,7 @@
   padding: 7px 12px;
   border: 0;
   border-radius: 999px;
-  background: #f5c766;
+  background: var(--color-primary-light);
   color: #3e452e;
   font: inherit;
   font-weight: 800;

@@ -3,8 +3,8 @@
   isolation: isolate;
   min-height: 100vh;
   min-height: 100dvh;
-  background: #f7f9f2;
-  color: #3e472f;
+  background: var(--app-page-background);
+  color: var(--color-primary-dark);
 }
 
 .activities-page-content {
@@ -562,7 +562,7 @@
 
 .activity-primary-button {
   border-radius: 999px;
-  background: #f5c766;
+  background: var(--color-primary-light);
   color: #3e452e;
   box-shadow: 0 2px 6px rgba(153, 111, 25, 0.15);
   transition: background-color 0.15s ease, transform 0.15s ease;
@@ -570,7 +570,7 @@
 
 .activity-primary-button:hover:not(:disabled) {
   transform: translateY(-1px);
-  background: #ffd77c;
+  background: var(--color-primary-light-hover);
 }
 
 .activity-danger-button {
@@ -1035,7 +1035,7 @@
   padding: 8px 13px;
   border: 0;
   border-radius: 999px;
-  background: #f5c766;
+  background: var(--color-primary-light);
   color: #3e452e;
   font: inherit;
   font-weight: 800;

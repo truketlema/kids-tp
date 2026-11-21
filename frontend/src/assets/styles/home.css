@@ -5,80 +5,10 @@
   flex-direction: column;
   padding: 8px clamp(16px, 3vw, 32px) 16px;
   overflow: hidden;
-  background:
-    radial-gradient(ellipse at 50% 48%, rgba(213, 245, 140, 0.36), transparent 72%),
-    linear-gradient(
-      110deg,
-      rgba(213, 245, 140, 0.15),
-      rgba(248, 249, 245, 0.42) 55%,
-      rgba(119, 127, 67, 0.08)
-    ),
-    #f8f9f5;
+  background: var(--welcome-page-background);
   color: var(--color-primary-dark);
 }
 
-.topbar {
-  display: flex;
-  width: 100%;
-  max-width: 1180px;
-  min-height: 72px;
-  align-items: center;
-  justify-content: space-between;
-  margin: 0 auto;
-  border-bottom: 1px solid rgba(75, 85, 49, 0.16);
-}
-
-.brand-lockup {
-  display: inline-flex;
-  align-items: center;
-  gap: 14px;
-  color: var(--color-primary-dark);
-  text-decoration: none;
-}
-
-.brand-mark {
-  display: block;
-  width: 68px;
-  aspect-ratio: 390 / 315;
-  background: var(--color-primary);
-  -webkit-mask: url('/logo.png') center / contain no-repeat;
-  mask: url('/logo.png') center / contain no-repeat;
-}
-
-.brand-name {
-  font-size: 34px;
-  font-weight: 900;
-  letter-spacing: -1.5px;
-  line-height: 1;
-}
-
-.brand-name span {
-  color: #777f43;
-}
-
-.member-link {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin: 0;
-  color: #59633a;
-  font-size: var(--text-small);
-}
-
-.signin {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  color: var(--color-primary-dark);
-  font-weight: 900;
-  text-decoration: none;
-}
-
-.signin:hover {
-  text-decoration: underline;
-}
-
-.small-arrow,
 .action-arrow {
   display: inline-grid;
   place-items: center;
@@ -89,11 +19,6 @@
   line-height: 1;
 }
 
-.small-arrow {
-  width: 20px;
-  height: 20px;
-}
-
 .hero {
   display: flex;
   flex: 1;
@@ -102,79 +27,6 @@
   justify-content: center;
   gap: clamp(16px, 2.4vh, 24px);
   padding: 12px 0;
-}
-
-.family-orbit {
-  position: relative;
-  display: grid;
-  width: min(54vw, 420px);
-  min-width: 260px;
-  aspect-ratio: 1;
-  place-items: center;
-}
-
-.orbit,
-.orbit-glow {
-  position: absolute;
-  border-radius: 50%;
-}
-
-.orbit-outer {
-  inset: 2% 5% 0 0;
-  border: 1px solid rgba(75, 85, 49, 0.12);
-  transform: rotate(-7deg);
-}
-
-.orbit-inner {
-  inset: 8% 2% 7% 5%;
-  border: 1px solid rgba(75, 85, 49, 0.15);
-  transform: rotate(5deg);
-}
-
-.orbit-glow {
-  inset: 9%;
-  background: radial-gradient(
-    circle at 42% 36%,
-    rgba(213, 245, 140, 0.78),
-    rgba(213, 245, 140, 0.54) 62%,
-    rgba(119, 127, 67, 0.28)
-  );
-  box-shadow: 14px 20px 30px rgba(57, 67, 44, 0.12);
-}
-
-.family-mark {
-  position: relative;
-  z-index: 1;
-  display: block;
-  width: 108%;
-  aspect-ratio: 390 / 315;
-  background: var(--color-primary-dark);
-  filter: drop-shadow(0 1px 1px rgba(41, 43, 32, 0.14));
-  transform: translateY(2%);
-  -webkit-mask: url('/logo.png') center / contain no-repeat;
-  mask: url('/logo.png') center / contain no-repeat;
-}
-
-.sparkle {
-  position: absolute;
-  z-index: 2;
-  width: 15px;
-  height: 15px;
-  background: var(--color-primary-light);
-  clip-path: polygon(50% 0, 60% 40%, 100% 50%, 60% 60%, 50% 100%, 40% 60%, 0 50%, 40% 40%);
-}
-
-.sparkle-one {
-  top: 20%;
-  left: 18%;
-  width: 18px;
-  height: 18px;
-  background: var(--color-primary);
-}
-
-.sparkle-two {
-  top: 28%;
-  right: 14%;
 }
 
 .start {
@@ -213,38 +65,6 @@
     padding: 6px 12px 12px;
   }
 
-  .topbar {
-    min-height: 60px;
-  }
-
-  .brand-lockup {
-    gap: 8px;
-  }
-
-  .brand-mark {
-    width: 44px;
-  }
-
-  .brand-name {
-    font-size: 27px;
-  }
-
-  .member-link {
-    gap: 6px;
-    font-size: var(--text-caption);
-  }
-
-  .small-arrow {
-    width: 18px;
-    height: 18px;
-    font-size: 13px;
-  }
-
-  .family-orbit {
-    width: min(70vw, 300px);
-    min-width: 0;
-  }
-
   .hero {
     gap: clamp(12px, 2.4vh, 18px);
     padding: 8px 0;
@@ -264,14 +84,6 @@
 }
 
 @media (min-width: 1200px) {
-  .topbar {
-    max-width: 1080px;
-  }
-
-  .family-orbit {
-    width: min(30vw, 420px);
-  }
-
   .hero {
     gap: 20px;
   }
@@ -281,23 +93,6 @@
   .screen {
     padding-right: 10px;
     padding-left: 10px;
-  }
-
-  .brand-mark {
-    width: 38px;
-  }
-
-  .brand-name {
-    font-size: 24px;
-  }
-
-  .member-link {
-    gap: 4px;
-    font-size: 0.75rem;
-  }
-
-  .family-orbit {
-    width: min(70vw, 280px);
   }
 
   .start {
@@ -311,17 +106,9 @@
     padding-bottom: 12px;
   }
 
-  .topbar {
-    min-height: 64px;
-  }
-
   .hero {
     gap: 16px;
     padding: 10px 0;
-  }
-
-  .family-orbit {
-    width: min(48vh, 360px);
   }
 
   .start {
@@ -330,18 +117,9 @@
 }
 
 @media (max-height: 600px) {
-  .topbar {
-    min-height: 56px;
-  }
-
   .hero {
     gap: 12px;
     padding: 8px 0;
-  }
-
-  .family-orbit {
-    width: min(44vh, 300px);
-    min-width: 200px;
   }
 
   .start {

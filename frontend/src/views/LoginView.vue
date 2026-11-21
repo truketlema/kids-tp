@@ -1,16 +1,17 @@
 <template>
   <main class="login-page">
+    <PublicHeader
+      prompt="New to Kids TP?"
+      link-text="Register"
+      link-to="/register"
+    />
+
     <div class="login-layout">
-      <aside class="login-brand-panel" aria-label="Kids TP">
-        <img src="/logo.png" alt="Kids TP" class="login-mascot" />
+      <aside class="login-brand-panel" aria-label="Kids TP family">
+        <FamilyArtwork variant="auth" />
       </aside>
 
       <section class="login-form-panel" aria-labelledby="login-title">
-        <div class="login-print-decoration" aria-hidden="true">
-          <img src="/print.png" alt="" class="login-print login-print-one" />
-          <img src="/print.png" alt="" class="login-print login-print-two" />
-        </div>
-
         <form
           class="login-form"
           :aria-busy="isSubmitting"
@@ -87,6 +88,8 @@
 <script setup>
 import { reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import FamilyArtwork from '../components/FamilyArtwork.vue'
+import PublicHeader from '../components/PublicHeader.vue'
 import { loginAccount } from '../services/auth.js'
 
 const router = useRouter()

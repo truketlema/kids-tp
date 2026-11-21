@@ -115,11 +115,6 @@
       </section>
     </div>
 
-    <div class="dashboard-print-decoration" aria-hidden="true">
-      <img class="dashboard-print dashboard-print-one" src="/print.png" alt="" />
-      <img class="dashboard-print dashboard-print-two" src="/print.png" alt="" />
-    </div>
-
     <nav class="mobile-bottom-nav" aria-label="Dashboard navigation">
       <RouterLink class="bottom-nav-current" to="/dashboard">
         <v-icon icon="mdi-view-dashboard-outline" />

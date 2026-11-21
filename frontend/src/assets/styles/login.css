@@ -1,29 +1,31 @@
 .login-page {
+  display: flex;
+  flex-direction: column;
   min-height: 100vh;
   min-height: 100dvh;
-  background: #fff;
-  color: #4b5632;
+  padding: 0 clamp(16px, 3vw, 32px);
+  background: var(--welcome-page-background);
+  color: var(--color-primary-dark);
 }
 
 .login-layout {
   display: grid;
-  grid-template-columns: minmax(270px, 34%) minmax(0, 1fr);
-  min-height: 100vh;
-  min-height: 100dvh;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(24px, 5vw, 72px);
+  width: min(100%, 1180px);
+  flex: 1;
+  min-height: calc(100dvh - 73px);
+  margin: 0 auto;
+  padding: 32px 0;
 }
 
 .login-brand-panel {
   display: grid;
   place-items: center;
+  min-height: 420px;
   padding: 32px;
-  background: #4b5632;
-}
-
-.login-mascot {
-  display: block;
-  width: min(100%, 270px);
-  height: auto;
-  object-fit: contain;
+  background: transparent;
 }
 
 .login-form-panel {
@@ -33,47 +35,20 @@
   display: grid;
   place-items: center;
   min-width: 0;
-  min-height: 100vh;
-  min-height: 100dvh;
-  padding: 48px clamp(28px, 8vw, 120px);
+  padding: 24px;
   overflow: hidden;
-
-  background: #fff;
-}
-
-.login-print-decoration {
-  position: absolute;
-  top: 0;
-  right: 0;
-  z-index: 0;
-
-  width: 140px;
-  height: 130px;
-  overflow: hidden;
-  pointer-events: none;
-}
-
-.login-print {
-  position: absolute;
-  height: auto;
-}
-
-.login-print-one {
-  top: -52px;
-  left: 36px;
-  width: 112px;
-}
-
-.login-print-two {
-  top: -2px;
-  left: 66px;
-  width: 112px;
+  background: transparent;
 }
 
 .login-form {
   position: relative;
   z-index: 1;
-  width: min(100%, 400px);
+  width: min(100%, 460px);
+  padding: 36px;
+  border: 1px solid var(--color-border);
+  border-radius: 22px;
+  background: var(--color-surface);
+  box-shadow: var(--app-card-shadow);
 }
 
 .login-badge {
@@ -82,16 +57,16 @@
   min-height: 22px;
   margin: 0 0 16px;
   padding: 4px 9px;
-  border-radius: 4px;
-  background: #e8f3ef;
-  color: #455333;
+  border-radius: 999px;
+  background: rgba(213, 245, 140, 0.32);
+  color: var(--color-primary-dark);
   font-size: var(--text-caption);
   font-weight: 800;
 }
 
 .login-form h1 {
   margin: 0 0 22px;
-  color: #4b5632;
+  color: var(--color-primary-dark);
   font-size: 32px;
   font-weight: 800;
   line-height: 1.2;
@@ -115,11 +90,11 @@
   width: 100%;
   height: 44px;
   padding: 0 12px;
-  border: 1px solid #dce4eb;
-  border-radius: 6px;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
   outline: none;
   background: #fff;
-  color: #4b5632;
+  color: var(--color-primary-dark);
   font: inherit;
   font-size: var(--text-body);
   transition: border-color 0.15s, box-shadow 0.15s;
@@ -131,7 +106,7 @@
 }
 
 .login-field input::placeholder {
-  color: #9aa48f;
+  color: #7b8470;
 }
 
 .remember {
@@ -139,7 +114,7 @@
   align-items: center;
   gap: 8px;
   margin: 1px 0 18px;
-  color: #78899a;
+  color: var(--color-text-muted);
   font-size: var(--text-small);
   cursor: pointer;
 }
@@ -160,8 +135,8 @@
   margin: 0 auto;
   border: 0;
   border-radius: var(--radius-pill);
-  background: #f5c766;
-  color: #3e452e;
+  background: var(--color-primary-light);
+  color: var(--color-primary-dark);
   font: inherit;
   font-size: var(--text-small);
   font-weight: 900;
@@ -170,7 +145,7 @@
 }
 
 .login-submit:hover:not(:disabled) {
-  background: #ffd77c;
+  background: var(--color-primary-light-hover);
   transform: translateY(-1px);
 }
 
@@ -199,23 +174,23 @@
 
 .login-footer {
   margin: 18px 0 0;
-  color: #718397;
+  color: var(--color-text-muted);
   font-size: var(--text-small);
 }
 
 .login-footer a {
   margin-left: 4px;
-  color: #4b5632;
+  color: var(--color-primary-dark);
   font-weight: 900;
 }
 
 @media (max-width: 650px) {
   .login-layout {
-    display: block;
-  }
-
-  .login-page {
-    background: #f7f9f2;
+    display: grid;
+    grid-template-columns: 1fr;
+    min-height: auto;
+    gap: 0;
+    padding: 24px 0 28px;
   }
 
   .login-brand-panel {
@@ -223,31 +198,13 @@
   }
 
   .login-form-panel {
-    min-height: 100dvh;
-    padding: 42px 24px 32px;
-    background: #f7f9f2;
+    padding: 0;
   }
 
-  .login-print-decoration {
-    width: 120px;
-    height: 116px;
+  .login-form {
+    padding: 28px 22px;
   }
 
-  .login-print {
-    width: 92px;
-  }
-
-  .login-print-one {
-    top: -50px;
-    left: 16px;
-    width: 112px;
-  }
-
-  .login-print-two {
-    top: -2px;
-    left: 46px;
-    width: 112px;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {

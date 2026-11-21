@@ -1,6 +1,5 @@
 <template>
   <main class="activities-page account-page-main">
-    <PagePrintDecoration />
 
     <div class="activities-page-content">
       <nav class="activities-breadcrumb" aria-label="Breadcrumb">
@@ -677,7 +676,6 @@
 import { computed, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import ActivityEditorFields from '../components/ActivityEditorFields.vue'
-import PagePrintDecoration from '../components/PagePrintDecoration.vue'
 import { usePageActivation } from '../composables/usePageActivation.js'
 import {
   ApiError,

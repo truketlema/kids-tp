@@ -1,6 +1,5 @@
 <template>
   <main class="child-profile-page account-page-main">
-    <PagePrintDecoration />
 
     <div class="child-profile-content">
       <nav class="child-profile-breadcrumb" aria-label="Breadcrumb">
@@ -218,7 +217,6 @@
 <script setup>
 import { computed, nextTick, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import PagePrintDecoration from '../components/PagePrintDecoration.vue'
 import { usePageActivation } from '../composables/usePageActivation.js'
 import {
   ApiError,

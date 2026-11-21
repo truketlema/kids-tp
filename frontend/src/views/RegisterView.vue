@@ -1,9 +1,14 @@
 <template>
   <main class="register-page">
-    <div class="page">
-      <!-- Left brand panel -->
-      <aside class="brand-panel" aria-label="Kids TP family benefits">
-        <img class="mascot" src="/logo.png" alt="Kids TP mascot" />
+    <PublicHeader
+      prompt="Already a member?"
+      link-text="Sign in"
+      link-to="/login"
+    />
+
+    <div class="register-layout">
+      <aside class="register-brand-panel" aria-label="Kids TP family benefits">
+        <FamilyArtwork variant="auth" />
 
         <div class="brand-copy">
           <p class="eyebrow">
@@ -14,7 +19,6 @@
             <span class="benefit-icon">
               <v-icon icon="mdi-account-group-outline" />
             </span>
-
             <div>
               <h2>One family, working together</h2>
               <p>Manage multiple children with the parents you invite.</p>
@@ -25,7 +29,6 @@
             <span class="benefit-icon">
               <v-icon icon="mdi-star-outline" />
             </span>
-
             <div>
               <h2>Points with purpose</h2>
               <p>
@@ -38,7 +41,6 @@
             <span class="benefit-icon">
               <v-icon icon="mdi-wallet-outline" />
             </span>
-
             <div>
               <h2>A clearer financial picture</h2>
               <p>
@@ -49,16 +51,10 @@
         </div>
       </aside>
 
-      <!-- Registration form panel -->
       <section
-        class="form-panel"
+        class="register-form-panel"
         aria-label="Parent registration form"
       >
-        <div class="print-decoration" aria-hidden="true">
-          <img class="print print-one" src="/print.png" alt="" />
-          <img class="print print-two" src="/print.png" alt="" />
-        </div>
-
         <form
           class="registration"
           :aria-busy="isSubmitting"
@@ -69,7 +65,7 @@
             You’ve been invited to join <strong>{{ invitationFamilyName }}</strong>.
           </p>
 
-          <h1 class="mobile-title">
+          <h1 class="register-title">
             Good habits grow into brighter futures.
           </h1>
 
@@ -275,6 +271,8 @@ import {
   ref,
 } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import FamilyArtwork from '../components/FamilyArtwork.vue'
+import PublicHeader from '../components/PublicHeader.vue'
 import {
   getCountries,
   getCountryCallingCode,

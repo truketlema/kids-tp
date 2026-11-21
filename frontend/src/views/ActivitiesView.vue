@@ -362,7 +362,7 @@
                     <small>Default: +{{ activity.default_tp }} TP</small>
                   </span>
                   <label class="child-activity-assignment-reward">
-                    TP for {{ selectedChild.name }}
+                    TP reward
                     <input
                       type="number"
                       min="1"
@@ -1144,11 +1144,39 @@ async function assignActivityToChild(activity) {
   isAssigningActivityId.value = activity.id
 
   try {
-    await assignChildActivity(child.id, activity.id, { tp_override: tpOverride })
+    const result = await assignChildActivity(child.id, activity.id, { tp_override: tpOverride })
+    if (result.activity_id == null || String(result.child_id) !== String(child.id)) {
+      throw new Error('The API returned an invalid activity assignment.')
+    }
+
+    categories.value = categories.value.map((category) => ({
+      ...category,
+      activities: category.activities.map((currentActivity) => {
+        if (String(currentActivity.id) !== String(activity.id)) {
+          return currentActivity
+        }
+
+        const childIds = currentActivity.child_ids || []
+        const childTpOverrides = (currentActivity.child_tp_overrides || [])
+          .filter((override) => String(override.child_id) !== String(child.id))
+
+        return {
+          ...currentActivity,
+          id: result.activity_id,
+          child_ids: childIds.some((id) => String(id) === String(child.id))
+            ? childIds
+            : [...childIds, child.id],
+          child_tp_overrides: [
+            ...childTpOverrides,
+            { child_id: child.id, tp_override: tpOverride },
+          ],
+        }
+      }),
+    }))
+
     const nextDrafts = { ...assignmentTpDrafts.value }
     delete nextDrafts[activity.id]
     assignmentTpDrafts.value = nextDrafts
-    await loadActivities(false)
   } catch (error) {
     if (error instanceof ApiError && error.status === 401) {
       clearAuthToken()

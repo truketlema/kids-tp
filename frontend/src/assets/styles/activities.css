@@ -1125,20 +1125,28 @@
   }
 
   .child-activity-assignment-category li {
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 8px;
   }
 
   .child-activity-assignment-category li > span {
-    flex: 1 1 100%;
+    grid-column: 1 / -1;
   }
 
   .child-activity-assignment-reward {
-    flex: 1 1 110px;
-    max-width: 110px;
+    display: grid;
+    grid-template-columns: max-content minmax(72px, 90px);
+    align-items: center;
+    gap: 6px;
+    flex: none;
+    max-width: none;
+    white-space: nowrap;
   }
 
   .child-activity-assignment-category .activity-primary-button {
-    margin-left: auto;
+    margin-left: 0;
   }
 
   .activity-dialog,

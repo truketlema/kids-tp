@@ -674,10 +674,11 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import ActivityEditorFields from '../components/ActivityEditorFields.vue'
 import PagePrintDecoration from '../components/PagePrintDecoration.vue'
+import { usePageActivation } from '../composables/usePageActivation.js'
 import {
   ApiError,
   addCategory,
@@ -1230,7 +1231,9 @@ async function refreshCategory(categoryName) {
   }
 }
 
-async function loadActivities(showLoading = true) {
+async function loadActivities(showLoading = true, background = false) {
+  const hasExistingData = Boolean(profile.value)
+
   if (showLoading) {
     isLoading.value = true
   }
@@ -1238,9 +1241,9 @@ async function loadActivities(showLoading = true) {
 
   try {
     const [userResult, categoryResult, childrenResult] = await Promise.all([
-      getCurrentUser(),
-      fetchCategories(),
-      fetchChildren(),
+      getCurrentUser({ bypassCache: background }),
+      fetchCategories({ bypassCache: background }),
+      fetchChildren({ bypassCache: background }),
     ])
 
     if (!Array.isArray(categoryResult.categories)) {
@@ -1268,7 +1271,11 @@ async function loadActivities(showLoading = true) {
       return
     }
 
-    loadError.value = error instanceof Error ? error.message : 'Unable to load activity categories.'
+    if (background && hasExistingData) {
+      console.error('Unable to refresh activity categories in the background.', error)
+    } else {
+      loadError.value = error instanceof Error ? error.message : 'Unable to load activity categories.'
+    }
   } finally {
     if (showLoading) {
       isLoading.value = false
@@ -1276,7 +1283,10 @@ async function loadActivities(showLoading = true) {
   }
 }
 
-onMounted(loadActivities)
+usePageActivation(
+  () => loadActivities(),
+  () => loadActivities(false, true),
+)
 </script>
 
 <style scoped src="../assets/styles/activities.css"></style>

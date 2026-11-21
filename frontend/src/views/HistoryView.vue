@@ -67,9 +67,10 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import PagePrintDecoration from '../components/PagePrintDecoration.vue'
+import { usePageActivation } from '../composables/usePageActivation.js'
 import {
   ApiError,
   clearAuthToken,
@@ -126,14 +127,19 @@ function formatDate(value) {
     : new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: 'short' }).format(date)
 }
 
-async function loadHistory() {
-  isLoading.value = true
+async function loadHistory({ background = false } = {}) {
+  const hasExistingData = Boolean(profile.value)
+
+  if (!background || !hasExistingData) {
+    isLoading.value = true
+  }
+
   loadError.value = ''
   try {
     const [user, result, childData] = await Promise.all([
-      getCurrentUser(),
-      fetchFamilyLedger({ childId: route.query.child_id }),
-      fetchChildren(),
+      getCurrentUser({ bypassCache: background }),
+      fetchFamilyLedger({ childId: route.query.child_id }, { bypassCache: background }),
+      fetchChildren({ bypassCache: background }),
     ])
     profile.value = user
     entries.value = result.ledger
@@ -144,14 +150,21 @@ async function loadHistory() {
       await router.replace({ name: 'login' })
       return
     }
-    loadError.value = error instanceof Error ? error.message : 'Unable to load points history.'
+    if (background && hasExistingData) {
+      console.error('Unable to refresh points history in the background.', error)
+    } else {
+      loadError.value = error instanceof Error ? error.message : 'Unable to load points history.'
+    }
   } finally {
     isLoading.value = false
   }
 }
 
-watch(() => route.query.child_id, loadHistory)
-onMounted(loadHistory)
+watch(() => route.query.child_id, () => loadHistory())
+usePageActivation(
+  () => loadHistory(),
+  () => loadHistory({ background: true }),
+)
 </script>
 
 <style scoped>

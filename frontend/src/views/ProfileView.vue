@@ -364,9 +364,10 @@
 </template>
 
 <script setup>
-import { computed, onMounted, reactive, ref, watch } from 'vue'
+import { computed, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import PagePrintDecoration from '../components/PagePrintDecoration.vue'
+import { usePageActivation } from '../composables/usePageActivation.js'
 import {
   ApiError,
   changePassword,
@@ -760,14 +761,19 @@ function formatNotificationDate(value) {
     : new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: 'short' }).format(date)
 }
 
-async function loadProfile() {
-  isLoading.value = true
+async function loadProfile({ background = false } = {}) {
+  const hasExistingData = Boolean(profile.value)
+
+  if (!background || !hasExistingData) {
+    isLoading.value = true
+  }
+
   loadError.value = ''
 
   try {
     const [userResult, childrenResult] = await Promise.all([
-      getCurrentUser(),
-      fetchChildren(),
+      getCurrentUser({ bypassCache: background }),
+      fetchChildren({ bypassCache: background }),
     ])
 
     if (!Array.isArray(childrenResult.children)) {
@@ -783,9 +789,13 @@ async function loadProfile() {
       return
     }
 
-    loadError.value = error instanceof Error
-      ? error.message
-      : 'Unable to load your profile.'
+    if (background && hasExistingData) {
+      console.error('Unable to refresh profile details in the background.', error)
+    } else {
+      loadError.value = error instanceof Error
+        ? error.message
+        : 'Unable to load your profile.'
+    }
   } finally {
     isLoading.value = false
   }
@@ -796,7 +806,10 @@ async function signOut() {
   await router.replace({ name: 'home' })
 }
 
-onMounted(loadProfile)
+usePageActivation(
+  () => loadProfile(),
+  () => loadProfile({ background: true }),
+)
 watch(
   () => route.query.panel,
   (panel) => {

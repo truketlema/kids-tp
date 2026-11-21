@@ -216,9 +216,10 @@
 </template>
 
 <script setup>
-import { computed, nextTick, onMounted, ref } from 'vue'
+import { computed, nextTick, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import PagePrintDecoration from '../components/PagePrintDecoration.vue'
+import { usePageActivation } from '../composables/usePageActivation.js'
 import {
   ApiError,
   clearAuthToken,
@@ -431,14 +432,19 @@ async function removeChildProfile() {
   }
 }
 
-async function loadChildProfile() {
-  isLoading.value = true
+async function loadChildProfile({ background = false } = {}) {
+  const hasExistingData = Boolean(profile.value)
+
+  if (!background || !hasExistingData) {
+    isLoading.value = true
+  }
+
   loadError.value = ''
 
   try {
     const [userResult, ledgerResult] = await Promise.all([
-      getCurrentUser(),
-      fetchChildLedger(route.params.childId),
+      getCurrentUser({ bypassCache: background }),
+      fetchChildLedger(route.params.childId, { bypassCache: background }),
     ])
 
     if (!ledgerResult.child) {
@@ -456,13 +462,20 @@ async function loadChildProfile() {
       return
     }
 
-    loadError.value = error instanceof Error ? error.message : 'Unable to load this child profile.'
+    if (background && hasExistingData) {
+      console.error('Unable to refresh the child profile in the background.', error)
+    } else {
+      loadError.value = error instanceof Error ? error.message : 'Unable to load this child profile.'
+    }
   } finally {
     isLoading.value = false
   }
 }
 
-onMounted(loadChildProfile)
+usePageActivation(
+  () => loadChildProfile(),
+  () => loadChildProfile({ background: true }),
+)
 </script>
 
 <style scoped src="../assets/styles/child-profile.css"></style>

@@ -8,7 +8,20 @@
     <p v-if="profileError" class="account-profile-error" role="alert">
       {{ profileError }}
     </p>
-    <router-view />
+    <RouterView v-slot="{ Component, route: viewRoute }">
+      <KeepAlive :key="viewCacheVersion" :max="12">
+        <component
+          v-if="viewRoute.meta.keepAlive"
+          :is="Component"
+          :key="viewRoute.fullPath"
+        />
+      </KeepAlive>
+      <component
+        v-if="!viewRoute.meta.keepAlive"
+        :is="Component"
+        :key="viewRoute.fullPath"
+      />
+    </RouterView>
   </v-app>
 </template>
 
@@ -22,6 +35,7 @@ const route = useRoute()
 const router = useRouter()
 const profile = ref(null)
 const profileError = ref('')
+const viewCacheVersion = ref(0)
 const showAccountHeader = computed(() => route.meta.requiresAuth)
 const activeNav = computed(() => ({
   dashboard: 'dashboard',
@@ -41,8 +55,18 @@ function updateHeaderProfile(event) {
   }
 }
 
-onMounted(() => window.addEventListener('profile-updated', updateHeaderProfile))
-onBeforeUnmount(() => window.removeEventListener('profile-updated', updateHeaderProfile))
+function clearCachedViews() {
+  viewCacheVersion.value += 1
+}
+
+onMounted(() => {
+  window.addEventListener('profile-updated', updateHeaderProfile)
+  window.addEventListener('kids-tp:auth-cleared', clearCachedViews)
+})
+onBeforeUnmount(() => {
+  window.removeEventListener('profile-updated', updateHeaderProfile)
+  window.removeEventListener('kids-tp:auth-cleared', clearCachedViews)
+})
 
 watch(showAccountHeader, async (shouldShow) => {
   const request = ++profileRequest

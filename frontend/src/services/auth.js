@@ -20,6 +20,10 @@ export function clearAuthToken() {
   localStorage.removeItem(TOKEN_STORAGE_KEY)
   sessionStorage.removeItem(TOKEN_STORAGE_KEY)
   clearApiReadCache()
+
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new Event('kids-tp:auth-cleared'))
+  }
 }
 
 function clearApiReadCache() {
@@ -42,7 +46,10 @@ function getCachedApiResponse(cacheKey) {
   return structuredClone(cached.data)
 }
 
-async function request(endpoint, { method = 'GET', payload, authenticated = false } = {}) {
+async function request(
+  endpoint,
+  { method = 'GET', payload, authenticated = false, bypassCache = false } = {},
+) {
   const headers = {
     Accept: 'application/json',
   }
@@ -67,7 +74,7 @@ async function request(endpoint, { method = 'GET', payload, authenticated = fals
 
     if (method === 'GET') {
       cacheKey = `${token}:${endpoint}`
-      const cachedResponse = getCachedApiResponse(cacheKey)
+      const cachedResponse = bypassCache ? null : getCachedApiResponse(cacheKey)
 
       if (cachedResponse) {
         return cachedResponse
@@ -162,8 +169,8 @@ export function loginAccount(payload, remember = false) {
   return authenticate('/login', payload, remember)
 }
 
-export function getCurrentUser() {
-  return request('/user', { authenticated: true })
+export function getCurrentUser({ bypassCache = false } = {}) {
+  return request('/user', { authenticated: true, bypassCache })
 }
 
 export function updateProfile(payload) {
@@ -228,21 +235,24 @@ export function markAllNotificationsRead() {
   })
 }
 
-export function fetchChildren() {
-  return request('/children', { authenticated: true })
+export function fetchChildren({ bypassCache = false } = {}) {
+  return request('/children', { authenticated: true, bypassCache })
 }
 
-export function fetchChildLedger(childId) {
-  return request(`/children/${encodeURIComponent(childId)}/ledger`, { authenticated: true })
+export function fetchChildLedger(childId, { bypassCache = false } = {}) {
+  return request(`/children/${encodeURIComponent(childId)}/ledger`, {
+    authenticated: true,
+    bypassCache,
+  })
 }
 
-export function fetchFamilyLedger(filters = {}) {
+export function fetchFamilyLedger(filters = {}, { bypassCache = false } = {}) {
   const query = new URLSearchParams()
   if (filters.type) query.set('type', filters.type)
   if (filters.childId) query.set('child_id', filters.childId)
   const suffix = query.size ? `?${query.toString()}` : ''
 
-  return request(`/ledger${suffix}`, { authenticated: true })
+  return request(`/ledger${suffix}`, { authenticated: true, bypassCache })
 }
 
 export function addLedgerEntry(childId, payload) {
@@ -253,8 +263,8 @@ export function addLedgerEntry(childId, payload) {
   })
 }
 
-export function fetchCategories() {
-  return request('/categories', { authenticated: true })
+export function fetchCategories({ bypassCache = false } = {}) {
+  return request('/categories', { authenticated: true, bypassCache })
 }
 
 export function addCategory(payload) {

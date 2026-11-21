@@ -311,8 +311,9 @@
 </template>
 
 <script setup>
-import { computed, onMounted, reactive, ref } from 'vue'
+import { computed, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { usePageActivation } from '../composables/usePageActivation.js'
 import PagePrintDecoration from '../components/PagePrintDecoration.vue'
 import {
   ApiError,
@@ -544,14 +545,19 @@ async function sendInvitation() {
   }
 }
 
-async function loadFamily() {
-  isLoading.value = true
+async function loadFamily({ background = false } = {}) {
+  const hasExistingData = Boolean(profile.value)
+
+  if (!background || !hasExistingData) {
+    isLoading.value = true
+  }
+
   loadError.value = ''
 
   try {
     const [userResult, childrenResult] = await Promise.all([
-      getCurrentUser(),
-      fetchChildren(),
+      getCurrentUser({ bypassCache: background }),
+      fetchChildren({ bypassCache: background }),
     ])
 
     if (!Array.isArray(childrenResult.children)) {
@@ -567,13 +573,20 @@ async function loadFamily() {
       return
     }
 
-    loadError.value = error instanceof Error ? error.message : 'Unable to load your family.'
+    if (background && hasExistingData) {
+      console.error('Unable to refresh family details in the background.', error)
+    } else {
+      loadError.value = error instanceof Error ? error.message : 'Unable to load your family.'
+    }
   } finally {
     isLoading.value = false
   }
 }
 
-onMounted(loadFamily)
+usePageActivation(
+  () => loadFamily(),
+  () => loadFamily({ background: true }),
+)
 </script>
 
 <style scoped src="../assets/styles/family.css"></style>

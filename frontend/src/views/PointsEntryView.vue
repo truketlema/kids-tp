@@ -153,9 +153,10 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import PagePrintDecoration from '../components/PagePrintDecoration.vue'
+import { usePageActivation } from '../composables/usePageActivation.js'
 import { addLedgerEntry, ApiError, clearAuthToken, fetchCategories, fetchChildLedger, getCurrentUser } from '../services/auth.js'
 
 const route = useRoute()
@@ -247,14 +248,19 @@ function setSelectedChild(result) {
   child.value = result.child
   summary.value = result.summary
 }
-async function loadData() {
-  isLoading.value = true
+async function loadData({ background = false } = {}) {
+  const hasExistingData = Boolean(profile.value)
+
+  if (!background || !hasExistingData) {
+    isLoading.value = true
+  }
+
   loadError.value = ''
   try {
     const [user, categoryResult, childResult] = await Promise.all([
-      getCurrentUser(),
-      fetchCategories(),
-      fetchChildLedger(childId.value),
+      getCurrentUser({ bypassCache: background }),
+      fetchCategories({ bypassCache: background }),
+      fetchChildLedger(childId.value, { bypassCache: background }),
     ])
     categories.value = categoryResult.categories
     profile.value = user
@@ -269,7 +275,11 @@ async function loadData() {
       await router.replace({ name: 'login' })
       return
     }
-    loadError.value = error instanceof Error ? error.message : 'Unable to load point details.'
+    if (background && hasExistingData) {
+      console.error('Unable to refresh point details in the background.', error)
+    } else {
+      loadError.value = error instanceof Error ? error.message : 'Unable to load point details.'
+    }
   } finally {
     isLoading.value = false
   }
@@ -323,7 +333,10 @@ function startAnother() {
   remarks.value = ''
   syncSuggestedAmount()
 }
-onMounted(loadData)
+usePageActivation(
+  () => loadData(),
+  () => loadData({ background: true }),
+)
 </script>
 
 <style scoped>

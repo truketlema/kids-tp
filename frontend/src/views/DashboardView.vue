@@ -278,8 +278,9 @@
 </template>
 
 <script setup>
-import { computed, onMounted, reactive, ref } from 'vue'
+import { computed, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { usePageActivation } from '../composables/usePageActivation.js'
 import {
   ApiError,
   clearAuthToken,
@@ -383,14 +384,19 @@ async function handleExpiredSession(error) {
   return true
 }
 
-async function loadDashboard() {
-  isLoading.value = true
+async function loadDashboard({ background = false } = {}) {
+  const hasExistingData = Boolean(profile.value)
+
+  if (!background || !hasExistingData) {
+    isLoading.value = true
+  }
+
   loadError.value = ''
 
   try {
     const [userResult, childrenResult] = await Promise.all([
-      getCurrentUser(),
-      fetchChildren(),
+      getCurrentUser({ bypassCache: background }),
+      fetchChildren({ bypassCache: background }),
     ])
 
     if (!Array.isArray(childrenResult.children)) {
@@ -404,7 +410,11 @@ async function loadDashboard() {
       return
     }
 
-    loadError.value = getErrorMessage(error, 'Unable to load your family dashboard.')
+    if (background && hasExistingData) {
+      console.error('Unable to refresh the family dashboard in the background.', error)
+    } else {
+      loadError.value = getErrorMessage(error, 'Unable to load your family dashboard.')
+    }
   } finally {
     isLoading.value = false
   }
@@ -458,9 +468,10 @@ async function submitAddChild() {
   }
 }
 
-onMounted(() => {
-  loadDashboard()
-})
+usePageActivation(
+  () => loadDashboard(),
+  () => loadDashboard({ background: true }),
+)
 </script>
 
 <style scoped src="../assets/styles/dashboard.css"></style>

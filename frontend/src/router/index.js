@@ -1,16 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
-import HomeView from '../views/HomeView.vue'
-import RegisterView from '../views/RegisterView.vue'
-import LoginView from '../views/LoginView.vue'
-import DashboardView from '../views/DashboardView.vue'
-import ProfileView from '../views/ProfileView.vue'
-import FamilyView from '../views/FamilyView.vue'
-import ChildProfileView from '../views/ChildProfileView.vue'
-import ChildActivitySetupView from '../views/ChildActivitySetupView.vue'
-import ActivitiesView from '../views/ActivitiesView.vue'
-import HistoryView from '../views/HistoryView.vue'
-import PointsEntryView from '../views/PointsEntryView.vue'
 import { getAuthToken } from '../services/auth.js'
 
 const router = createRouter({
@@ -20,76 +9,76 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: HomeView,
+      component: () => import('../views/HomeView.vue'),
     },
     {
       path: '/register',
       name: 'register',
-      component: RegisterView,
+      component: () => import('../views/RegisterView.vue'),
     },
     {
       path: '/login',
       name: 'login',
-      component: LoginView,
+      component: () => import('../views/LoginView.vue'),
     },
     {
       path: '/dashboard',
       name: 'dashboard',
-      component: DashboardView,
+      component: () => import('../views/DashboardView.vue'),
       meta: { requiresAuth: true },
     },
     {
       path: '/activities',
       name: 'activities',
-      component: ActivitiesView,
+      component: () => import('../views/ActivitiesView.vue'),
       meta: { requiresAuth: true },
     },
     {
       path: '/activities/:categoryId',
       name: 'category-activities',
-      component: ActivitiesView,
+      component: () => import('../views/ActivitiesView.vue'),
       meta: { requiresAuth: true },
     },
     {
       path: '/children/:childId/activities',
       name: 'child-activities',
-      component: ActivitiesView,
+      component: () => import('../views/ActivitiesView.vue'),
       meta: { requiresAuth: true },
     },
     {
       path: '/children/setup/activities',
       name: 'child-activity-setup',
-      component: ChildActivitySetupView,
+      component: () => import('../views/ChildActivitySetupView.vue'),
       meta: { requiresAuth: true },
     },
     {
       path: '/history',
       name: 'history',
-      component: HistoryView,
+      component: () => import('../views/HistoryView.vue'),
       meta: { requiresAuth: true },
     },
     {
       path: '/children/:childId/points/:type(award|deduct)',
       name: 'child-points',
-      component: PointsEntryView,
+      component: () => import('../views/PointsEntryView.vue'),
       meta: { requiresAuth: true },
     },
     {
       path: '/profile',
       name: 'profile',
-      component: ProfileView,
+      component: () => import('../views/ProfileView.vue'),
       meta: { requiresAuth: true },
     },
     {
       path: '/family',
       name: 'family',
-      component: FamilyView,
+      component: () => import('../views/FamilyView.vue'),
       meta: { requiresAuth: true },
     },
     {
       path: '/children/:childId',
       name: 'child-profile',
-      component: ChildProfileView,
+      component: () => import('../views/ChildProfileView.vue'),
       meta: { requiresAuth: true },
     },
   ],

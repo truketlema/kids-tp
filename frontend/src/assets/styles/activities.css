@@ -74,6 +74,7 @@
 
 .child-activity-assignment-panel {
   display: grid;
+  align-content: start;
   gap: 14px;
   width: min(100%, 900px);
   max-height: calc(100vh - 48px);

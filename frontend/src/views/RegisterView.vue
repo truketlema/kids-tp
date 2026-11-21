@@ -79,7 +79,7 @@
               v-model.trim="form.parentName"
               name="parentName"
               autocomplete="name"
-              placeholder="Selam Tesfaye"
+              placeholder="Your full name"
               required
             />
           </label>
@@ -91,7 +91,7 @@
               name="email"
               type="email"
               autocomplete="email"
-              placeholder="selam.tesfaye@example.com"
+              placeholder="you@example.com"
               :readonly="isInvitation"
               required
             />
@@ -175,7 +175,7 @@
                 type="tel"
                 autocomplete="tel-national"
                 inputmode="tel"
-                placeholder="Phone number"
+                placeholder="Your phone number"
                 required
               />
             </div>
@@ -188,7 +188,7 @@
               name="password"
               type="password"
               autocomplete="new-password"
-              placeholder="••••••••••••"
+              placeholder="At least 8 characters"
               minlength="8"
               required
             />
@@ -201,7 +201,7 @@
               name="password_confirmation"
               type="password"
               autocomplete="new-password"
-              placeholder="Re-enter your password"
+              placeholder="Confirm your password"
               minlength="8"
               required
             />
@@ -213,7 +213,7 @@
               v-model.trim="form.familyName"
               name="familyName"
               autocomplete="organization"
-              placeholder="Abebe family"
+              placeholder="Your family name"
               required
             />
           </label>

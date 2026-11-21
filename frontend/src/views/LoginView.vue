@@ -26,7 +26,7 @@
               type="text"
               name="name"
               autocomplete="name"
-              placeholder="Selam Tesfaye"
+              placeholder="Your full name"
               required
             />
           </label>
@@ -38,7 +38,7 @@
               type="email"
               name="email"
               autocomplete="email"
-              placeholder="selam.tesfaye@example.com"
+              placeholder="you@example.com"
               required
             />
           </label>
@@ -50,7 +50,7 @@
               type="password"
               name="password"
               autocomplete="current-password"
-              placeholder="Enter your password"
+              placeholder="Your password"
               required
             />
           </label>

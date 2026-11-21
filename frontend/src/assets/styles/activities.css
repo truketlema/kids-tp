@@ -19,7 +19,7 @@
   align-items: center;
   gap: 7px;
   margin-bottom: 20px;
-  color: #7a816f;
+  color: var(--color-text-muted);
   font-size: var(--text-caption);
 }
 
@@ -57,7 +57,7 @@
 
 .activities-page-heading p {
   margin: 6px 0 0;
-  color: #828979;
+  color: var(--color-text-muted);
   font-size: var(--text-small);
 }
 
@@ -81,10 +81,10 @@
   max-height: calc(100dvh - 48px);
   overflow: auto;
   padding: 22px;
-  border: 1px solid #dfe8ce;
-  border-radius: 15px;
+  border: 1px solid var(--app-card-border);
+  border-radius: var(--app-card-radius);
   background: #fff;
-  box-shadow: 0 18px 45px rgba(49, 61, 36, 0.24);
+  box-shadow: 0 18px 45px rgba(49, 61, 36, 0.18);
 }
 
 .child-activity-assignment-heading {
@@ -103,7 +103,7 @@
 
 .child-activity-assignment-heading p {
   margin: 5px 0 0;
-  color: #828979;
+  color: var(--color-text-muted);
   font-size: var(--text-caption);
 }
 
@@ -141,7 +141,7 @@
 }
 
 .child-activity-assignment-toggle small {
-  color: #828979;
+  color: var(--color-text-muted);
   font-size: var(--text-caption);
 }
 
@@ -203,7 +203,7 @@
 }
 
 .child-activity-assignment-category li small {
-  color: #828979;
+  color: var(--color-text-muted);
   font-size: var(--text-caption);
 }
 
@@ -263,7 +263,7 @@
 
 .category-detail-copy p {
   margin: 0;
-  color: #818876;
+  color: var(--color-text-muted);
   font-size: var(--text-caption);
 }
 
@@ -278,7 +278,7 @@
   padding: 14px;
   border-radius: 10px;
   background: #f7f9f2;
-  color: #858c7a;
+  color: var(--color-text-muted);
   font-size: var(--text-caption);
   text-align: center;
 }
@@ -313,7 +313,7 @@
 .category-empty-state p {
   max-width: 320px;
   margin: 0 0 8px;
-  color: #858c7a;
+  color: var(--color-text-muted);
   font-size: var(--text-caption);
   line-height: 1.5;
 }
@@ -351,10 +351,10 @@
 
 .category-card {
   overflow: hidden;
-  border: 1px solid #e6e9df;
-  border-radius: 15px;
+  border: 1px solid var(--app-card-border);
+  border-radius: var(--app-card-radius);
   background: #fff;
-  box-shadow: 0 4px 14px rgba(49, 61, 36, 0.035);
+  box-shadow: var(--app-card-shadow);
   transition:
     transform 280ms cubic-bezier(0.2, 0.8, 0.2, 1),
     box-shadow 280ms cubic-bezier(0.2, 0.8, 0.2, 1);
@@ -458,7 +458,7 @@
 
 .category-copy small {
   overflow: hidden;
-  color: #818876;
+  color: var(--color-text-muted);
   font-size: var(--text-caption);
   text-overflow: ellipsis;
 }
@@ -674,7 +674,7 @@
 
 .delete-confirmation-header p {
   margin: 4px 0 0;
-  color: #858c7a;
+  color: var(--color-text-muted);
   font-size: var(--text-caption);
 }
 
@@ -711,7 +711,7 @@
 
 .activity-dialog-header p {
   margin: 4px 0 0;
-  color: #858c7a;
+  color: var(--color-text-muted);
   font-size: var(--text-caption);
 }
 
@@ -724,7 +724,7 @@
   border: 0;
   border-radius: 50%;
   background: transparent;
-  color: #858c7a;
+  color: var(--color-text-muted);
   cursor: pointer;
 }
 
@@ -747,12 +747,12 @@
 }
 
 .activity-required {
-  color: #d54d40;
+  color: var(--color-danger);
 }
 
 .activity-optional,
 .activity-field-hint {
-  color: #8a907e;
+  color: var(--color-text-muted);
   font-size: var(--text-caption);
   font-weight: 400;
 }
@@ -779,7 +779,7 @@
 
 .category-icon-preview-chevron {
   margin-left: auto;
-  color: #79816d;
+  color: var(--color-text-muted);
 }
 
 .category-icon-preview > span:last-child {
@@ -793,7 +793,7 @@
 }
 
 .category-icon-preview small {
-  color: #858c7a;
+  color: var(--color-text-muted);
   font-size: var(--text-caption);
 }
 
@@ -864,7 +864,7 @@
 
 .activity-dialog-category small,
 .activity-dialog-category-hint {
-  color: #858c7a;
+  color: var(--color-text-muted);
   font-size: var(--text-caption);
 }
 
@@ -893,7 +893,7 @@
 }
 
 .activity-dialog-activity small {
-  color: #858c7a;
+  color: var(--color-text-muted);
   font-size: var(--text-caption);
 }
 
@@ -990,7 +990,7 @@
 }
 
 .activity-copy small {
-  color: #858c7a;
+  color: var(--color-text-muted);
   font-size: var(--text-caption);
   line-height: 1.35;
 }
@@ -1009,7 +1009,7 @@
 }
 
 .activity-values small {
-  color: #858c7a;
+  color: var(--color-text-muted);
   font-size: var(--text-caption);
 }
 
@@ -1051,7 +1051,7 @@
   padding: 10px max(24px, calc((100% - 1080px) / 2));
   border-top: 1px solid #e6e9df;
   background: #fff;
-  color: #8a907e;
+  color: var(--color-text-muted);
   font-size: var(--text-caption);
 }
 
@@ -1375,6 +1375,6 @@
   }
 
   .activities-mobile-nav > span {
-    color: #a2a99a;
+    color: var(--color-text-muted);
   }
 }

@@ -17,7 +17,7 @@
   align-items: center;
   gap: 8px;
   margin-bottom: 18px;
-  color: #7a816f;
+  color: var(--color-text-muted);
   font-size: var(--text-caption);
 }
 
@@ -49,7 +49,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #8b927d;
+  color: var(--color-text-muted);
   font-size: var(--text-caption);
 }
 
@@ -92,9 +92,10 @@
 .child-setup-intro {
   margin-bottom: 20px;
   padding: 16px 18px;
-  border: 1px solid #e8ecdf;
-  border-radius: 13px;
+  border: 1px solid var(--app-card-border);
+  border-radius: var(--app-card-radius);
   background: #fff;
+  box-shadow: var(--app-card-shadow);
 }
 
 .child-setup-intro strong {
@@ -105,7 +106,7 @@
 
 .child-setup-intro p {
   margin: 6px 0 0;
-  color: #737b68;
+  color: var(--color-text-muted);
   font-size: var(--text-small);
   line-height: 1.5;
 }
@@ -213,7 +214,7 @@
 
 .child-setup-category-copy small {
   overflow: hidden;
-  color: #818876;
+  color: var(--color-text-muted);
   font-size: var(--text-caption);
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -230,7 +231,7 @@
 
 .child-setup-category-chevron {
   flex: 0 0 auto;
-  color: #818876;
+  color: var(--color-text-muted);
 }
 
 .child-setup-select-all {
@@ -315,7 +316,7 @@
 }
 
 .child-setup-activity-copy small {
-  color: #858c7a;
+  color: var(--color-text-muted);
   font-size: var(--text-caption);
 }
 
@@ -345,7 +346,7 @@
 
 .child-setup-reward-input input:disabled {
   background: #f3f5ef;
-  color: #7b836e;
+  color: var(--color-text-muted);
 }
 
 .child-setup-summary {
@@ -354,9 +355,10 @@
   display: grid;
   gap: 12px;
   padding: 15px;
-  border: 1px solid #e8ecdf;
-  border-radius: 14px;
+  border: 1px solid var(--app-card-border);
+  border-radius: var(--app-card-radius);
   background: #fff;
+  box-shadow: var(--app-card-shadow);
 }
 
 .child-setup-summary h2 {
@@ -390,7 +392,7 @@
 
 .child-setup-summary-count small,
 .child-setup-summary-reward small {
-  color: #818876;
+  color: var(--color-text-muted);
   font-size: var(--text-caption);
 }
 
@@ -414,7 +416,7 @@
 }
 
 .child-setup-summary-reward > span {
-  color: #818876;
+  color: var(--color-text-muted);
   font-size: var(--text-caption);
 }
 
@@ -423,7 +425,7 @@
   justify-content: space-between;
   gap: 8px;
   padding: 0 2px;
-  color: #737b68;
+  color: var(--color-text-muted);
   font-size: var(--text-caption);
 }
 
@@ -448,7 +450,7 @@
 
 .child-setup-advice p {
   margin: 6px 0 0;
-  color: #737b68;
+  color: var(--color-text-muted);
   font-size: var(--text-caption);
   line-height: 1.45;
 }
@@ -476,7 +478,7 @@
 }
 
 .child-setup-summary-note {
-  color: #858c7a;
+  color: var(--color-text-muted);
   font-size: var(--text-caption);
   text-align: center;
 }
@@ -488,7 +490,7 @@
   border: 1px solid #e8ecdf;
   border-radius: 12px;
   background: #fff;
-  color: #737b68;
+  color: var(--color-text-muted);
   text-align: center;
 }
 
@@ -539,7 +541,7 @@
 
 .child-setup-exit-dialog p {
   margin: 10px 0 20px;
-  color: #737b68;
+  color: var(--color-text-muted);
   line-height: 1.5;
 }
 

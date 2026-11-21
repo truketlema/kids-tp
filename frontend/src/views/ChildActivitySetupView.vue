@@ -215,6 +215,7 @@ import {
   assignChildActivity,
   clearAuthToken,
   fetchCategories,
+  getAuthToken,
   getCurrentUser,
   removeChild,
 } from '../services/auth.js'
@@ -477,6 +478,11 @@ async function completeSetup() {
 }
 
 onBeforeRouteLeave(() => {
+  if (!getAuthToken()) {
+    sessionStorage.removeItem('kids-tp:child-setup-draft')
+    return true
+  }
+
   if (allowRouteLeave) {
     return true
   }

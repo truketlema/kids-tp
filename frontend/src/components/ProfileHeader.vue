@@ -1,10 +1,7 @@
 <template>
   <header class="account-header">
     <div class="account-header-inner">
-      <RouterLink class="account-brand" to="/dashboard" aria-label="Kids TP dashboard">
-        <img src="/logo.png" alt="" />
-        <span>kids tp</span>
-      </RouterLink>
+      <BrandLockup class="account-brand" to="/dashboard" aria-label="Kids TP dashboard" />
 
       <nav class="account-desktop-nav" aria-label="Main navigation">
         <RouterLink
@@ -61,10 +58,7 @@
       </div>
 
       <div class="account-mobile-header">
-        <RouterLink class="account-brand" to="/dashboard" aria-label="Kids TP dashboard">
-          <img src="/logo.png" alt="" />
-          <span>kids tp</span>
-        </RouterLink>
+        <BrandLockup class="account-brand" to="/dashboard" aria-label="Kids TP dashboard" />
         <RouterLink class="account-bell" to="/profile?panel=notifications" aria-label="Open notifications">
           <v-icon icon="mdi-bell-outline" />
         </RouterLink>
@@ -75,6 +69,7 @@
 
 <script setup>
 import { useRouter } from 'vue-router'
+import BrandLockup from './BrandLockup.vue'
 import { clearAuthToken } from '../services/auth.js'
 
 const { profile, active } = defineProps({
@@ -115,7 +110,7 @@ function initials(name) {
 
 <style scoped>
 .account-header {
-  border-bottom: 1px solid #e6e9df;
+  border-bottom: 1px solid var(--color-border);
   background: var(--app-page-background);
 }
 
@@ -127,30 +122,6 @@ function initials(name) {
   min-height: 74px;
   margin: 0 auto;
   padding: 0 24px;
-}
-
-.account-brand {
-  position: relative;
-  display: inline-flex;
-  flex: 0 0 auto;
-  align-items: center;
-  gap: 0;
-  color: #4b5632;
-  font-size: 19px;
-  font-weight: 900;
-  letter-spacing: -0.8px;
-  text-decoration: none;
-}
-
-.account-brand img {
-  position: relative;
-  z-index: 1;
-  display: block;
-  width: 76px;
-  height: 62px;
-  margin-right: -13px;
-  object-fit: contain;
-  transform: translateY(-7px);
 }
 
 .account-desktop-nav {
@@ -181,7 +152,7 @@ function initials(name) {
 }
 
 .account-desktop-nav [aria-disabled='true'] {
-  color: #9da394;
+  color: var(--color-text-muted);
 }
 
 .account-header-details {
@@ -214,7 +185,7 @@ function initials(name) {
   padding: 8px 12px;
   border-radius: 999px;
   background: #f1f4e9;
-  color: #70785f;
+  color: var(--color-text-muted);
   font-size: var(--text-caption);
   white-space: nowrap;
 }
@@ -283,7 +254,7 @@ function initials(name) {
 }
 
 .account-header-user small {
-  color: #828979;
+  color: var(--color-text-muted);
   font-size: 11px;
 }
 
@@ -330,8 +301,8 @@ function initials(name) {
 
 @media (max-width: 760px) {
   .account-header-inner {
-    min-height: 58px;
-    padding: 10px 18px;
+    min-height: 64px;
+    padding: 0 12px;
   }
 
   .account-header-inner > .account-brand,
@@ -347,16 +318,5 @@ function initials(name) {
     width: 100%;
   }
 
-  .account-mobile-header .account-brand {
-    gap: 0;
-    font-size: 17px;
-  }
-
-  .account-mobile-header .account-brand img {
-    width: 58px;
-    height: 48px;
-    margin-right: -10px;
-    transform: translateY(-5px);
-  }
 }
 </style>

@@ -7,7 +7,10 @@
     />
 
     <section class="hero" aria-label="Welcome">
-      <FamilyArtwork />
+      <div class="hero-brand">
+        <h1 class="hero-title">kids tp</h1>
+        <FamilyArtwork />
+      </div>
 
       <RouterLink to="/register" class="start">
         Let's get started

@@ -106,7 +106,7 @@
 }
 
 .login-field input::placeholder {
-  color: #7b8470;
+  color: var(--color-text-muted);
 }
 
 .remember {

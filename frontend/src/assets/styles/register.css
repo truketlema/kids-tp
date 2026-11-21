@@ -171,7 +171,7 @@
 }
 
 .field input::placeholder {
-  color: #7b8470;
+  color: var(--color-text-muted);
 }
 
 .phone-input {
@@ -273,7 +273,7 @@
 
 .country-empty {
   margin: 8px 10px;
-  color: #718397;
+  color: var(--color-text-muted);
   font-size: var(--text-small);
 }
 
@@ -299,7 +299,7 @@
 
   margin: 18px 0 20px;
 
-  color: #78899a;
+  color: var(--color-text-muted);
   font-size: var(--text-small);
   line-height: 1.45;
 

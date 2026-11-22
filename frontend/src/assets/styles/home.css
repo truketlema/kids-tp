@@ -78,10 +78,12 @@
 
 @media (max-width: 600px) {
   .screen {
+    position: relative;
     padding: 6px 12px 12px;
   }
 
   .hero {
+    justify-content: center;
     gap: clamp(12px, 2.4vh, 18px);
     padding: 8px 0;
   }

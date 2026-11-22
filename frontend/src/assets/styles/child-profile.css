@@ -757,9 +757,9 @@ main.child-profile-page .child-point-actions a {
   font-size: var(--text-small);
 }
 
-.child-deduct-action { background: #fbe4dc; }
-.child-award-action { background: #075E54; color: #FFFFFF; }
-.child-activities-action { background: #F0F2F5; color: #075E54; text-decoration: none; }
+.child-point-actions .child-deduct-action { background: #fbe4dc; color: #111B21; }
+.child-point-actions .child-award-action { background: #075E54; color: #FFFFFF; }
+.child-point-actions .child-activities-action { border: 1px solid #DCE8E7; background: #fff; color: #111B21; text-decoration: none; }
 .child-activities-action span { min-width: 0; }
 
 @media (min-width: 761px) {

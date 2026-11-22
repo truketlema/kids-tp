@@ -102,7 +102,7 @@ function initials(name) {
 <style scoped>
 .account-header {
   border-bottom: 1px solid var(--color-border);
-  background: var(--app-page-background);
+  background: #FFFFFF;
 }
 
 .account-header-inner {
@@ -133,13 +133,13 @@ function initials(name) {
 }
 
 .account-desktop-nav a:hover {
-  border-bottom-color: #667342;
-  color: #38432c;
+  border-bottom-color: #075E54;
+  color: #111B21;
 }
 
 .account-desktop-nav .account-nav-current {
-  border-bottom-color: #667342;
-  color: #38432c;
+  border-bottom-color: #075E54;
+  color: #111B21;
 }
 
 .account-desktop-nav [aria-disabled='true'] {
@@ -157,7 +157,7 @@ function initials(name) {
   border: 0;
   border-radius: 999px;
   background: transparent;
-  color: #667342;
+  color: #075E54;
   font: inherit;
   font-size: var(--text-caption);
   font-weight: 800;
@@ -167,7 +167,7 @@ function initials(name) {
 }
 
 .account-sign-out:hover {
-  background: #f1f4e9;
+  background: #E7F7F3;
 }
 
 .account-date {
@@ -176,7 +176,7 @@ function initials(name) {
   gap: 8px;
   padding: 8px 12px;
   border-radius: 999px;
-  background: #f1f4e9;
+  background: #E7F7F3;
   color: var(--color-text-muted);
   font-size: var(--text-caption);
   white-space: nowrap;

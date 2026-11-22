@@ -24,9 +24,9 @@ const vuetify = createVuetify({
       kidsTpTheme: {
         dark: false,
         colors: {
-          primary: '#4B5531',
-          secondary: '#D5F58C',
-          background: '#F8F9F5',
+          primary: '#075E54',
+          secondary: '#075E54',
+          background: '#F0F2F5',
           surface: '#FFFFFF',
         },
       },

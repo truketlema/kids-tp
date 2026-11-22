@@ -1,35 +1,21 @@
 :root {
-  --color-primary: #4B5531;
-  --color-primary-light: #D5F58C;
-  --color-primary-dark: #39432C;
-  --color-primary-light-hover: #E3FFAD;
+  --color-primary: #075E54;
+  --color-primary-light: #075E54;
+  --color-primary-dark: #075E54;
+  --color-primary-light-hover: #075E54;
 
-  --color-background: #F8F9F5;
+  --color-background: #F0F2F5;
   --color-surface: #FFFFFF;
-  --color-border: rgba(75, 85, 49, 0.2);
-  --color-text: #39432C;
-  --color-text-muted: #59633A;
-  --color-text-dark: #292B20;
+  --color-border: rgba(7, 94, 84, 0.14);
+  --color-text: #111B21;
+  --color-text-muted: #667781;
+  --color-text-dark: #111B21;
   --color-danger: #9C443B;
-  --app-card-border: rgba(75, 85, 49, 0.16);
+  --app-card-border: rgba(7, 94, 84, 0.12);
   --app-card-radius: 20px;
-  --welcome-page-background:
-    radial-gradient(
-      ellipse 70% 18% at 50% 102%,
-      rgba(213, 245, 140, 0.72) 0%,
-      rgba(213, 245, 140, 0.38) 56%,
-      rgba(213, 245, 140, 0) 82%
-    ),
-    radial-gradient(ellipse at 50% 48%, rgba(213, 245, 140, 0.36), transparent 72%),
-    linear-gradient(
-      110deg,
-      rgba(213, 245, 140, 0.15),
-      rgba(248, 249, 245, 0.42) 55%,
-      rgba(119, 127, 67, 0.08)
-    ),
-    #F8F9F5;
-  --app-page-background: #F7F8FA;
-  --app-card-shadow: 0 10px 24px rgba(49, 61, 36, 0.08);
+  --welcome-page-background: #FFFFFF;
+  --app-page-background: #F0F2F5;
+  --app-card-shadow: 0 10px 24px rgba(7, 94, 84, 0.08);
 
   --welcome-background: radial-gradient(
     ellipse at 50% 30%,

@@ -116,13 +116,15 @@
               <p>Help and options for your account.</p>
             </header>
 
-            <button
+            <component
+              :is="action.key === 'logout' ? 'a' : 'button'"
               v-for="action in supportActions"
               :key="action.label"
               class="profile-setting-row"
               :class="{ 'profile-delete-row': action.danger }"
-              type="button"
-              @click="runSupportAction(action.key)"
+              :href="action.key === 'logout' ? '/logout' : undefined"
+              :type="action.key === 'logout' ? undefined : 'button'"
+              @click="action.key === 'logout' ? undefined : runSupportAction(action.key)"
             >
               <span class="profile-round-icon" :class="{ 'profile-danger-icon': action.danger }">
                 <v-icon :icon="action.icon" />
@@ -132,7 +134,7 @@
                 <small>{{ action.description }}</small>
               </span>
               <v-icon class="profile-chevron" icon="mdi-chevron-right" />
-            </button>
+            </component>
           </section>
         </div>
       </div>
@@ -372,7 +374,6 @@ import {
   clearAuthToken,
   deleteAccount,
   fetchChildren,
-  signOutAccount,
   fetchNotificationPreferences,
   fetchNotifications,
   getCurrentUser,
@@ -544,12 +545,6 @@ function openSetting(key) {
 }
 
 function runSupportAction(key) {
-  if (key === 'logout') {
-    activeDialog.value = ''
-    signOut()
-    return
-  }
-
   openProfileDialog(key)
 }
 
@@ -799,10 +794,6 @@ async function loadProfile({ background = false } = {}) {
   } finally {
     isLoading.value = false
   }
-}
-
-function signOut() {
-  signOutAccount()
 }
 
 usePageActivation(

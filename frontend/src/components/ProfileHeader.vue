@@ -54,7 +54,7 @@
             <small>{{ profile.family?.family_name || 'Family account' }}</small>
           </span>
         </RouterLink>
-        <button class="account-sign-out" type="button" @click="signOut">Sign out</button>
+        <a class="account-sign-out" href="/logout">Sign out</a>
       </div>
 
       <div class="account-mobile-header">
@@ -69,7 +69,6 @@
 
 <script setup>
 import BrandLockup from './BrandLockup.vue'
-import { signOutAccount } from '../services/auth.js'
 
 const { profile, active } = defineProps({
   profile: {
@@ -88,10 +87,6 @@ const todayLabel = new Intl.DateTimeFormat(undefined, {
   month: 'long',
   year: 'numeric',
 }).format(new Date())
-
-function signOut() {
-  signOutAccount()
-}
 
 function initials(name) {
   return (name || 'P')
@@ -168,6 +163,7 @@ function initials(name) {
   font-weight: 800;
   white-space: nowrap;
   cursor: pointer;
+  text-decoration: none;
 }
 
 .account-sign-out:hover {

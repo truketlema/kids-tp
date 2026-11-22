@@ -409,6 +409,7 @@
   font: inherit;
   text-align: left;
   cursor: pointer;
+  text-decoration: none;
 }
 
 .profile-setting-row:first-of-type {

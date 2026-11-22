@@ -26,15 +26,6 @@ export function clearAuthToken() {
   }
 }
 
-export function signOutAccount() {
-  clearAuthToken()
-  sessionStorage.removeItem('kids-tp:child-setup-draft')
-
-  if (typeof window !== 'undefined') {
-    window.location.href = `${window.location.origin}/`
-  }
-}
-
 function clearApiReadCache() {
   apiReadCache.clear()
   apiReadCacheVersion += 1

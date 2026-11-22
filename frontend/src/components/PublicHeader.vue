@@ -48,7 +48,7 @@ defineProps({
   align-items: center;
   gap: 10px;
   margin: 0;
-  color: #59633A;
+  color: #111B21;
   font-size: var(--text-small);
 }
 
@@ -56,7 +56,7 @@ defineProps({
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  color: var(--color-primary-dark);
+  color: #075E54;
   font-weight: 900;
   text-decoration: none;
 }
@@ -71,8 +71,8 @@ defineProps({
   height: 20px;
   place-items: center;
   border-radius: 5px;
-  background: rgba(57, 67, 44, 0.12);
-  color: var(--color-primary-dark);
+  background: rgba(7, 94, 84, 0);
+  color: #075E54;
   font-size: 15px;
   line-height: 1;
 }

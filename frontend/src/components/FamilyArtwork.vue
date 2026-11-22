@@ -42,25 +42,27 @@ defineProps({
 
 .orbit-outer {
   inset: 2% 5% 0 0;
-  border: 1px solid rgba(75, 85, 49, 0.12);
+  border: 2.5px solid rgba(7, 94, 84, 0.18);
   transform: rotate(-7deg);
 }
 
 .orbit-inner {
   inset: 8% 2% 7% 5%;
-  border: 1px solid rgba(75, 85, 49, 0.15);
+  border: 2.5px solid rgba(7, 94, 84, 0.16);
   transform: rotate(5deg);
 }
 
 .orbit-glow {
   inset: 9%;
   background: radial-gradient(
-    circle at 42% 36%,
-    rgba(213, 245, 140, 0.78),
-    rgba(213, 245, 140, 0.54) 62%,
-    rgba(119, 127, 67, 0.28)
+    ellipse 58% 56% at 20% 18%,
+    rgba(215, 243, 195, 0.82) 0%,
+    rgba(190, 239, 202, 0.58) 32%,
+    rgba(205, 246, 220, 0.28) 58%,
+    rgba(238, 252, 244, 0.10) 82%,
+    rgba(255, 255, 255, 0) 100%
   );
-  box-shadow: 14px 20px 30px rgba(57, 67, 44, 0.12);
+  box-shadow: 14px 20px 30px rgba(7, 94, 84, 0.08);
 }
 
 .family-mark {
@@ -69,7 +71,7 @@ defineProps({
   display: block;
   width: 108%;
   aspect-ratio: 390 / 315;
-  background: var(--color-primary-dark);
+  background: #075E54;
   filter: drop-shadow(0 1px 1px rgba(41, 43, 32, 0.14));
   transform: translateY(2%);
   -webkit-mask: url('/logo.png') center / contain no-repeat;
@@ -81,7 +83,7 @@ defineProps({
   z-index: 2;
   width: 15px;
   height: 15px;
-  background: var(--color-primary-light);
+  background: #075E54;
   clip-path: polygon(50% 0, 60% 40%, 100% 50%, 60% 60%, 50% 100%, 40% 60%, 0 50%, 40% 40%);
 }
 
@@ -90,12 +92,13 @@ defineProps({
   left: 18%;
   width: 18px;
   height: 18px;
-  background: var(--color-primary);
+  background: #075E54;
 }
 
 .sparkle-two {
   top: 28%;
   right: 14%;
+  background: #075E54;
 }
 
 .family-orbit--auth {

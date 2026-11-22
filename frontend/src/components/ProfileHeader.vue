@@ -167,7 +167,7 @@ function initials(name) {
 }
 
 .account-sign-out:hover {
-  background: #E7F7F3;
+  background: #F0F2F5;
 }
 
 .account-date {
@@ -176,7 +176,7 @@ function initials(name) {
   gap: 8px;
   padding: 8px 12px;
   border-radius: 999px;
-  background: #E7F7F3;
+  background: #F0F2F5;
   color: var(--color-text-muted);
   font-size: var(--text-caption);
   white-space: nowrap;
@@ -201,7 +201,7 @@ function initials(name) {
 }
 
 .account-bell:hover {
-  background: #E7F7F3;
+  background: #F0F2F5;
 }
 
 .account-header-user {

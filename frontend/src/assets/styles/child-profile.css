@@ -57,9 +57,9 @@
   height: 48px;
   flex: 0 0 auto;
   place-items: center;
-  border: 4px solid #DCF8C6;
+  border: 4px solid #F0F2F5;
   border-radius: 50%;
-  background: #E7F7F3;
+  background: #F0F2F5;
   color: #075E54;
   font-size: var(--text-body);
   font-weight: 800;
@@ -257,7 +257,7 @@
 }
 
 .child-reward-settings:hover {
-  background: #E7F7F3;
+  background: #F0F2F5;
 }
 
 .child-profile-icon {
@@ -267,7 +267,7 @@
   flex: 0 0 auto;
   place-items: center;
   border-radius: 50%;
-  background: #E7F7F3;
+  background: #F0F2F5;
   color: #075E54;
 }
 
@@ -377,7 +377,7 @@
   padding: 6px 10px;
   border-left: 3px solid var(--allocation-color);
   border-radius: 4px;
-  background: #E7F7F3;
+  background: #F0F2F5;
   font-size: var(--text-caption);
 }
 
@@ -497,8 +497,9 @@
 .child-profile-info-note {
   margin: 0;
   padding: 11px 13px;
+  border: 1px solid #DCE8E7;
   border-radius: 10px;
-  background: #E7F7F3;
+  background: #fff;
   color: #075E54;
   font-size: var(--text-caption);
 }
@@ -641,8 +642,9 @@
 .child-profile-state {
   margin: 0 0 14px;
   padding: 12px 14px;
+  border: 1px solid #DCE8E7;
   border-radius: 10px;
-  background: #E7F7F3;
+  background: #fff;
   color: #075E54;
   font-size: var(--text-small);
 }
@@ -757,7 +759,7 @@ main.child-profile-page .child-point-actions a {
 
 .child-deduct-action { background: #fbe4dc; }
 .child-award-action { background: #075E54; color: #FFFFFF; }
-.child-activities-action { background: #DCF8C6; color: #075E54; text-decoration: none; }
+.child-activities-action { background: #F0F2F5; color: #075E54; text-decoration: none; }
 .child-activities-action span { min-width: 0; }
 
 @media (min-width: 761px) {
@@ -801,7 +803,7 @@ main.child-profile-page .child-point-actions a {
 }
 
 .child-responsibility-card {
-  background: #E7F7F3;
+  background: #fff;
 }
 
 .child-responsibility-card > header,
@@ -859,7 +861,7 @@ main.child-profile-page .child-point-actions a {
   height: 7px;
   overflow: hidden;
   border-radius: 999px;
-  background: #E7F7F3;
+  background: #F0F2F5;
 }
 
 .child-goal-track span {
@@ -893,7 +895,7 @@ main.child-profile-page .child-point-actions a {
   min-height: var(--button-height);
   padding: 0 var(--button-padding-inline);
   border-radius: 999px;
-  background: #E7F7F3;
+  background: #F0F2F5;
   color: #075E54;
   font-size: var(--text-caption);
   font-weight: 800;
@@ -951,7 +953,7 @@ main.child-profile-page .child-point-actions a {
   flex: 0 0 auto;
   place-items: center;
   border-radius: 50%;
-  background: #E7F7F3;
+  background: #F0F2F5;
   color: #075E54;
 }
 
@@ -1230,8 +1232,9 @@ main.child-profile-page .child-point-actions a {
   }
 
   .child-profile-mobile-nav .child-nav-current {
-    background: #DCF8C6;
-    color: #075E54;
+    margin-inline: 8px;
+    background: #075E54;
+    color: #FFFFFF;
   }
 
   .child-profile-mobile-nav .child-nav-unavailable {

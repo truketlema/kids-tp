@@ -230,7 +230,7 @@ function numericValue(value) {
   padding: 9px 10px;
   border: 1px solid #DCE8E7;
   border-radius: 9px;
-  background: #E7F7F3;
+  background: #F0F2F5;
 }
 
 .activity-child-assignment > header {
@@ -283,7 +283,7 @@ function numericValue(value) {
   flex: 0 0 auto;
   place-items: center;
   border-radius: 50%;
-  background: #DCF8C6;
+  background: #F0F2F5;
   color: #075E54;
   font-size: 9px;
   font-weight: 800;
@@ -301,7 +301,7 @@ function numericValue(value) {
   margin-left: auto;
   padding: 2px 7px;
   border-radius: 999px;
-  background: #DCF8C6;
+  background: #F0F2F5;
   color: #075E54;
   font-size: 9px;
   font-weight: 700;

@@ -80,7 +80,7 @@
   gap: 8px;
   padding: 8px 12px;
   border-radius: 999px;
-  background: #E7F7F3;
+  background: #F0F2F5;
   color: #667781;
   font-size: var(--text-caption);
   white-space: nowrap;
@@ -228,7 +228,7 @@
   place-items: center;
   border: 5px solid #DCE8E7;
   border-radius: 50%;
-  background: #E7F7F3;
+  background: #F0F2F5;
   color: #075E54;
   font-size: var(--text-body);
   font-weight: 800;
@@ -252,7 +252,7 @@
   width: max-content;
   padding: 3px 8px;
   border-radius: 999px;
-  background: #E7F7F3;
+  background: #F0F2F5;
   color: #075E54;
   font-size: var(--text-caption);
   font-weight: 800;
@@ -327,7 +327,7 @@
   flex: 0 0 auto;
   place-items: center;
   border-radius: 50%;
-  background: #E7F7F3;
+  background: #F0F2F5;
   color: #075E54;
 }
 
@@ -476,8 +476,9 @@
 .profile-state {
   margin: 0 0 18px;
   padding: 12px 14px;
+  border: 1px solid #DCE8E7;
   border-radius: 10px;
-  background: #E7F7F3;
+  background: #fff;
   color: #075E54;
   font-size: var(--text-small);
 }
@@ -584,7 +585,7 @@
   place-items: center;
   border: 0;
   border-radius: 50%;
-  background: #E7F7F3;
+  background: #F0F2F5;
   color: #075E54;
   cursor: pointer;
 }
@@ -821,7 +822,7 @@
 
 .profile-notification-list li.unread {
   border-color: #DCE8E7;
-  background: #E7F7F3;
+  background: #F0F2F5;
 }
 
 .profile-notification-dot {
@@ -1084,8 +1085,9 @@
   }
 
   .profile-mobile-nav .profile-nav-current {
-    background: #DCF8C6;
-    color: #075E54;
+    margin-inline: 8px;
+    background: #075E54;
+    color: #FFFFFF;
   }
 
   .profile-mobile-nav .profile-nav-unavailable {

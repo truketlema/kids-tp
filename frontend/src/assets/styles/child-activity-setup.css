@@ -71,12 +71,12 @@
 
 .child-setup-step-complete > span {
   border-color: #075E54 !important;
-  background: #DCF8C6 !important;
+  background: #F0F2F5 !important;
 }
 
 .child-setup-step-connector {
   height: 1px;
-  background: #E7F7F3;
+  background: #F0F2F5;
 }
 
 .child-setup-steps .child-setup-step-current {
@@ -134,7 +134,7 @@
 .child-setup-heading > div > span {
   padding: 3px 8px;
   border-radius: 999px;
-  background: #E7F7F3;
+  background: #F0F2F5;
   color: #075E54;
   font-size: var(--text-caption);
 }
@@ -195,7 +195,7 @@
   flex: 0 0 auto;
   place-items: center;
   border-radius: 50%;
-  background: #E7F7F3;
+  background: #F0F2F5;
   color: #075E54;
   font-size: 19px;
 }
@@ -224,7 +224,7 @@
   width: max-content;
   padding: 2px 6px;
   border-radius: 999px;
-  background: #E7F7F3;
+  background: #F0F2F5;
   color: #075E54;
   font-size: var(--text-caption);
 }
@@ -240,7 +240,7 @@
   padding: 0 9px;
   border: 0;
   border-radius: 999px;
-  background: #E7F7F3;
+  background: #F0F2F5;
   color: #075E54;
   font: inherit;
   font-size: var(--text-caption);
@@ -270,7 +270,7 @@
 }
 
 .child-setup-activity-selected {
-  background: #E7F7F3;
+  background: #F0F2F5;
 }
 
 .child-setup-activity-choice {
@@ -296,7 +296,7 @@
   flex: 0 0 auto;
   place-items: center;
   border-radius: 50%;
-  background: #E7F7F3;
+  background: #F0F2F5;
   color: #075E54;
   font-size: 16px;
 }
@@ -345,7 +345,7 @@
 }
 
 .child-setup-reward-input input:disabled {
-  background: #E7F7F3;
+  background: #F0F2F5;
   color: var(--color-text-muted);
 }
 
@@ -377,7 +377,7 @@
   gap: 4px;
   padding: 11px;
   border-radius: 10px;
-  background: #E7F7F3;
+  background: #F0F2F5;
 }
 
 .child-setup-summary-count {
@@ -407,7 +407,7 @@
 }
 
 .child-setup-summary-reward {
-  background: #DCF8C6;
+  background: #F0F2F5;
 }
 
 .child-setup-summary-reward strong {
@@ -437,7 +437,7 @@
   padding: 11px;
   border-left: 3px solid #075E54;
   border-radius: 8px;
-  background: #E7F7F3;
+  background: #F0F2F5;
 }
 
 .child-setup-advice > strong {

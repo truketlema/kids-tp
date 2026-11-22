@@ -545,6 +545,7 @@ function openSetting(key) {
 
 function runSupportAction(key) {
   if (key === 'logout') {
+    activeDialog.value = ''
     signOut()
     return
   }

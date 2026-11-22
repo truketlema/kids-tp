@@ -31,7 +31,7 @@ export function signOutAccount() {
   sessionStorage.removeItem('kids-tp:child-setup-draft')
 
   if (typeof window !== 'undefined') {
-    window.location.replace('/')
+    window.location.href = `${window.location.origin}/`
   }
 }
 

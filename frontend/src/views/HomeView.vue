@@ -8,7 +8,6 @@
 
     <section class="hero" aria-label="Welcome">
       <div class="hero-brand">
-        <h1 class="hero-title">kids tp</h1>
         <FamilyArtwork />
       </div>
 

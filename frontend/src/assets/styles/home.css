@@ -36,15 +36,6 @@
   gap: 2px;
 }
 
-.hero-title {
-  margin: 0;
-  color: var(--color-primary-dark);
-  font-size: clamp(52px, 9vw, 88px);
-  font-weight: 900;
-  letter-spacing: -0.04em;
-  line-height: 1;
-}
-
 .start {
   display: inline-flex;
   min-width: 230px;
@@ -78,7 +69,6 @@
 
 @media (max-width: 600px) {
   .screen {
-    position: relative;
     padding: 6px 12px 12px;
   }
 

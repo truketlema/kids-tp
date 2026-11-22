@@ -14,21 +14,20 @@
   --app-card-border: rgba(75, 85, 49, 0.16);
   --app-card-radius: 20px;
   --welcome-page-background:
+    radial-gradient(
+      ellipse 70% 18% at 50% 102%,
+      rgba(213, 245, 140, 0.72) 0%,
+      rgba(213, 245, 140, 0.38) 56%,
+      rgba(213, 245, 140, 0) 82%
+    ),
+    radial-gradient(ellipse at 50% 48%, rgba(213, 245, 140, 0.36), transparent 72%),
     linear-gradient(
-      180deg,
-      #E9FAEA 0%,
-      #E8FAE9 8%,
-      #EBF8E6 20%,
-      #E5F8DF 32%,
-      #DCF6C4 44%,
-      #DBF2BE 52%,
-      #E1F2AE 64%,
-      #DAF7B4 74%,
-      #D7F7AE 82%,
-      #D4F6AA 88%,
-      #CAF3A7 96%,
-      #CBF3A9 100%
-    );
+      110deg,
+      rgba(213, 245, 140, 0.15),
+      rgba(248, 249, 245, 0.42) 55%,
+      rgba(119, 127, 67, 0.08)
+    ),
+    #F8F9F5;
   --app-page-background: linear-gradient(
     112deg,
     rgba(213, 245, 140, 0.13),

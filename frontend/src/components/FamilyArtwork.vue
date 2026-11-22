@@ -44,12 +44,18 @@ defineProps({
   inset: 2% 5% 0 0;
   border: 2.5px solid rgba(7, 94, 84, 0.18);
   transform: rotate(-7deg);
+  box-shadow:
+    0 0 16px rgba(37, 211, 102, 0.22),
+    10px 14px 30px rgba(7, 94, 84, 0.10);
 }
 
 .orbit-inner {
   inset: 8% 2% 7% 5%;
   border: 2.5px solid rgba(7, 94, 84, 0.16);
   transform: rotate(5deg);
+  box-shadow:
+    0 0 12px rgba(37, 211, 102, 0.18),
+    8px 10px 24px rgba(7, 94, 84, 0.08);
 }
 
 .orbit-glow {

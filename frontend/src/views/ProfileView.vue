@@ -372,6 +372,7 @@ import {
   clearAuthToken,
   deleteAccount,
   fetchChildren,
+  signOutAccount,
   fetchNotificationPreferences,
   fetchNotifications,
   getCurrentUser,
@@ -799,9 +800,8 @@ async function loadProfile({ background = false } = {}) {
   }
 }
 
-async function signOut() {
-  clearAuthToken()
-  await router.replace({ name: 'home' })
+function signOut() {
+  signOutAccount()
 }
 
 usePageActivation(

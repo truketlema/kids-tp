@@ -28,12 +28,7 @@
       rgba(119, 127, 67, 0.08)
     ),
     #F8F9F5;
-  --app-page-background: linear-gradient(
-    112deg,
-    rgba(213, 245, 140, 0.13),
-    rgba(248, 249, 245, 0.94) 56%,
-    rgba(119, 127, 67, 0.08)
-  ), #F8F9F5;
+  --app-page-background: #F7F8FA;
   --app-card-shadow: 0 10px 24px rgba(49, 61, 36, 0.08);
 
   --welcome-background: radial-gradient(

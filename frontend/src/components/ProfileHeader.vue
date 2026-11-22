@@ -68,9 +68,8 @@
 </template>
 
 <script setup>
-import { useRouter } from 'vue-router'
 import BrandLockup from './BrandLockup.vue'
-import { clearAuthToken } from '../services/auth.js'
+import { signOutAccount } from '../services/auth.js'
 
 const { profile, active } = defineProps({
   profile: {
@@ -83,8 +82,6 @@ const { profile, active } = defineProps({
   },
 })
 
-const router = useRouter()
-
 const todayLabel = new Intl.DateTimeFormat(undefined, {
   weekday: 'long',
   day: 'numeric',
@@ -92,9 +89,8 @@ const todayLabel = new Intl.DateTimeFormat(undefined, {
   year: 'numeric',
 }).format(new Date())
 
-async function signOut() {
-  clearAuthToken()
-  await router.replace({ name: 'home' })
+function signOut() {
+  signOutAccount()
 }
 
 function initials(name) {

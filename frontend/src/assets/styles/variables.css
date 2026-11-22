@@ -4,7 +4,7 @@
   --color-primary-dark: #075E54;
   --color-primary-light-hover: #075E54;
 
-  --color-background: #F0F2F5;
+  --color-background: #FFFFFF;
   --color-surface: #FFFFFF;
   --color-border: rgba(7, 94, 84, 0.14);
   --color-text: #111B21;
@@ -14,7 +14,7 @@
   --app-card-border: rgba(7, 94, 84, 0.12);
   --app-card-radius: 20px;
   --welcome-page-background: #FFFFFF;
-  --app-page-background: #F0F2F5;
+  --app-page-background: #FFFFFF;
   --app-card-shadow: 0 10px 24px rgba(7, 94, 84, 0.08);
 
   --welcome-background: radial-gradient(

@@ -126,7 +126,7 @@ function initials(name) {
 .account-desktop-nav span {
   padding: 27px 0 24px;
   border-bottom: 3px solid transparent;
-  color: #6d7565;
+  color: #667781;
   font-size: var(--text-small);
   text-decoration: none;
   white-space: nowrap;
@@ -187,7 +187,7 @@ function initials(name) {
   height: 7px;
   flex: 0 0 auto;
   border-radius: 50%;
-  background: #98b449;
+  background: #075E54;
 }
 
 .account-bell {
@@ -195,13 +195,13 @@ function initials(name) {
   place-items: center;
   width: 32px;
   height: 32px;
-  color: #455333;
+  color: #075E54;
   border-radius: 50%;
   text-decoration: none;
 }
 
 .account-bell:hover {
-  background: #f1f4e9;
+  background: #E7F7F3;
 }
 
 .account-header-user {
@@ -220,7 +220,7 @@ function initials(name) {
   height: 30px;
   flex: 0 0 auto;
   border-radius: 50%;
-  background: #4b5632;
+  background: #075E54;
   color: #fff;
   font-size: var(--text-caption);
   font-weight: 800;
@@ -241,7 +241,7 @@ function initials(name) {
 }
 
 .account-header-user strong {
-  color: #37402d;
+  color: #111B21;
   font-size: var(--text-caption);
 }
 

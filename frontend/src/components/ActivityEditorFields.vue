@@ -193,7 +193,7 @@ function numericValue(value) {
   display: grid;
   gap: 5px;
   min-width: 0;
-  color: #657052;
+  color: #667781;
   font-size: var(--text-caption);
   font-weight: 700;
 }
@@ -205,10 +205,10 @@ function numericValue(value) {
   min-width: 0;
   min-height: 38px;
   padding: 8px 10px;
-  border: 1px solid #dfe5d6;
+  border: 1px solid #DCE8E7;
   border-radius: 8px;
   background: #fff;
-  color: #39432c;
+  color: #111B21;
   font: inherit;
   font-size: var(--text-caption);
 }
@@ -220,17 +220,17 @@ function numericValue(value) {
 .activity-form-fields input:focus,
 .activity-form-fields textarea:focus,
 .activity-form-fields select:focus {
-  border-color: #9bab73;
-  outline: 2px solid rgba(155, 171, 115, 0.18);
+  border-color: #075E54;
+  outline: 2px solid rgba(7, 94, 84, 0.18);
 }
 
 .activity-child-assignment {
   display: grid;
   gap: 5px;
   padding: 9px 10px;
-  border: 1px solid #e5e9dd;
+  border: 1px solid #DCE8E7;
   border-radius: 9px;
-  background: #f7f9f2;
+  background: #E7F7F3;
 }
 
 .activity-child-assignment > header {
@@ -242,7 +242,7 @@ function numericValue(value) {
 }
 
 .activity-child-assignment > header strong {
-  color: #647052;
+  color: #667781;
   font-size: 9px;
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -252,7 +252,7 @@ function numericValue(value) {
   padding: 0;
   border: 0;
   background: transparent;
-  color: #60734a;
+  color: #075E54;
   font: inherit;
   font-size: 10px;
   font-weight: 700;
@@ -265,7 +265,7 @@ function numericValue(value) {
   gap: 7px;
   min-height: 31px;
   padding: 4px 2px;
-  border-top: 1px solid #e8ecdf;
+  border-top: 1px solid #DCE8E7;
   cursor: pointer;
 }
 
@@ -273,7 +273,7 @@ function numericValue(value) {
   width: 14px;
   height: 14px;
   flex: 0 0 auto;
-  accent-color: #71884c;
+  accent-color: #075E54;
 }
 
 .activity-child-avatar {
@@ -283,15 +283,15 @@ function numericValue(value) {
   flex: 0 0 auto;
   place-items: center;
   border-radius: 50%;
-  background: #e2edc8;
-  color: #536b3a;
+  background: #DCF8C6;
+  color: #075E54;
   font-size: 9px;
   font-weight: 800;
 }
 
 .activity-child-name {
   overflow: hidden;
-  color: #46513a;
+  color: #111B21;
   font-size: 11px;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -301,8 +301,8 @@ function numericValue(value) {
   margin-left: auto;
   padding: 2px 7px;
   border-radius: 999px;
-  background: #dceda8;
-  color: #596e3c;
+  background: #DCF8C6;
+  color: #075E54;
   font-size: 9px;
   font-weight: 700;
   white-space: nowrap;
@@ -310,7 +310,7 @@ function numericValue(value) {
 
 .activity-no-children {
   margin: 0;
-  color: #858c7a;
+  color: #667781;
   font-size: 10px;
 }
 

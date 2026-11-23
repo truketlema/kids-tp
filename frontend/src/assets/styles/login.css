@@ -9,33 +9,23 @@
 }
 
 .login-layout {
-  display: grid;
-  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1fr);
-  align-items: center;
-  gap: clamp(24px, 5vw, 72px);
-  width: min(100%, 1180px);
+  display: flex;
   flex: 1;
+  align-items: safe center;
+  justify-content: center;
+  width: min(100%, 640px);
   min-height: calc(100dvh - 73px);
   margin: 0 auto;
   padding: 32px 0;
 }
 
-.login-brand-panel {
-  display: grid;
-  place-items: center;
-  min-height: 420px;
-  padding: 32px;
-  background: transparent;
-}
-
 .login-form-panel {
   position: relative;
   isolation: isolate;
-
   display: grid;
+  width: 100%;
   place-items: center;
   min-width: 0;
-  padding: 24px;
   overflow: hidden;
   background: transparent;
 }
@@ -43,7 +33,7 @@
 .login-form {
   position: relative;
   z-index: 1;
-  width: min(100%, 700px);
+  width: 100%;
   padding: 36px;
   border: 1px solid var(--color-border);
   border-radius: 22px;
@@ -186,25 +176,13 @@
 
 @media (max-width: 650px) {
   .login-layout {
-    display: grid;
-    grid-template-columns: 1fr;
     min-height: auto;
-    gap: 0;
     padding: 24px 0 28px;
-  }
-
-  .login-brand-panel {
-    display: none;
-  }
-
-  .login-form-panel {
-    padding: 0;
   }
 
   .login-form {
     padding: 28px 22px;
   }
-
 }
 
 @media (prefers-reduced-motion: reduce) {

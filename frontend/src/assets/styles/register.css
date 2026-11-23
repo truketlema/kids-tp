@@ -16,81 +16,22 @@
 }
 
 .register-layout {
-  display: grid;
-  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1fr);
-  align-items: start;
-  gap: clamp(24px, 5vw, 72px);
-  width: min(100%, 1180px);
+  display: flex;
   flex: 1;
+  align-items: safe center;
+  justify-content: center;
+  width: min(100%, 640px);
   min-height: calc(100dvh - 73px);
   margin: 0 auto;
   padding: 32px 0;
   background: transparent;
 }
 
-.register-brand-panel {
-  position: sticky;
-  top: 24px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  align-self: start;
-  min-height: calc(100dvh - 120px);
-  padding: 24px 32px;
-  background: transparent;
-}
-
-.register-brand-panel .family-orbit {
-  margin-bottom: 12px;
-}
-
-.brand-copy {
-  width: 100%;
-  max-width: 320px;
-}
-
-.eyebrow {
-  margin: 0 0 18px;
-  color: var(--color-primary);
-  font-size: var(--text-caption);
-  font-weight: 800;
-  letter-spacing: 0.4px;
-}
-
-.benefit {
-  display: grid;
-  grid-template-columns: 20px 1fr;
-  gap: 10px;
-  margin: 0 0 16px;
-}
-
-.benefit-icon {
-  padding-top: 1px;
-  color: var(--color-primary);
-  font-size: 18px;
-  line-height: 1;
-}
-
-.benefit h2 {
-  margin: 0 0 3px;
-  color: var(--color-text);
-  font-size: 15px;
-  font-weight: 800;
-}
-
-.benefit p {
-  margin: 0;
-  color: var(--color-text-muted);
-  font-size: var(--text-small);
-  line-height: 1.45;
-}
-
 .register-form-panel {
   display: grid;
+  width: 100%;
   place-items: center;
   min-width: 0;
-  padding: 24px;
   background: transparent;
 }
 
@@ -98,7 +39,7 @@
   position: relative;
   z-index: 1;
 
-  width: min(100%, 700px);
+  width: 100%;
   padding: 36px;
   border: 1px solid var(--color-border);
   border-radius: 22px;
@@ -395,23 +336,12 @@
 
 @media (max-width: 650px) {
   .register-layout {
-    grid-template-columns: 1fr;
-    gap: 0;
+    align-items: center;
     min-height: auto;
     padding: 24px 0 28px;
   }
 
-  .register-brand-panel {
-    display: none;
-  }
-
-  .register-form-panel {
-    padding: 0;
-  }
-
   .registration {
-    width: min(100%, 460px);
-    margin: 0 auto;
     padding: 28px 22px;
   }
 

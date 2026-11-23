@@ -7,10 +7,6 @@
     />
 
     <div class="login-layout">
-      <aside class="login-brand-panel" aria-label="Kids TP family">
-        <FamilyArtwork variant="auth" />
-      </aside>
-
       <section class="login-form-panel" aria-labelledby="login-title">
         <form
           class="login-form"
@@ -88,7 +84,6 @@
 <script setup>
 import { reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import FamilyArtwork from '../components/FamilyArtwork.vue'
 import PublicHeader from '../components/PublicHeader.vue'
 import { loginAccount } from '../services/auth.js'
 

@@ -7,50 +7,6 @@
     />
 
     <div class="register-layout">
-      <aside class="register-brand-panel" aria-label="Kids TP family benefits">
-        <FamilyArtwork variant="auth" />
-
-        <div class="brand-copy">
-          <p class="eyebrow">
-            TRUST POINTS &amp; FINANCIAL RESPONSIBILITY
-          </p>
-
-          <article class="benefit">
-            <span class="benefit-icon">
-              <v-icon icon="mdi-account-group-outline" />
-            </span>
-            <div>
-              <h2>One family, working together</h2>
-              <p>Manage multiple children with the parents you invite.</p>
-            </div>
-          </article>
-
-          <article class="benefit">
-            <span class="benefit-icon">
-              <v-icon icon="mdi-star-outline" />
-            </span>
-            <div>
-              <h2>Points with purpose</h2>
-              <p>
-                Recognize completed commitments and build accountability.
-              </p>
-            </div>
-          </article>
-
-          <article class="benefit">
-            <span class="benefit-icon">
-              <v-icon icon="mdi-wallet-outline" />
-            </span>
-            <div>
-              <h2>A clearer financial picture</h2>
-              <p>
-                Turn Trust Points into simple ETB planning allocations.
-              </p>
-            </div>
-          </article>
-        </div>
-      </aside>
-
       <section
         class="register-form-panel"
         aria-label="Parent registration form"
@@ -271,7 +227,6 @@ import {
   ref,
 } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import FamilyArtwork from '../components/FamilyArtwork.vue'
 import PublicHeader from '../components/PublicHeader.vue'
 import {
   getCountries,

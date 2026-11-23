@@ -76,6 +76,7 @@
   --radius-pill: 50px;
 
   --shadow-card: 0 8px 24px rgba(0, 0, 0, 0.12);
+  color-scheme: light;
 }
 
 html[data-theme='dark'] {

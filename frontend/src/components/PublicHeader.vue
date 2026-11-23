@@ -58,6 +58,7 @@ defineProps({
 
 .public-header-actions {
   display: flex;
+  flex: 0 0 auto;
   align-items: center;
   gap: 14px;
 }
@@ -81,11 +82,14 @@ defineProps({
 
 .public-member-link {
   display: flex;
+  flex: 0 0 auto;
+  flex-wrap: nowrap;
   align-items: center;
-  gap: 10px;
+  gap: 6px;
   margin: 0;
   color: var(--color-text);
   font-size: var(--text-small);
+  white-space: nowrap;
 }
 
 .public-member-link a {
@@ -118,8 +122,12 @@ defineProps({
     min-height: 64px;
   }
 
+  .public-header-actions {
+    gap: 8px;
+  }
+
   .public-member-link {
-    gap: 6px;
+    gap: 4px;
     font-size: var(--text-caption);
   }
 

@@ -76,6 +76,10 @@
   --radius-pill: 50px;
 
   --shadow-card: 0 8px 24px rgba(0, 0, 0, 0.12);
+  color-scheme: light;
+}
+
+html[data-theme='light'] {
   color-scheme: only light;
 }
 
@@ -123,7 +127,61 @@ html[data-theme='dark'] {
   --color-text-muted: #93A69B;
   --app-card-border: rgba(155, 232, 196, 0.16);
   --app-card-shadow: 0 18px 40px rgba(0, 0, 0, 0.55);
-  color-scheme: only light;
+  color-scheme: dark;
+  background-color: #000000;
+  color: #F4F8F5;
+}
+
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme='light']),
+  html:not([data-theme='light']) body {
+    --color-primary: #3DDC97;
+    --color-primary-hover: #62E8B0;
+    --color-primary-soft: #10241B;
+    --color-primary-soft-text: #9BE8C4;
+    --color-primary-focus: rgba(61, 220, 151, 0.28);
+    --color-hover: #18241E;
+    --color-success: #9BE8C4;
+    --color-success-soft: #10241B;
+    --color-success-border: #1E4A36;
+    --color-warning: #F0D08A;
+    --color-warning-soft: #261F12;
+    --color-warning-border: #5A4A28;
+    --color-earned: #F0D08A;
+    --color-earned-soft: #3A3014;
+    --color-danger: #FFB1A8;
+    --color-danger-soft: #2A1616;
+    --color-danger-soft-hover: #3A1E1E;
+    --color-danger-border: #5E3330;
+    --color-danger-button: #E06A62;
+    --color-danger-button-hover: #F0847C;
+    --color-info: #B7D7E6;
+    --color-info-soft: #121E24;
+    --color-overlay: rgba(0, 0, 0, 0.74);
+    --color-overlay-strong: rgba(0, 0, 0, 0.86);
+    --color-primary-shadow: rgba(0, 0, 0, 0.5);
+    --color-chart-primary: #1F8F6A;
+    --color-chart-secondary: #3DDC97;
+    --color-budget-savings: #1F8F6A;
+    --color-budget-purchase: #3DDC97;
+    --color-budget-spending: #F0D08A;
+    --color-budget-reserve: #E7A08E;
+    --color-on-primary: #042117;
+    --color-background: #000000;
+    --color-surface: #101714;
+    --color-header: #000000;
+    --color-chip: #17211C;
+    --color-input: #0C1210;
+    --color-border: rgba(155, 232, 196, 0.14);
+    --color-border-strong: rgba(155, 232, 196, 0.24);
+    --color-text: #F4F8F5;
+    --color-text-muted: #93A69B;
+    --app-card-border: rgba(155, 232, 196, 0.16);
+    --app-card-shadow: 0 18px 40px rgba(0, 0, 0, 0.55);
+    color-scheme: dark;
+    background-color: #000000;
+    color: #F4F8F5;
+  }
 }
 
 @media (max-width: 760px) {

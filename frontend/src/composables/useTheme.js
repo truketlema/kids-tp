@@ -8,7 +8,6 @@ export function applyTheme(nextTheme) {
   const value = nextTheme === 'dark' ? 'dark' : 'light'
   theme.value = value
   document.documentElement.dataset.theme = value
-  document.documentElement.style.colorScheme = value
   localStorage.setItem(THEME_STORAGE_KEY, value)
 }
 

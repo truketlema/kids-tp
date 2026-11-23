@@ -76,7 +76,7 @@
   --radius-pill: 50px;
 
   --shadow-card: 0 8px 24px rgba(0, 0, 0, 0.12);
-  color-scheme: light;
+  color-scheme: only light;
 }
 
 html[data-theme='dark'] {
@@ -123,7 +123,7 @@ html[data-theme='dark'] {
   --color-text-muted: #93A69B;
   --app-card-border: rgba(155, 232, 196, 0.16);
   --app-card-shadow: 0 18px 40px rgba(0, 0, 0, 0.55);
-  color-scheme: dark;
+  color-scheme: only light;
 }
 
 @media (max-width: 760px) {

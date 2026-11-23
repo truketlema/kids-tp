@@ -78,9 +78,18 @@
         </form>
 
         <section class="child-points-overview" aria-label="Points overview">
-          <article class="child-point-balance"><small>CURRENT BALANCE</small><strong>{{ ledgerSummary.current_balance }} <span>TP</span></strong><span>Verified ledger</span></article>
-          <article class="child-point-earned"><small>EARNED THIS WEEK</small><strong>+{{ ledgerSummary.earned_this_week }} <span>TP</span></strong><span>Points awarded</span></article>
-          <article class="child-point-deducted"><small>DEDUCTIONS THIS WEEK</small><strong>−{{ ledgerSummary.deducted_this_week }} <span>TP</span></strong><span>Daily limit: {{ deductionCapLabel }}</span></article>
+          <article class="child-point-balance">
+            <span class="child-point-mark" aria-hidden="true"><v-icon icon="mdi-wallet-outline" /></span>
+            <span class="child-point-copy"><small>CURRENT BALANCE</small><strong>{{ ledgerSummary.current_balance }} <span>TP</span></strong><span>Verified ledger</span></span>
+          </article>
+          <article class="child-point-earned">
+            <span class="child-point-mark" aria-hidden="true"><v-icon icon="mdi-star-outline" /></span>
+            <span class="child-point-copy"><small>EARNED THIS WEEK</small><strong>+{{ ledgerSummary.earned_this_week }} <span>TP</span></strong><span>Points awarded</span></span>
+          </article>
+          <article class="child-point-deducted">
+            <span class="child-point-mark" aria-hidden="true"><v-icon icon="mdi-minus-circle-outline" /></span>
+            <span class="child-point-copy"><small>DEDUCTIONS THIS WEEK</small><strong>−{{ ledgerSummary.deducted_this_week }} <span>TP</span></strong><span>Daily limit: {{ deductionCapLabel }}</span></span>
+          </article>
         </section>
         <div class="child-point-actions">
           <button type="button" class="child-deduct-action" @click="openPointDialog('deduct')"><v-icon icon="mdi-minus-circle-outline" /> Deduct Points</button>
@@ -93,6 +102,7 @@
             <span>View {{ child.name }}’s Activities</span>
           </RouterLink>
         </div>
+        <div class="child-profile-lower">
         <section class="child-responsibility-card">
           <header><span><v-icon icon="mdi-finance" /> Financial Responsibility</span><small>Estimate only</small></header>
           <div class="child-value-estimate">
@@ -137,6 +147,7 @@
             </button>
           </section>
 
+        </div>
         </div>
       </template>
       <div

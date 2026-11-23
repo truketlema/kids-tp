@@ -705,23 +705,91 @@
   border-radius: 12px;
 }
 
-.child-points-overview article > small {
+.child-point-mark {
+  display: none;
+}
+
+.child-point-copy {
+  display: contents;
+}
+
+.child-point-copy > small {
   font-size: 10px;
   font-weight: 800;
 }
 
-.child-points-overview article > strong {
+.child-point-copy > strong {
   font-size: 22px;
 }
 
-.child-points-overview article > strong span,
-.child-points-overview article > span {
+.child-point-copy > strong span,
+.child-point-copy > span {
   font-size: var(--text-caption);
 }
 
 .child-point-balance { background: var(--color-primary); color: var(--color-on-primary); }
 .child-point-earned { background: var(--color-earned-soft); color: var(--color-earned); }
 .child-point-deducted { background: var(--color-danger-soft); color: var(--color-danger); }
+
+html[data-theme='dark'] .child-points-overview article {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  overflow: hidden;
+  border: 1px solid transparent;
+  border-radius: 16px;
+}
+
+html[data-theme='dark'] .child-point-mark,
+html[data-theme='dark'] .child-point-copy {
+  position: relative;
+  z-index: 1;
+}
+
+html[data-theme='dark'] .child-point-mark {
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border: 1.5px solid currentColor;
+  border-radius: 50%;
+  background: color-mix(in srgb, currentColor 12%, transparent);
+}
+
+html[data-theme='dark'] .child-point-copy {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+html[data-theme='dark'] .child-point-balance {
+  border-color: rgba(61, 220, 151, 0.7);
+  background:
+    radial-gradient(circle at 12% 0%, rgba(61, 220, 151, 0.28), transparent 42%),
+    linear-gradient(160deg, #163428 0%, #0c1c16 70%);
+  color: #3ddc97;
+  box-shadow: 0 0 28px rgba(61, 220, 151, 0.14);
+}
+
+html[data-theme='dark'] .child-point-earned {
+  border-color: rgba(240, 208, 138, 0.7);
+  background:
+    radial-gradient(circle at 18% 0%, rgba(240, 208, 138, 0.24), transparent 46%),
+    linear-gradient(160deg, #322a12 0%, #16140c 72%);
+  color: #f0d08a;
+  box-shadow: 0 0 28px rgba(240, 208, 138, 0.12);
+}
+
+html[data-theme='dark'] .child-point-deducted {
+  border-color: rgba(247, 160, 176, 0.65);
+  background:
+    radial-gradient(circle at 88% 110%, rgba(247, 160, 176, 0.28), transparent 46%),
+    linear-gradient(160deg, #3a1822 0%, #1a1014 72%);
+  color: #f7b7c4;
+  box-shadow: 0 0 28px rgba(247, 160, 176, 0.12);
+}
 
 .child-point-actions {
   display: flex;
@@ -762,6 +830,32 @@ main.child-profile-page .child-point-actions a {
 .child-point-actions .child-activities-action { border: 1px solid var(--color-border-strong); background: var(--color-surface); color: var(--color-text); text-decoration: none; }
 .child-activities-action span { min-width: 0; }
 
+@media (min-width: 961px) {
+  .child-profile-lower {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(300px, 0.85fr);
+    grid-template-areas:
+      "responsibility activity"
+      "extra activity";
+    align-items: start;
+    gap: 16px;
+  }
+
+  .child-profile-lower .child-recent-activity {
+    grid-area: activity;
+    margin-bottom: 0;
+  }
+
+  .child-profile-lower .child-responsibility-card {
+    grid-area: responsibility;
+    margin-bottom: 0;
+  }
+
+  .child-profile-lower .child-profile-grid {
+    grid-area: extra;
+  }
+}
+
 @media (min-width: 761px) {
   .child-points-overview article {
     align-content: space-between;
@@ -770,16 +864,16 @@ main.child-profile-page .child-point-actions a {
     padding: 18px;
   }
 
-  .child-points-overview article > small {
+  .child-point-copy > small {
     font-size: 12px;
   }
 
-  .child-points-overview article > strong {
+  .child-point-copy > strong {
     font-size: 24px;
   }
 
-  .child-points-overview article > strong span,
-  .child-points-overview article > span {
+  .child-point-copy > strong span,
+  .child-point-copy > span {
     font-size: 13px;
   }
 
@@ -1052,8 +1146,8 @@ main.child-profile-page .child-point-actions a {
 
   .child-points-overview { gap: 7px; }
   .child-points-overview article { align-content: space-between; min-height: 128px; padding: 9px; }
-  .child-points-overview article > strong { font-size: 17px; }
-  .child-points-overview article > small { font-size: var(--text-caption); }
+  .child-point-copy > strong { font-size: 17px; }
+  .child-point-copy > small { font-size: var(--text-caption); }
   .child-point-actions {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));

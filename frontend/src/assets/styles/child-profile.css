@@ -1144,6 +1144,7 @@ main.child-profile-page .child-point-actions a {
     margin-bottom: 12px;
   }
 
+  html[data-theme='dark'] .child-point-mark { display: none; }
   .child-points-overview { gap: 7px; }
   .child-points-overview article { align-content: space-between; min-height: 128px; padding: 9px; }
   .child-point-copy > strong { font-size: 17px; }

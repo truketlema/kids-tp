@@ -77,7 +77,7 @@ defineProps({
   display: block;
   width: 108%;
   aspect-ratio: 390 / 315;
-  background: #075E54;
+  background: var(--color-primary);
   filter: drop-shadow(0 1px 1px rgba(41, 43, 32, 0.14));
   transform: translateY(2%);
   -webkit-mask: url('/logo.png') center / contain no-repeat;
@@ -89,7 +89,7 @@ defineProps({
   z-index: 2;
   width: 15px;
   height: 15px;
-  background: #075E54;
+  background: var(--color-primary);
   clip-path: polygon(50% 0, 60% 40%, 100% 50%, 60% 60%, 50% 100%, 40% 60%, 0 50%, 40% 40%);
 }
 
@@ -98,18 +98,34 @@ defineProps({
   left: 18%;
   width: 18px;
   height: 18px;
-  background: #075E54;
+  background: var(--color-primary);
 }
 
 .sparkle-two {
   top: 28%;
   right: 14%;
-  background: #075E54;
+  background: var(--color-primary);
 }
 
 .family-orbit--auth {
   width: min(30vw, 320px);
   min-width: 220px;
+}
+
+html[data-theme='dark'] .orbit-outer {
+  border-width: 3px;
+  border-color: rgba(61, 220, 151, 0.4);
+  box-shadow: 0 0 16px rgba(61, 220, 151, 0.28);
+}
+
+html[data-theme='dark'] .orbit-inner {
+  border-width: 3px;
+  border-color: rgba(61, 220, 151, 0.28);
+  box-shadow: 0 0 12px rgba(61, 220, 151, 0.2);
+}
+
+html[data-theme='dark'] .orbit-glow {
+  display: none;
 }
 
 @media (max-width: 600px) {

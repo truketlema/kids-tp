@@ -39,6 +39,14 @@
           <span aria-hidden="true"></span>
           {{ todayLabel }}
         </span>
+        <button
+          class="theme-toggle"
+          type="button"
+          :aria-label="isDark ? 'Switch to light theme' : 'Switch to dark theme'"
+          @click="toggleTheme"
+        >
+          <v-icon :icon="isDark ? 'mdi-white-balance-sunny' : 'mdi-weather-night'" />
+        </button>
         <RouterLink class="account-bell" to="/profile?panel=notifications" aria-label="Open notifications">
           <v-icon icon="mdi-bell-outline" />
         </RouterLink>
@@ -59,9 +67,19 @@
 
       <div class="account-mobile-header">
         <BrandLockup class="account-brand" to="/dashboard" aria-label="Kids TP dashboard" />
-        <RouterLink class="account-bell" to="/profile?panel=notifications" aria-label="Open notifications">
-          <v-icon icon="mdi-bell-outline" />
-        </RouterLink>
+        <div class="account-mobile-tools">
+          <button
+            class="theme-toggle"
+            type="button"
+            :aria-label="isDark ? 'Switch to light theme' : 'Switch to dark theme'"
+            @click="toggleTheme"
+          >
+            <v-icon :icon="isDark ? 'mdi-white-balance-sunny' : 'mdi-weather-night'" />
+          </button>
+          <RouterLink class="account-bell" to="/profile?panel=notifications" aria-label="Open notifications">
+            <v-icon icon="mdi-bell-outline" />
+          </RouterLink>
+        </div>
       </div>
     </div>
   </header>
@@ -69,6 +87,9 @@
 
 <script setup>
 import BrandLockup from './BrandLockup.vue'
+import { useTheme } from '../composables/useTheme.js'
+
+const { isDark, toggleTheme } = useTheme()
 
 const { profile, active } = defineProps({
   profile: {
@@ -102,7 +123,30 @@ function initials(name) {
 <style scoped>
 .account-header {
   border-bottom: 1px solid var(--color-border);
-  background: #FFFFFF;
+  background: var(--color-header);
+}
+
+.theme-toggle {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--color-primary);
+  cursor: pointer;
+}
+
+.theme-toggle:hover {
+  background: var(--color-chip);
+}
+
+.account-mobile-tools {
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .account-header-inner {
@@ -126,20 +170,20 @@ function initials(name) {
 .account-desktop-nav span {
   padding: 27px 0 24px;
   border-bottom: 3px solid transparent;
-  color: #667781;
+  color: var(--color-text-muted);
   font-size: var(--text-small);
   text-decoration: none;
   white-space: nowrap;
 }
 
 .account-desktop-nav a:hover {
-  border-bottom-color: #075E54;
-  color: #111B21;
+  border-bottom-color: var(--color-primary);
+  color: var(--color-text);
 }
 
 .account-desktop-nav .account-nav-current {
-  border-bottom-color: #075E54;
-  color: #111B21;
+  border-bottom-color: var(--color-primary);
+  color: var(--color-text);
 }
 
 .account-desktop-nav [aria-disabled='true'] {
@@ -157,7 +201,7 @@ function initials(name) {
   border: 0;
   border-radius: 999px;
   background: transparent;
-  color: #075E54;
+  color: var(--color-primary);
   font: inherit;
   font-size: var(--text-caption);
   font-weight: 800;
@@ -167,7 +211,7 @@ function initials(name) {
 }
 
 .account-sign-out:hover {
-  background: #F0F2F5;
+  background: var(--color-chip);
 }
 
 .account-date {
@@ -176,7 +220,7 @@ function initials(name) {
   gap: 8px;
   padding: 8px 12px;
   border-radius: 999px;
-  background: #F0F2F5;
+  background: var(--color-chip);
   color: var(--color-text-muted);
   font-size: var(--text-caption);
   white-space: nowrap;
@@ -187,7 +231,7 @@ function initials(name) {
   height: 7px;
   flex: 0 0 auto;
   border-radius: 50%;
-  background: #075E54;
+  background: var(--color-primary);
 }
 
 .account-bell {
@@ -195,13 +239,13 @@ function initials(name) {
   place-items: center;
   width: 32px;
   height: 32px;
-  color: #075E54;
+  color: var(--color-primary);
   border-radius: 50%;
   text-decoration: none;
 }
 
 .account-bell:hover {
-  background: #F0F2F5;
+  background: var(--color-chip);
 }
 
 .account-header-user {
@@ -220,8 +264,8 @@ function initials(name) {
   height: 30px;
   flex: 0 0 auto;
   border-radius: 50%;
-  background: #075E54;
-  color: #fff;
+  background: var(--color-primary);
+  color: var(--color-on-primary);
   font-size: var(--text-caption);
   font-weight: 800;
 }
@@ -241,7 +285,7 @@ function initials(name) {
 }
 
 .account-header-user strong {
-  color: #111B21;
+  color: var(--color-text);
   font-size: var(--text-caption);
 }
 

@@ -24,7 +24,7 @@
 }
 
 .family-breadcrumb a {
-  color: #075E54;
+  color: var(--color-primary);
   font-weight: 700;
   text-decoration: none;
 }
@@ -46,7 +46,7 @@
 
 .family-title-row h1 {
   margin: 0;
-  color: #111B21;
+  color: var(--color-text);
   font-size: var(--text-heading);
 }
 
@@ -64,7 +64,7 @@
   padding: 14px 18px;
   border: 1px solid var(--app-card-border);
   border-radius: var(--app-card-radius);
-  background: #fff;
+  background: var(--color-surface);
   box-shadow: var(--app-card-shadow);
 }
 
@@ -81,8 +81,8 @@
 .family-home-icon {
   width: 46px;
   height: 46px;
-  background: #F0F2F5;
-  color: #075E54;
+  background: var(--color-chip);
+  color: var(--color-primary);
   font-size: 20px;
 }
 
@@ -96,7 +96,7 @@
 .family-summary-copy h2 {
   overflow: hidden;
   margin: 0;
-  color: #111B21;
+  color: var(--color-text);
   font-size: var(--text-body);
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -120,7 +120,7 @@
   border: 0;
   border-radius: 999px;
   background: var(--color-primary-light);
-  color: #FFFFFF;
+  color: var(--color-on-primary);
   font: inherit;
   font-size: var(--text-caption);
   font-weight: 800;
@@ -130,7 +130,7 @@
 
 .family-summary-card > button:hover,
 .family-financial-setting > button:hover {
-  background: #054C44;
+  background: var(--color-primary-hover);
 }
 
 .family-inline-form,
@@ -148,7 +148,7 @@
   display: grid;
   gap: 4px;
   min-width: 150px;
-  color: #667781;
+  color: var(--color-text-muted);
   font-size: var(--text-caption);
   font-weight: 700;
 }
@@ -159,10 +159,10 @@
   width: 100%;
   min-height: 34px;
   padding: 6px 9px;
-  border: 1px solid #DCE8E7;
+  border: 1px solid var(--color-border-strong);
   border-radius: 7px;
-  background: #fff;
-  color: #111B21;
+  background: var(--color-input);
+  color: var(--color-text);
   font: inherit;
 }
 
@@ -174,7 +174,7 @@
   border: 0;
   border-radius: 999px;
   background: var(--color-primary-light);
-  color: #FFFFFF;
+  color: var(--color-on-primary);
   font: inherit;
   font-size: 11px;
   font-weight: 800;
@@ -184,8 +184,8 @@
 
 .family-inline-form .family-form-cancel,
 .family-setting-editor .family-form-cancel {
-  border: 1px solid #DCE8E7;
-  background: #fff;
+  border: 1px solid var(--color-border-strong);
+  background: var(--color-surface);
 }
 
 .family-inline-form button:disabled,
@@ -214,9 +214,9 @@
 .family-invitation-form {
   margin-top: 10px;
   padding: 12px;
-  border: 1px solid #DCE8E7;
+  border: 1px solid var(--color-border-strong);
   border-radius: 12px;
-  background: #fff;
+  background: var(--color-surface);
 }
 
 .family-invitation-form label {
@@ -224,9 +224,9 @@
 }
 
 .family-notice-error {
-  border-color: #efc8c3;
-  background: #fff5f3;
-  color: #9c443b;
+  border-color: var(--color-danger-border);
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
 }
 
 .family-management-grid {
@@ -256,15 +256,15 @@
 
 .family-section-title h2 {
   margin: 0;
-  color: #111B21;
+  color: var(--color-text);
   font-size: var(--text-large);
 }
 
 .family-section-title > div > span {
   padding: 3px 8px;
   border-radius: 999px;
-  background: #F0F2F5;
-  color: #667781;
+  background: var(--color-chip);
+  color: var(--color-text-muted);
   font-size: var(--text-caption);
 }
 
@@ -288,7 +288,7 @@
   padding: 10px 13px;
   border: 1px solid var(--app-card-border);
   border-radius: var(--app-card-radius);
-  background: #fff;
+  background: var(--color-surface);
   color: inherit;
   text-align: left;
   text-decoration: none;
@@ -299,15 +299,15 @@
 }
 
 .family-member-card[href]:hover {
-  border-color: #DCE8E7;
-  background: #F0F2F5;
+  border-color: var(--color-border-strong);
+  background: var(--color-chip);
 }
 
 .family-member-avatar {
   width: 38px;
   height: 38px;
-  background: #F0F2F5;
-  color: #075E54;
+  background: var(--color-chip);
+  color: var(--color-primary);
   font-size: var(--text-caption);
   font-weight: 800;
 }
@@ -327,7 +327,7 @@
 
 .family-member-name strong {
   overflow: hidden;
-  color: #111B21;
+  color: var(--color-text);
   font-size: var(--text-small);
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -341,13 +341,13 @@
 }
 
 .parent-role {
-  background: #F0F2F5;
-  color: #075E54;
+  background: var(--color-chip);
+  color: var(--color-primary);
 }
 
 .child-role {
-  background: #F0F2F5;
-  color: #075E54;
+  background: var(--color-chip);
+  color: var(--color-primary);
 }
 
 .family-member-copy > small {
@@ -372,7 +372,7 @@
 }
 
 .family-view-profile {
-  color: #667781;
+  color: var(--color-text-muted);
   font-size: var(--text-caption);
   white-space: nowrap;
 }
@@ -389,14 +389,14 @@
 }
 
 .family-invite-card:hover {
-  background: #F0F2F5;
+  background: var(--color-chip);
 }
 
 .family-invite-icon {
   width: 38px;
   height: 38px;
-  background: #F0F2F5;
-  color: #075E54;
+  background: var(--color-chip);
+  color: var(--color-primary);
   font-size: 20px;
 }
 
@@ -408,7 +408,7 @@
 }
 
 .family-invite-card strong {
-  color: #111B21;
+  color: var(--color-text);
   font-size: var(--text-small);
 }
 
@@ -420,9 +420,9 @@
 .family-members-note {
   margin: 12px 0 0;
   padding: 12px;
-  border: 1px solid #DCE8E7;
+  border: 1px solid var(--color-border-strong);
   border-radius: 8px;
-  background: #F0F2F5;
+  background: var(--color-chip);
   color: var(--color-text-muted);
   font-size: var(--text-caption);
   line-height: 1.5;
@@ -432,19 +432,19 @@
   padding: 16px;
   border: 1px solid var(--app-card-border);
   border-radius: var(--app-card-radius);
-  background: #fff;
+  background: var(--color-surface);
   box-shadow: var(--app-card-shadow);
 }
 
 .family-financial-card > header {
   margin-bottom: 10px;
   padding: 0 2px 10px;
-  border-bottom: 1px solid #DCE8E7;
+  border-bottom: 1px solid var(--color-border-strong);
 }
 
 .family-financial-card > header h2 {
   margin: 0;
-  color: #111B21;
+  color: var(--color-text);
   font-size: var(--text-small);
 }
 
@@ -460,15 +460,15 @@
   gap: 10px;
   margin-bottom: 10px;
   padding: 12px 10px;
-  border: 1px solid #DCE8E7;
+  border: 1px solid var(--color-border-strong);
   border-radius: 12px;
 }
 
 .family-setting-icon {
   width: 30px;
   height: 30px;
-  background: #F0F2F5;
-  color: #075E54;
+  background: var(--color-chip);
+  color: var(--color-primary);
 }
 
 .family-setting-copy {
@@ -479,7 +479,7 @@
 }
 
 .family-setting-copy strong {
-  color: #111B21;
+  color: var(--color-text);
   font-size: var(--text-caption);
 }
 
@@ -489,7 +489,7 @@
 }
 
 .family-setting-copy b {
-  color: #111B21;
+  color: var(--color-text);
   font-size: var(--text-caption);
 }
 
@@ -511,7 +511,7 @@
   gap: 7px;
   margin: 0;
   padding: 10px;
-  border: 1px solid #DCE8E7;
+  border: 1px solid var(--color-border-strong);
   border-radius: 10px;
   color: var(--color-text-muted);
   font-size: var(--text-caption);
@@ -527,9 +527,9 @@
   gap: 9px;
   margin-top: 10px;
   padding: 11px 9px;
-  border: 1px solid #DCE8E7;
+  border: 1px solid var(--color-border-strong);
   border-radius: 11px;
-  background: #F0F2F5;
+  background: var(--color-chip);
 }
 
 .family-reward-settings > div {
@@ -555,8 +555,8 @@
   flex: 0 0 auto;
   padding: 4px 7px;
   border-radius: 999px;
-  background: #F0F2F5;
-  color: #667781;
+  background: var(--color-chip);
+  color: var(--color-text-muted);
   font-size: var(--text-caption);
   font-weight: 800;
 }
@@ -571,7 +571,7 @@
 
 .family-budget-section-heading h2 {
   margin: 0;
-  color: #111B21;
+  color: var(--color-text);
   font-size: var(--text-body);
 }
 
@@ -592,7 +592,7 @@
   padding: 14px;
   border: 1px solid var(--app-card-border);
   border-radius: var(--app-card-radius);
-  background: #fff;
+  background: var(--color-surface);
 }
 
 .family-budget-card > header,
@@ -613,7 +613,7 @@
 }
 
 .family-budget-child strong {
-  color: #111B21;
+  color: var(--color-text);
   font-size: var(--text-small);
 }
 
@@ -629,7 +629,7 @@
   border: 0;
   border-radius: 999px;
   background: var(--color-primary-light);
-  color: #FFFFFF;
+  color: var(--color-on-primary);
   font: inherit;
   font-size: 10px;
   font-weight: 800;
@@ -664,13 +664,13 @@
   align-content: center;
   justify-items: center;
   border-radius: 50%;
-  background: white;
+  background: var(--color-surface);
   color: var(--color-text-muted);
   font-size: var(--text-caption);
 }
 
 .family-budget-chart strong {
-  color: #111B21;
+  color: var(--color-text);
   font-size: 13px;
 }
 
@@ -691,8 +691,8 @@
   padding: 5px 7px;
   border-left: 3px solid var(--allocation-color);
   border-radius: 4px;
-  background: #F0F2F5;
-  color: #075E54;
+  background: var(--color-chip);
+  color: var(--color-primary);
   font-size: var(--text-caption);
 }
 
@@ -704,7 +704,7 @@
 }
 
 .family-budget-content li strong {
-  color: #111B21;
+  color: var(--color-text);
   font-size: var(--text-caption);
 }
 
@@ -730,7 +730,7 @@
   grid-template-columns: 10px minmax(0, 1fr) 58px 10px;
   align-items: center;
   gap: 7px;
-  color: #111B21;
+  color: var(--color-text);
   font-size: var(--text-caption);
 }
 
@@ -738,21 +738,21 @@
   width: 100%;
   min-height: 31px;
   padding: 4px 7px;
-  border: 1px solid #DCE8E7;
+  border: 1px solid var(--color-border-strong);
   border-radius: 6px;
-  color: #111B21;
+  color: var(--color-text);
   font: inherit;
 }
 
 .family-budget-editor > strong {
-  color: #075E54;
+  color: var(--color-primary);
   font-size: var(--text-caption);
   text-align: right;
 }
 
 .family-budget-editor > .family-budget-total-invalid,
 .family-budget-editor > .family-notice-error {
-  color: #a64035;
+  color: var(--color-danger);
 }
 
 .family-budget-editor > .family-notice-error {
@@ -771,15 +771,15 @@
 }
 
 .family-budget-actions .family-budget-reset {
-  border: 1px solid #DCE8E7;
-  background: #fff;
+  border: 1px solid var(--color-border-strong);
+  background: var(--color-surface);
 }
 
 .family-budget-empty {
   padding: 18px;
-  border: 1px solid #DCE8E7;
+  border: 1px solid var(--color-border-strong);
   border-radius: 12px;
-  background: #fff;
+  background: var(--color-surface);
   color: var(--color-text-muted);
   font-size: var(--text-caption);
 }
@@ -788,16 +788,16 @@
 .family-state {
   margin: 0 0 16px;
   padding: 12px 14px;
-  border: 1px solid #DCE8E7;
+  border: 1px solid var(--color-border-strong);
   border-radius: 10px;
-  background: #fff;
-  color: #075E54;
+  background: var(--color-surface);
+  color: var(--color-primary);
   font-size: var(--text-small);
 }
 
 .family-state-error {
-  background: #fff0ee;
-  color: #9f332a;
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
 }
 
 .family-state p {
@@ -809,7 +809,7 @@
   border: 0;
   border-radius: 999px;
   background: var(--color-primary-light);
-  color: #FFFFFF;
+  color: var(--color-on-primary);
   font: inherit;
   font-weight: 800;
   cursor: pointer;
@@ -822,14 +822,14 @@
   gap: 20px;
   min-height: 54px;
   padding: 10px max(24px, calc((100% - 1100px) / 2));
-  border-top: 1px solid #DCE8E7;
-  background: #fff;
+  border-top: 1px solid var(--color-border-strong);
+  background: var(--color-surface);
   color: var(--color-text-muted);
   font-size: var(--text-caption);
 }
 
 .family-footer strong {
-  color: #075E54;
+  color: var(--color-primary);
 }
 
 .family-mobile-nav {
@@ -951,8 +951,8 @@
     grid-template-columns: repeat(5, minmax(0, 1fr));
     min-height: 60px;
     padding: 5px 5px max(5px, env(safe-area-inset-bottom));
-    border-top: 1px solid #DCE8E7;
-    background: rgba(255, 255, 255, 0.97);
+    border-top: 1px solid var(--color-border-strong);
+    background: var(--color-header);
   }
 
   .family-mobile-nav a,
@@ -965,7 +965,7 @@
     border: 0;
     border-radius: 9px;
     background: transparent;
-    color: #667781;
+    color: var(--color-text-muted);
     font: inherit;
     text-decoration: none;
   }
@@ -985,8 +985,8 @@
 
   .family-mobile-nav .family-nav-current {
     margin-inline: 8px;
-    background: #075E54;
-    color: #FFFFFF;
+    background: var(--color-primary);
+    color: var(--color-on-primary);
   }
 
   .family-mobile-nav .family-nav-unavailable {

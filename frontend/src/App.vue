@@ -28,11 +28,19 @@
 <script setup>
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useTheme as useVuetifyTheme } from 'vuetify'
 import ProfileHeader from './components/ProfileHeader.vue'
+import { useTheme } from './composables/useTheme.js'
 import { ApiError, clearAuthToken, getCurrentUser } from './services/auth.js'
 
 const route = useRoute()
 const router = useRouter()
+const vuetifyTheme = useVuetifyTheme()
+const { theme } = useTheme()
+
+watch(theme, (value) => {
+  vuetifyTheme.global.name.value = value === 'dark' ? 'kidsTpDark' : 'kidsTpLight'
+}, { immediate: true })
 const profile = ref(null)
 const profileError = ref('')
 const viewCacheVersion = ref(0)
@@ -98,8 +106,8 @@ watch(showAccountHeader, async (shouldShow) => {
 .account-profile-error {
   margin: 0;
   padding: 8px 20px;
-  background: #fff0eb;
-  color: #a64035;
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
   font-size: 13px;
   text-align: center;
 }

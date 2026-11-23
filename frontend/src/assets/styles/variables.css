@@ -1,20 +1,54 @@
 :root {
   --color-primary: #075E54;
-  --color-primary-light: #075E54;
-  --color-primary-dark: #075E54;
-  --color-primary-light-hover: #075E54;
+  --color-primary-hover: #054C44;
+  --color-primary-soft: #DCF8C6;
+  --color-primary-soft-text: #075E54;
+  --color-primary-focus: rgba(7, 94, 84, 0.12);
+  --color-hover: #E8F3EF;
+  --color-success: #42795B;
+  --color-success-soft: #EDF7EF;
+  --color-success-border: #D7EBDD;
+  --color-warning: #806541;
+  --color-warning-soft: #FFF8EC;
+  --color-warning-border: #F1E2C3;
+  --color-earned: #53613d;
+  --color-earned-soft: #f9e9ae;
+  --color-danger: #9C443B;
+  --color-danger-soft: #FFF0EE;
+  --color-danger-soft-hover: #FCE1DD;
+  --color-danger-border: #EFC8C3;
+  --color-danger-button: #B94F45;
+  --color-danger-button-hover: #A94239;
+  --color-info: #4F7282;
+  --color-info-soft: #EAF3F7;
+  --color-overlay: rgba(17, 27, 33, 0.42);
+  --color-overlay-strong: rgba(17, 27, 33, 0.58);
+  --color-primary-shadow: rgba(7, 94, 84, 0.16);
+  --color-chart-primary: #128C7E;
+  --color-chart-secondary: #25D366;
+  --color-budget-savings: #527B61;
+  --color-budget-purchase: #7BBF70;
+  --color-budget-spending: #E4B84F;
+  --color-budget-reserve: #D98973;
+  --color-primary-light: var(--color-primary);
+  --color-primary-dark: var(--color-primary);
+  --color-primary-light-hover: var(--color-primary-hover);
+  --color-on-primary: #FFFFFF;
 
   --color-background: #FFFFFF;
   --color-surface: #FFFFFF;
+  --color-header: #FFFFFF;
+  --color-chip: #F0F2F5;
+  --color-input: #FFFFFF;
   --color-border: rgba(7, 94, 84, 0.14);
+  --color-border-strong: #DCE8E7;
   --color-text: #111B21;
   --color-text-muted: #667781;
-  --color-text-dark: #111B21;
-  --color-danger: #9C443B;
+  --color-text-dark: var(--color-text);
   --app-card-border: rgba(7, 94, 84, 0.12);
   --app-card-radius: 20px;
-  --welcome-page-background: #FFFFFF;
-  --app-page-background: #FFFFFF;
+  --welcome-page-background: var(--color-background);
+  --app-page-background: var(--color-background);
   --app-card-shadow: 0 10px 24px rgba(7, 94, 84, 0.08);
 
   --welcome-background: radial-gradient(
@@ -42,6 +76,53 @@
   --radius-pill: 50px;
 
   --shadow-card: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+html[data-theme='dark'] {
+  --color-primary: #3DDC97;
+  --color-primary-hover: #62E8B0;
+  --color-primary-soft: #10241B;
+  --color-primary-soft-text: #9BE8C4;
+  --color-primary-focus: rgba(61, 220, 151, 0.28);
+  --color-hover: #18241E;
+  --color-success: #9BE8C4;
+  --color-success-soft: #10241B;
+  --color-success-border: #1E4A36;
+  --color-warning: #F0D08A;
+  --color-warning-soft: #261F12;
+  --color-warning-border: #5A4A28;
+  --color-earned: #F0D08A;
+  --color-earned-soft: #3A3014;
+  --color-danger: #FFB1A8;
+  --color-danger-soft: #2A1616;
+  --color-danger-soft-hover: #3A1E1E;
+  --color-danger-border: #5E3330;
+  --color-danger-button: #E06A62;
+  --color-danger-button-hover: #F0847C;
+  --color-info: #B7D7E6;
+  --color-info-soft: #121E24;
+  --color-overlay: rgba(0, 0, 0, 0.74);
+  --color-overlay-strong: rgba(0, 0, 0, 0.86);
+  --color-primary-shadow: rgba(0, 0, 0, 0.5);
+  --color-chart-primary: #1F8F6A;
+  --color-chart-secondary: #3DDC97;
+  --color-budget-savings: #1F8F6A;
+  --color-budget-purchase: #3DDC97;
+  --color-budget-spending: #F0D08A;
+  --color-budget-reserve: #E7A08E;
+  --color-on-primary: #042117;
+  --color-background: #000000;
+  --color-surface: #101714;
+  --color-header: #000000;
+  --color-chip: #17211C;
+  --color-input: #0C1210;
+  --color-border: rgba(155, 232, 196, 0.14);
+  --color-border-strong: rgba(155, 232, 196, 0.24);
+  --color-text: #F4F8F5;
+  --color-text-muted: #93A69B;
+  --app-card-border: rgba(155, 232, 196, 0.16);
+  --app-card-shadow: 0 18px 40px rgba(0, 0, 0, 0.55);
+  color-scheme: dark;
 }
 
 @media (max-width: 760px) {

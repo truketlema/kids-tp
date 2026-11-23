@@ -26,6 +26,11 @@ body {
   min-height: 100dvh;
 }
 
+.v-application {
+  background: var(--color-background) !important;
+  color: var(--color-text);
+}
+
 button,
 input,
 textarea,

@@ -19,15 +19,24 @@ const vuetify = createVuetify({
     sets: { mdi: mdiSvgIconSet },
   },
   theme: {
-    defaultTheme: 'kidsTpTheme',
+    defaultTheme: document.documentElement.dataset.theme === 'dark' ? 'kidsTpDark' : 'kidsTpLight',
     themes: {
-      kidsTpTheme: {
+      kidsTpLight: {
         dark: false,
         colors: {
           primary: '#075E54',
           secondary: '#075E54',
           background: '#FFFFFF',
           surface: '#FFFFFF',
+        },
+      },
+      kidsTpDark: {
+        dark: true,
+        colors: {
+          primary: '#3DDC97',
+          secondary: '#1F8F6A',
+          background: '#000000',
+          surface: '#101714',
         },
       },
     },

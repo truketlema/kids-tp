@@ -193,7 +193,7 @@ function numericValue(value) {
   display: grid;
   gap: 5px;
   min-width: 0;
-  color: #667781;
+  color: var(--color-text-muted);
   font-size: var(--text-caption);
   font-weight: 700;
 }
@@ -205,10 +205,10 @@ function numericValue(value) {
   min-width: 0;
   min-height: 38px;
   padding: 8px 10px;
-  border: 1px solid #DCE8E7;
+  border: 1px solid var(--color-border-strong);
   border-radius: 8px;
-  background: #fff;
-  color: #111B21;
+  background: var(--color-input);
+  color: var(--color-text);
   font: inherit;
   font-size: var(--text-caption);
 }
@@ -220,17 +220,17 @@ function numericValue(value) {
 .activity-form-fields input:focus,
 .activity-form-fields textarea:focus,
 .activity-form-fields select:focus {
-  border-color: #075E54;
-  outline: 2px solid rgba(7, 94, 84, 0.18);
+  border-color: var(--color-primary);
+  outline: 2px solid var(--color-primary-focus);
 }
 
 .activity-child-assignment {
   display: grid;
   gap: 5px;
   padding: 9px 10px;
-  border: 1px solid #DCE8E7;
+  border: 1px solid var(--color-border-strong);
   border-radius: 9px;
-  background: #F0F2F5;
+  background: var(--color-chip);
 }
 
 .activity-child-assignment > header {
@@ -242,7 +242,7 @@ function numericValue(value) {
 }
 
 .activity-child-assignment > header strong {
-  color: #667781;
+  color: var(--color-text-muted);
   font-size: 9px;
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -252,7 +252,7 @@ function numericValue(value) {
   padding: 0;
   border: 0;
   background: transparent;
-  color: #075E54;
+  color: var(--color-primary);
   font: inherit;
   font-size: 10px;
   font-weight: 700;
@@ -265,7 +265,7 @@ function numericValue(value) {
   gap: 7px;
   min-height: 31px;
   padding: 4px 2px;
-  border-top: 1px solid #DCE8E7;
+  border-top: 1px solid var(--color-border-strong);
   cursor: pointer;
 }
 
@@ -273,7 +273,7 @@ function numericValue(value) {
   width: 14px;
   height: 14px;
   flex: 0 0 auto;
-  accent-color: #075E54;
+  accent-color: var(--color-primary);
 }
 
 .activity-child-avatar {
@@ -283,15 +283,15 @@ function numericValue(value) {
   flex: 0 0 auto;
   place-items: center;
   border-radius: 50%;
-  background: #F0F2F5;
-  color: #075E54;
+  background: var(--color-chip);
+  color: var(--color-primary);
   font-size: 9px;
   font-weight: 800;
 }
 
 .activity-child-name {
   overflow: hidden;
-  color: #111B21;
+  color: var(--color-text);
   font-size: 11px;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -301,8 +301,8 @@ function numericValue(value) {
   margin-left: auto;
   padding: 2px 7px;
   border-radius: 999px;
-  background: #F0F2F5;
-  color: #075E54;
+  background: var(--color-chip);
+  color: var(--color-primary);
   font-size: 9px;
   font-weight: 700;
   white-space: nowrap;
@@ -310,7 +310,7 @@ function numericValue(value) {
 
 .activity-no-children {
   margin: 0;
-  color: #667781;
+  color: var(--color-text-muted);
   font-size: 10px;
 }
 

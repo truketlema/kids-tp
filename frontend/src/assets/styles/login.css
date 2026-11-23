@@ -5,7 +5,7 @@
   min-height: 100dvh;
   padding: 0 clamp(16px, 3vw, 32px);
   background: var(--welcome-page-background);
-  color: #111B21;
+  color: var(--color-text);
 }
 
 .login-layout {
@@ -58,15 +58,15 @@
   margin: 0 0 16px;
   padding: 4px 9px;
   border-radius: 999px;
-  background: #DCF8C6;
-  color: #075E54;
+  background: var(--color-primary-soft);
+  color: var(--color-primary-soft-text);
   font-size: var(--text-caption);
   font-weight: 800;
 }
 
 .login-form h1 {
   margin: 0 0 22px;
-  color: #111B21;
+  color: var(--color-text);
   font-size: 32px;
   font-weight: 800;
   line-height: 1.2;
@@ -80,7 +80,7 @@
 .login-field span {
   display: block;
   margin-bottom: 6px;
-  color: #111B21;
+  color: var(--color-text);
   font-size: var(--text-small);
   font-weight: 800;
 }
@@ -93,16 +93,16 @@
   border: 1px solid var(--color-border);
   border-radius: 10px;
   outline: none;
-  background: #fff;
-  color: #111B21;
+  background: var(--color-input);
+  color: var(--color-text);
   font: inherit;
   font-size: var(--text-body);
   transition: border-color 0.15s, box-shadow 0.15s;
 }
 
 .login-field input:focus {
-  border-color: #075E54;
-  box-shadow: 0 0 0 3px rgba(7, 94, 84, 0.12);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-focus);
 }
 
 .login-field input::placeholder {
@@ -123,7 +123,7 @@
   width: 15px;
   height: 15px;
   margin: 0;
-  accent-color: #075E54;
+  accent-color: var(--color-primary);
 }
 
 .login-submit {
@@ -135,8 +135,8 @@
   margin: 0 auto;
   border: 0;
   border-radius: var(--radius-pill);
-  background: #075E54;
-  color: #FFFFFF;
+  background: var(--color-primary);
+  color: var(--color-on-primary);
   font: inherit;
   font-size: var(--text-small);
   font-weight: 900;
@@ -145,7 +145,7 @@
 }
 
 .login-submit:hover:not(:disabled) {
-  background: #075E54;
+  background: var(--color-primary);
   transform: translateY(-1px);
 }
 
@@ -156,20 +156,20 @@
 
 .login-submit:focus-visible,
 .login-footer a:focus-visible {
-  outline: 3px solid #075E54;
+  outline: 3px solid var(--color-primary);
   outline-offset: 3px;
 }
 
 .login-status {
   margin: 14px 0 0;
-  color: #536b35;
+  color: var(--color-success);
   text-align: center;
   font-size: var(--text-small);
   line-height: 1.45;
 }
 
 .login-status-error {
-  color: #b42318;
+  color: var(--color-danger);
 }
 
 .login-footer {
@@ -180,7 +180,7 @@
 
 .login-footer a {
   margin-left: 4px;
-  color: #075E54;
+  color: var(--color-primary);
   font-weight: 900;
 }
 

@@ -26,7 +26,7 @@
   padding: 0;
   border: 0;
   background: transparent;
-  color: #075E54;
+  color: var(--color-primary);
   font: inherit;
   font-weight: 700;
   text-decoration: none;
@@ -59,34 +59,34 @@
   height: 25px;
   flex: 0 0 auto;
   place-items: center;
-  border: 1px solid #DCE8E7;
+  border: 1px solid var(--color-border-strong);
   border-radius: 50%;
-  background: #fff;
+  background: var(--color-surface);
   font-weight: 800;
 }
 
 .child-setup-steps .child-setup-step-complete {
-  color: #075E54;
+  color: var(--color-primary);
 }
 
 .child-setup-step-complete > span {
-  border-color: #075E54 !important;
-  background: #F0F2F5 !important;
+  border-color: var(--color-primary) !important;
+  background: var(--color-chip) !important;
 }
 
 .child-setup-step-connector {
   height: 1px;
-  background: #F0F2F5;
+  background: var(--color-chip);
 }
 
 .child-setup-steps .child-setup-step-current {
-  color: #111B21;
+  color: var(--color-text);
 }
 
 .child-setup-step-current > span {
-  border-color: #075E54 !important;
-  background: #075E54 !important;
-  color: #fff;
+  border-color: var(--color-primary) !important;
+  background: var(--color-primary) !important;
+  color: var(--color-on-primary);
 }
 
 .child-setup-intro {
@@ -94,12 +94,12 @@
   padding: 16px 18px;
   border: 1px solid var(--app-card-border);
   border-radius: var(--app-card-radius);
-  background: #fff;
+  background: var(--color-surface);
   box-shadow: var(--app-card-shadow);
 }
 
 .child-setup-intro strong {
-  color: #075E54;
+  color: var(--color-primary);
   font-size: var(--text-caption);
   letter-spacing: 0.4px;
 }
@@ -127,20 +127,20 @@
 
 .child-setup-heading h1 {
   margin: 0;
-  color: #111B21;
+  color: var(--color-text);
   font-size: var(--text-large);
 }
 
 .child-setup-heading > div > span {
   padding: 3px 8px;
   border-radius: 999px;
-  background: #F0F2F5;
-  color: #075E54;
+  background: var(--color-chip);
+  color: var(--color-primary);
   font-size: var(--text-caption);
 }
 
 .child-setup-heading > a {
-  color: #075E54;
+  color: var(--color-primary);
   font-size: var(--text-caption);
   font-weight: 800;
   text-decoration: none;
@@ -161,9 +161,9 @@
 
 .child-setup-category {
   overflow: hidden;
-  border: 1px solid #DCE8E7;
+  border: 1px solid var(--color-border-strong);
   border-radius: 13px;
-  background: #fff;
+  background: var(--color-surface);
 }
 
 .child-setup-category > header {
@@ -195,8 +195,8 @@
   flex: 0 0 auto;
   place-items: center;
   border-radius: 50%;
-  background: #F0F2F5;
-  color: #075E54;
+  background: var(--color-chip);
+  color: var(--color-primary);
   font-size: 19px;
 }
 
@@ -208,7 +208,7 @@
 }
 
 .child-setup-category-copy strong {
-  color: #111B21;
+  color: var(--color-text);
   font-size: var(--text-small);
 }
 
@@ -224,8 +224,8 @@
   width: max-content;
   padding: 2px 6px;
   border-radius: 999px;
-  background: #F0F2F5;
-  color: #075E54;
+  background: var(--color-chip);
+  color: var(--color-primary);
   font-size: var(--text-caption);
 }
 
@@ -240,8 +240,8 @@
   padding: 0 9px;
   border: 0;
   border-radius: 999px;
-  background: #F0F2F5;
-  color: #075E54;
+  background: var(--color-chip);
+  color: var(--color-primary);
   font: inherit;
   font-size: var(--text-caption);
   font-weight: 800;
@@ -266,11 +266,11 @@
   gap: 12px;
   min-height: 57px;
   padding: 8px 7px;
-  border-top: 1px solid #DCE8E7;
+  border-top: 1px solid var(--color-border-strong);
 }
 
 .child-setup-activity-selected {
-  background: #F0F2F5;
+  background: var(--color-chip);
 }
 
 .child-setup-activity-choice {
@@ -286,7 +286,7 @@
   width: 16px;
   height: 16px;
   flex: 0 0 auto;
-  accent-color: #075E54;
+  accent-color: var(--color-primary);
 }
 
 .child-setup-activity-icon {
@@ -296,8 +296,8 @@
   flex: 0 0 auto;
   place-items: center;
   border-radius: 50%;
-  background: #F0F2F5;
-  color: #075E54;
+  background: var(--color-chip);
+  color: var(--color-primary);
   font-size: 16px;
 }
 
@@ -309,7 +309,7 @@
 
 .child-setup-activity-copy strong {
   overflow: hidden;
-  color: #111B21;
+  color: var(--color-text);
   font-size: var(--text-caption);
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -324,7 +324,7 @@
   display: grid;
   gap: 3px;
   flex: 0 0 98px;
-  color: #667781;
+  color: var(--color-text-muted);
   font-size: var(--text-caption);
 }
 
@@ -338,14 +338,14 @@
   width: 72px;
   min-height: 30px;
   padding: 4px 6px;
-  border: 1px solid #DCE8E7;
+  border: 1px solid var(--color-border-strong);
   border-radius: 6px;
-  color: #111B21;
+  color: var(--color-text);
   font: inherit;
 }
 
 .child-setup-reward-input input:disabled {
-  background: #F0F2F5;
+  background: var(--color-chip);
   color: var(--color-text-muted);
 }
 
@@ -357,15 +357,15 @@
   padding: 15px;
   border: 1px solid var(--app-card-border);
   border-radius: var(--app-card-radius);
-  background: #fff;
+  background: var(--color-surface);
   box-shadow: var(--app-card-shadow);
 }
 
 .child-setup-summary h2 {
   margin: 0;
   padding-bottom: 9px;
-  border-bottom: 1px solid #DCE8E7;
-  color: #667781;
+  border-bottom: 1px solid var(--color-border-strong);
+  color: var(--color-text-muted);
   font-size: var(--text-caption);
   letter-spacing: 0.4px;
   text-transform: uppercase;
@@ -377,7 +377,7 @@
   gap: 4px;
   padding: 11px;
   border-radius: 10px;
-  background: #F0F2F5;
+  background: var(--color-chip);
 }
 
 .child-setup-summary-count {
@@ -397,21 +397,21 @@
 }
 
 .child-setup-summary-count strong {
-  color: #111B21;
+  color: var(--color-text);
   font-size: var(--text-small);
 }
 
 .child-setup-summary-count > span:last-child {
-  color: #075E54;
+  color: var(--color-primary);
   font-size: var(--text-caption);
 }
 
 .child-setup-summary-reward {
-  background: #F0F2F5;
+  background: var(--color-chip);
 }
 
 .child-setup-summary-reward strong {
-  color: #075E54;
+  color: var(--color-primary);
   font-size: var(--text-large);
 }
 
@@ -430,21 +430,21 @@
 }
 
 .child-setup-deduction-cap strong {
-  color: #111B21;
+  color: var(--color-text);
 }
 
 .child-setup-advice {
   padding: 11px;
-  border-left: 3px solid #075E54;
+  border-left: 3px solid var(--color-primary);
   border-radius: 8px;
-  background: #F0F2F5;
+  background: var(--color-chip);
 }
 
 .child-setup-advice > strong {
   display: flex;
   align-items: center;
   gap: 5px;
-  color: #075E54;
+  color: var(--color-primary);
   font-size: var(--text-caption);
 }
 
@@ -465,7 +465,7 @@
   border: 0;
   border-radius: 999px;
   background: var(--color-primary-light);
-  color: #FFFFFF;
+  color: var(--color-on-primary);
   font: inherit;
   font-size: var(--text-small);
   font-weight: 800;
@@ -487,9 +487,9 @@
   max-width: 680px;
   margin: 28px auto;
   padding: 18px;
-  border: 1px solid #DCE8E7;
+  border: 1px solid var(--color-border-strong);
   border-radius: 12px;
-  background: #fff;
+  background: var(--color-surface);
   color: var(--color-text-muted);
   text-align: center;
 }
@@ -499,7 +499,7 @@
 }
 
 .child-setup-error {
-  color: #a64035;
+  color: var(--color-danger);
 }
 
 .child-setup-state button {
@@ -508,7 +508,7 @@
   border: 0;
   border-radius: 999px;
   background: var(--color-primary-light);
-  color: #FFFFFF;
+  color: var(--color-on-primary);
   font: inherit;
   font-weight: 800;
   cursor: pointer;
@@ -521,21 +521,21 @@
   display: grid;
   place-items: center;
   padding: 20px;
-  background: rgb(29 35 21 / 48%);
+  background: var(--color-overlay-strong);
 }
 
 .child-setup-exit-dialog {
   width: min(100%, 440px);
   padding: 24px;
-  border: 1px solid #DCE8E7;
+  border: 1px solid var(--color-border-strong);
   border-radius: 16px;
-  background: #fff;
-  box-shadow: 0 18px 60px rgb(34 42 21 / 22%);
+  background: var(--color-surface);
+  box-shadow: var(--app-card-shadow);
 }
 
 .child-setup-exit-dialog h2 {
   margin: 0;
-  color: #111B21;
+  color: var(--color-text);
   font-size: var(--text-heading);
 }
 
@@ -555,19 +555,19 @@
 .child-setup-exit-dialog button {
   min-height: 40px;
   padding: 0 16px;
-  border: 1px solid #DCE8E7;
+  border: 1px solid var(--color-border-strong);
   border-radius: 999px;
-  background: #fff;
-  color: #075E54;
+  background: var(--color-surface);
+  color: var(--color-primary);
   font: inherit;
   font-weight: 800;
   cursor: pointer;
 }
 
 .child-setup-exit-dialog .child-setup-exit-confirm {
-  border-color: #075E54;
-  background: #075E54;
-  color: #fff;
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+  color: var(--color-on-primary);
 }
 
 @media (max-width: 900px) {

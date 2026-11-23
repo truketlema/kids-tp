@@ -25,7 +25,7 @@ defineProps({
   flex: 0 0 auto;
   align-items: center;
   gap: 0;
-  color: #075E54;
+  color: var(--color-primary);
   text-decoration: none;
   white-space: nowrap;
 }
@@ -37,7 +37,7 @@ defineProps({
   width: 84px;
   margin-right: -14px;
   aspect-ratio: 390 / 315;
-  background: #075E54;
+  background: var(--color-primary);
   transform: translateY(-8px);
   -webkit-mask: url('/logo.png') center / contain no-repeat;
   mask: url('/logo.png') center / contain no-repeat;
@@ -53,7 +53,7 @@ defineProps({
 }
 
 .brand-name span {
-  color: #075E54;
+  color: var(--color-primary);
 }
 
 @media (max-width: 600px) {

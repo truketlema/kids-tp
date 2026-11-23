@@ -57,7 +57,7 @@
                   @click="toggleCategory(category.id)"
                 >
                   <span class="child-setup-category-icon">
-                    <v-icon :icon="category.icon || 'mdi-format-list-checks'" />
+                    <v-icon :icon="categoryIcon(category)" />
                   </span>
                   <span class="child-setup-category-copy">
                     <strong>{{ category.name }}</strong>
@@ -236,6 +236,24 @@ const loadError = ref('')
 const saveError = ref('')
 let allowRouteLeave = false
 let resolveRouteLeave = null
+
+function categoryIcon(category) {
+  if (category?.icon) {
+    return category.icon
+  }
+
+  const icons = {
+    Education: 'mdi-book-open-variant',
+    'Personal Care': 'mdi-heart-outline',
+    Household: 'mdi-home-outline',
+    'Trust & Character': 'mdi-account-heart-outline',
+    'Time Management': 'mdi-clock-outline',
+    'Digital Responsibility': 'mdi-cellphone-check',
+    'Financial Literacy': 'mdi-piggy-bank-outline',
+  }
+
+  return icons[category?.name] || 'mdi-format-list-checks'
+}
 
 const selectedActivities = computed(() => categories.value.flatMap((category) =>
   category.activities

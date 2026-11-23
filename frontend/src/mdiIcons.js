@@ -71,6 +71,8 @@ import {
   mdiViewDashboardOutline,
   mdiWalletOutline,
   mdiWaterOutline,
+  mdiWeatherNight,
+  mdiWhiteBalanceSunny,
 } from '@mdi/js'
 
 const iconPaths = {
@@ -145,6 +147,8 @@ const iconPaths = {
   'mdi-view-dashboard-outline': mdiViewDashboardOutline,
   'mdi-wallet-outline': mdiWalletOutline,
   'mdi-water-outline': mdiWaterOutline,
+  'mdi-weather-night': mdiWeatherNight,
+  'mdi-white-balance-sunny': mdiWhiteBalanceSunny,
 }
 
 const warnedIconNames = new Set()

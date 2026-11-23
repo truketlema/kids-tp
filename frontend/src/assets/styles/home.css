@@ -5,8 +5,8 @@
   flex-direction: column;
   padding: 8px clamp(16px, 3vw, 32px) 16px;
   overflow: hidden;
-  background: #FFFFFF;
-  color: var(--color-primary-dark);
+  background: var(--color-background);
+  color: var(--color-text);
 }
 
 .action-arrow {
@@ -14,7 +14,7 @@
   place-items: center;
   border-radius: 5px;
   background: rgba(255, 255, 255, 0.16);
-  color: #FFFFFF;
+  color: var(--color-on-primary);
   font-size: 15px;
   line-height: 1;
 }
@@ -45,9 +45,9 @@
   gap: 10px;
   padding: 10px 22px;
   border-radius: var(--radius-pill);
-  background: #075E54;
-  box-shadow: 0 12px 28px rgba(7, 94, 84, 0.18);
-  color: #FFFFFF;
+  background: var(--color-primary);
+  box-shadow: var(--app-card-shadow);
+  color: var(--color-on-primary);
   font-size: var(--text-body);
   font-weight: 900;
   text-decoration: none;
@@ -58,7 +58,7 @@
 
 .start:hover {
   transform: translateY(-2px);
-  box-shadow: 0 12px 24px rgba(7, 94, 84, 0.22);
+  box-shadow: var(--app-card-shadow);
 }
 
 .action-arrow {

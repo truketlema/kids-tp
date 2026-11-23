@@ -5,7 +5,7 @@
   min-height: 100dvh;
   padding: 0 clamp(16px, 3vw, 32px);
   background: var(--welcome-page-background);
-  color: #111B21;
+  color: var(--color-text);
   font-family: 'Nunito', sans-serif;
 }
 
@@ -74,7 +74,7 @@
 
 .benefit h2 {
   margin: 0 0 3px;
-  color: #111B21;
+  color: var(--color-text);
   font-size: 15px;
   font-weight: 800;
 }
@@ -115,8 +115,8 @@
   padding: 4px 10px;
 
   border-radius: 999px;
-  background: #DCF8C6;
-  color: #075E54;
+  background: var(--color-primary-soft);
+  color: var(--color-primary-soft-text);
 
   font-size: var(--text-caption);
   font-weight: 800;
@@ -125,7 +125,7 @@
 
 .register-title {
   margin: 0 0 22px;
-  color: #111B21;
+  color: var(--color-text);
   font-size: 32px;
   font-weight: 800;
   line-height: 1.2;
@@ -141,7 +141,7 @@
   display: block;
   margin: 0 0 6px;
 
-  color: #111B21;
+  color: var(--color-text);
   font-size: var(--text-small);
   font-weight: 800;
 }
@@ -156,8 +156,8 @@
   border-radius: 10px;
   outline: none;
 
-  background: #fff;
-  color: #111B21;
+  background: var(--color-input);
+  color: var(--color-text);
 
   font-family: inherit;
   font-size: var(--text-body);
@@ -166,8 +166,8 @@
 }
 
 .field input:focus {
-  border-color: #075E54;
-  box-shadow: 0 0 0 3px rgba(7, 94, 84, 0.12);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-focus);
 }
 
 .field input::placeholder {
@@ -181,13 +181,13 @@
   height: 44px;
   border: 1px solid var(--color-border);
   border-radius: 10px;
-  background: #fff;
+  background: var(--color-input);
   transition: border-color 0.15s, box-shadow 0.15s;
 }
 
 .phone-input:focus-within {
-  border-color: #075E54;
-  box-shadow: 0 0 0 3px rgba(7, 94, 84, 0.12);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-focus);
 }
 
 .phone-code-picker {
@@ -206,8 +206,8 @@
   border: 0;
   border-right: 1px solid var(--color-border);
   border-radius: 10px 0 0 10px;
-  background: #fff;
-  color: #111B21;
+  background: var(--color-surface);
+  color: var(--color-text);
   font-family: inherit;
   font-size: var(--text-body);
   font-weight: 700;
@@ -216,7 +216,7 @@
 
 .phone-code-trigger:focus-visible,
 .country-option:focus-visible {
-  outline: 2px solid #075E54;
+  outline: 2px solid var(--color-primary);
   outline-offset: -2px;
 }
 
@@ -229,8 +229,8 @@
   padding: 8px;
   border: 1px solid var(--color-border);
   border-radius: 10px;
-  background: #fff;
-  box-shadow: 0 8px 24px #20211d24;
+  background: var(--color-surface);
+  box-shadow: var(--app-card-shadow);
 }
 
 .field .country-search {
@@ -253,7 +253,7 @@
   border: 0;
   border-radius: 4px;
   background: transparent;
-  color: #111B21;
+  color: var(--color-text);
   font-family: inherit;
   font-size: var(--text-small);
   text-align: left;
@@ -262,12 +262,12 @@
 
 .country-option:hover,
 .country-option[aria-selected='true'] {
-  background: #e8f3ef;
+  background: var(--color-hover);
 }
 
 .country-option-code {
   flex: 0 0 auto;
-  color: #075E54;
+  color: var(--color-primary);
   font-weight: 800;
 }
 
@@ -311,7 +311,7 @@
   width: 16px;
   height: 16px;
   margin: 0;
-  accent-color: #075E54;
+  accent-color: var(--color-primary);
 }
 
 /* SUBMIT BUTTON */
@@ -328,8 +328,8 @@
   border: 0;
   border-radius: 999px;
 
-  background: #075E54;
-  color: #FFFFFF;
+  background: var(--color-primary);
+  color: var(--color-on-primary);
 
   font-family: inherit;
   font-size: var(--text-body);
@@ -341,7 +341,7 @@
 }
 
 .submit:hover {
-  background: #075E54;
+  background: var(--color-primary);
   transform: translateY(-1px);
 }
 
@@ -352,7 +352,7 @@
 
 .submit:focus-visible,
 .login:focus-visible {
-  outline: 3px solid #075E54;
+  outline: 3px solid var(--color-primary);
   outline-offset: 3px;
 }
 
@@ -380,13 +380,13 @@
   min-height: 18px;
   margin: 12px 0 0;
 
-  color: #536b35;
+  color: var(--color-success);
   text-align: center;
   font-size: var(--text-small);
 }
 
 .status-error {
-  color: #b42318;
+  color: var(--color-danger);
 }
 
 /* DESKTOP */

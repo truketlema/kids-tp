@@ -324,10 +324,10 @@ import {
 } from '../services/auth.js'
 
 const defaultBudgetAllocation = [
-  { key: 'long_term_savings', label: 'Long-term Savings', percentage: 40, color: '#264f3a' },
-  { key: 'planned_purchase', label: 'Planned Purchase', percentage: 25, color: '#7bd16b' },
-  { key: 'discretionary_spending', label: 'Discretionary Spending', percentage: 20, color: '#f5c64c' },
-  { key: 'reserve', label: 'Reserve', percentage: 15, color: '#fa987d' },
+  { key: 'long_term_savings', label: 'Long-term Savings', percentage: 40, color: 'var(--color-budget-savings)' },
+  { key: 'planned_purchase', label: 'Planned Purchase', percentage: 25, color: 'var(--color-budget-purchase)' },
+  { key: 'discretionary_spending', label: 'Discretionary Spending', percentage: 20, color: 'var(--color-budget-spending)' },
+  { key: 'reserve', label: 'Reserve', percentage: 15, color: 'var(--color-budget-reserve)' },
 ]
 const avatarIcons = {
   bear: 'mdi-teddy-bear',

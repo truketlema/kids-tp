@@ -138,7 +138,7 @@
           </div>
         </section>
         <section v-else class="category-empty-state">
-          <img class="category-empty-logo" src="/logo.png" alt="Kids TP logo" />
+          <span class="category-empty-logo" role="img" aria-label="Kids TP family"></span>
           <h2>No activities yet</h2>
           <p v-if="isChildActivitiesPage">
             No activities in this category are assigned to {{ selectedChild?.name }}.
